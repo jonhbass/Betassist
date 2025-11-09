@@ -1,22 +1,218 @@
-.dashboard-container {
-  padding: 2rem;
-  color: #fff;
-  background-color: #121212;
+/* layout base */
+.ba-dashboard {
   min-height: 100vh;
-}
-
-.dashboard-cards {
   display: flex;
-  gap: 2rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  background: radial-gradient(ellipse at top left,#082c56 0%, #021026 40%, #010309 100%);
+  color: #fff;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
-.card {
-  background-color: #1e1e1e;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 0 10px #000;
+/* top bar */
+.ba-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 36px;
+}
+.ba-logo {
+  font-weight: 800;
+  color: #ffd24d;
+  font-size: 20px;
+  letter-spacing: .6px;
+}
+.ba-top-actions .ba-btn {
+  margin-left: 12px;
+}
+
+/* main content */
+.ba-main {
   flex: 1;
-  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 24px;
+}
+
+/* banner (use an image at src/assets/banner.jpg if available) */
+.ba-banner {
+  width: min(900px, 90%);
+  height: 260px;
+  border-radius: 12px;
+  background-image: url('/src/assets/banners/1.png');
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  border: 4px solid rgba(255,255,255,0.03);
+}
+
+/* welcome */
+.ba-welcome {
+  margin: 0;
+  font-size: 26px;
+  text-align: center;
+  color: #e9f6ff;
+}
+.ba-welcome span {
+  color: #fff;
+  font-weight: 700;
+  text-transform: none;
+}
+
+/* action grid (buttons) */
+.ba-actions-grid {
+  width: min(720px, 92%);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 6px;
+}
+.ba-action {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 2px solid rgba(86,165,255,0.35);
+  color: #dff4ff;
+  padding: 16px 18px;
+  border-radius: 10px;
+  font-size: 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.ba-action:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(15,50,100,0.35); }
+
+.ba-action.primary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ba-action.highlight {
+  background: linear-gradient(90deg,#0b5cc0,#1aa3ff);
+  color: #fff;
+  font-weight: 700;
+  justify-content: center;
+}
+
+/* small top buttons */
+.ba-btn.small {
+  background: rgba(255,255,255,0.04);
+  border: none;
+  color: #dff4ff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* footer / floating button */
+.ba-footer {
+  display: flex;
+  justify-content: center;
+  padding: 18px;
+}
+.ba-floating {
+  background: #5bd0ff;
+  color: #06303d;
+  border: none;
+  padding: 14px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  cursor: pointer;
+}
+
+/* carousel */
+.ba-carousel {
+  width: min(900px, 90%);
+  position: relative;
+  border-radius: 12px;
+  overflow: visible;
+}
+.ba-carousel-inner {
+  position: relative;
+  width: 100%;
+  height: 260px;
+}
+.ba-slide {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.02);
+  transition: opacity 600ms ease, transform 600ms ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  border: 4px solid rgba(255,255,255,0.03);
+  z-index: 1; /* abaixa z-index dos slides */
+}
+.ba-slide.active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 1;
+}
+
+/* arrows (hidden por padrão, aparecem ao hover) */
+.ba-carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) scale(0.92);
+  background: rgba(10,30,60,0.5);
+  border: none;
+  color: #fff;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+
+  /* escondido por padrão */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  z-index: 20; /* garante que as setas fiquem acima dos slides */
+}
+.ba-carousel-arrow.left { left: 8px; }
+.ba-carousel-arrow.right { right: 8px; }
+
+/* mostrar setas ao passar o mouse sobre o carousel */
+.ba-carousel:hover .ba-carousel-arrow {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
+}
+
+/* dots */
+.ba-carousel-dots {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -18px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ba-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.18);
+  border: 2px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  padding: 0;
+}
+.ba-dot.active {
+  background: #5ed3fd;
+  box-shadow: 0 4px 10px rgba(79,209,255,0.18);
+  transform: scale(1.15);
+}
+
+/* responsive */
+@media (min-width: 900px) {
+  .ba-actions-grid { grid-template-columns: 1fr 1fr; }
+  .ba-banner { height: 320px; }
+  .ba-carousel-inner { height: 320px; }
+  .ba-slide { height: 320px; }
 }

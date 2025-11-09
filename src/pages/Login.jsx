@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import '../css/Login.css'
 
 const USERS = [
-  { username: 'jhonathan', password: 'react' },
+  { username: 'jhon', password: 'jhon' },
   { username: 'tute4279', password: '1234' },
 ]
 
