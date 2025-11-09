@@ -1,20 +1,14 @@
 import { useState } from 'react'
-import './styles.css'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login'
-import Home from './pages/Home'
+import './css/App.css'
+import { BrowserRouter } from 'react-router-dom'
+import { Routers } from './routers/routers'
+
 
 function App() {
-  return (
-    
+  return ( 
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
-        </Routes>
-      </BrowserRouter>
-    
+        <Routers />
+      </BrowserRouter>  
   )
 }
 

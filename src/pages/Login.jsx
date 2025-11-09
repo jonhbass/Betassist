@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import './Login.css' // importa os estilos específicos
+import '../css/Login.css'
 
 const USERS = [
   { username: 'jhonathan', password: 'react' },
@@ -13,51 +13,51 @@ export default function Login() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    const ok = USERS.some(u => u.username === username && u.password === password)
+function handleSubmit(e) {
+  e.preventDefault()
+  const ok = USERS.some(u => u.username === username && u.password === password)
 
-    if (ok) {
-      localStorage.setItem('authUser', username)
-      navigate('/home')
+  if (ok) {
+    localStorage.setItem('authUser', username)
+    navigate('/home')
     } else {
-      setError('Usuário ou senha inválidos')
+    setError('Usuário ou senha inválidos')
     }
   }
 
 return (
     
-  <div className="login-wrap">
+<div className="login-wrap">
     
-    <form className="login-card" onSubmit={handleSubmit}>
-        {error && <p className="login-error">{error}</p>}
-    <div className="login-header">    
-    <img src="./src/assets/icon.png" alt="BetAssist Logo" className="header-icon" />
-      <h2>BetAssist</h2>
-    </div>
+  <form className="login-card" onSubmit={handleSubmit}>
+    {error && <p className="login-error">{error}</p>}
+  <div className="login-header">    
+  <img src="./src/assets/icon.svg" alt="BetAssist Logo" className="header-icon" />
+    <h2>BetAssist</h2>
+</div>
 
-      <label>
-        Usuário
-      <input
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          placeholder="Digite seu usuário"
-          />
-      </label>
+<label>
+      Usuário
+  <input
+    value={username}
+    onChange={e => setUsername(e.target.value)}
+    placeholder="Digite seu usuário"
+  />
+</label>
 
-      <label>
-          Senha
-      <input
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-           placeholder="Digite sua senha"
-          />
-      </label>
+<label>
+      Senha
+  <input
+    type="password"
+    value={password}
+    onChange={e => setPassword(e.target.value)}
+    placeholder="Digite sua senha"
+  />
+</label>
 
-      <button type="submit">Login</button>
-    </form>
-  </div>
+  <button type="submit">Login</button>
+  </form>
+</div>
   )
 }
 

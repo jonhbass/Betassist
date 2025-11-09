@@ -19,6 +19,7 @@
 .login-card label { display: block; margin: 10px 0; font-size: 14px; } /*Altura Box Login*/
 
 .login-card input {
+  padding-left: 15px; /* Espaçamento interno à esquerda */
   display: block;
   width: 80%;          /* ocupa 80% da largura do card */
   height: 40px;        /* altura fixa */
@@ -28,6 +29,7 @@
   border-radius: 8px;
   color: #fff;
   text-align: left; /*Alinhar texto*/
+  box-sizing: border-box;
 }
 
 .login-card input::placeholder {
@@ -106,4 +108,5 @@
 /* Aumenta o icone ao passar o mouse */
 .login-header .header-icon:hover {
   transform: scale(1.2);
+  
 }
