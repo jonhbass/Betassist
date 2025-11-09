@@ -1,0 +1,109 @@
+.login-wrap { 
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 20% 0%, #16213e 10%, #0d0d0d 60%); /*Cores do background da pagina*/
+  color: #fff; /* Cor das letras principais */
+}
+
+.login-card { /*Bordas do Box do login*/
+  width: 320px; /*largura do box*/
+  background: #111;
+  border: 1px solid #1f2740;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.login-card h2 { margin-bottom: 16px; } /*Altura Box Login*/
+.login-card label { display: block; margin: 10px 0; font-size: 14px; } /*Altura Box Login*/
+
+.login-card input {
+  display: block;
+  width: 80%;          /* ocupa 80% da largura do card */
+  height: 40px;        /* altura fixa */
+  margin: 6px auto;    /* centraliza horizontalmente */
+  background: #0b0f1a;
+  border: 1px solid #26314f;
+  border-radius: 8px;
+  color: #fff;
+  text-align: left; /*Alinhar texto*/
+}
+
+.login-card input::placeholder {
+  text-align: center;  /* centraliza o placeholder */
+  color: #aaa;         /* cor diferenciada para destacar */
+}
+
+.login-card input:focus {
+  outline: none;               /* remove o contorno azul/branco padrão */
+  background: #0b0f1a;         /* mantém o fundo escuro */
+  border: 1px solid #00adb5;   /* borda azul turquesa personalizada */
+  box-shadow: 0 0 8px #00adb5; /* glow suave */
+  color: #fff;                 /* mantém o texto branco */
+}
+
+.login-card button { /* Configuração botão de login*/
+  width: 95%;
+  margin-top: 14px;
+  padding: 10px;
+  background: linear-gradient(90deg, #00adb5, #006f76);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.login-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgb(118, 230, 255);
+}
+
+.login-error {
+  background: #3b0f0f;
+  color: #ffb3b3;
+  padding: 8px;
+  border-radius: 6px;
+}
+.login-card label {
+  display: block;        /* faz o label ocupar a linha inteira */
+  margin: 10px 0;        /* espaçamento entre os labels */
+  font-size: 15px;
+  text-align: center;      /* opcional: alinha o texto à esquerda */
+}
+
+.login-card label input {
+  display: block;        /* garante que o input fique embaixo do texto */
+  width: 100%;           /* ocupa toda a largura do card */
+  margin-top: 6px;       /* espaço entre o texto e a caixa */
+}
+
+.login-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.login-header h2 { /*Texto BetAssist*/
+  font-family: 'Poppins', sans-serif; /* ou Orbitron se quiser mais tech */
+  font-size: 30px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px #00acb58f, 0 0 16px #00acb55a, 0 0 24px #00acb52f;
+}
+
+.login-header .header-icon {
+  width: 50px;
+  height: auto;
+  max-width: 50px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Aumenta o icone ao passar o mouse */
+.login-header .header-icon:hover {
+  transform: scale(1.2);
+}
