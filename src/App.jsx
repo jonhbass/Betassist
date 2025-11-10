@@ -6,9 +6,9 @@ import { Routers } from './routers/routers'
 
 function App() {
   return ( 
-      <BrowserRouter>
-        <Routers />
-      </BrowserRouter>  
+    <BrowserRouter>
+      <Routers />
+    </BrowserRouter>  
   )
 }
 

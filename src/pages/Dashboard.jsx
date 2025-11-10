@@ -54,37 +54,37 @@ export default function Dashboard() {
     setIndex((i) => (i + 1) % slides.length);
   }
 
-  function handleLogout() {
-    localStorage.removeItem("authUser");
-    navigate("/login", { replace: true });
+function handleLogout() {
+  localStorage.removeItem("authUser");
+  navigate("/login", { replace: true });
   }
 
 return (
 
 <div className="ba-dashboard">
-  <header className="ba-topbar">
-    <div className="ba-logo">BetAssist</div>
-    <div className="ba-top-actions">
-      <button className="ba-btn small">💬 Mensajes</button>
-      <button className="ba-btn small">🔔 Notificaciones</button>
-      <button className="ba-btn small">☰</button>
-      <button className="ba-btn small" onClick={handleLogout}>
+<header className="ba-topbar">
+  <div className="ba-logo">BetAssist</div>
+  <div className="ba-top-actions">
+  <button className="ba-btn small">💬 Mensajes</button>
+  <button className="ba-btn small">🔔 Notificaciones</button>
+  <button className="ba-btn small">☰</button>
+  <button className="ba-btn small" onClick={handleLogout}>
        Sair
-     </button>
-    </div>
-  </header>
+  </button>
+</div>
+</header>
 
- <main className="ba-main">
-    <div
-      className="ba-carousel"
-      onMouseEnter={() => {
-      isHovered.current = true;
-      }}
-      onMouseLeave={() => {
-      isHovered.current = false;
-      }}
-    >
-  <div className="ba-carousel-inner">
+<main className="ba-main">
+  <div
+    className="ba-carousel"
+    onMouseEnter={() => {
+    isHovered.current = true;
+    }}
+    onMouseLeave={() => {
+    isHovered.current = false;
+    }}
+  >
+<div className="ba-carousel-inner">
       {slides.map((src, i) => (
       <div
       key={i}
