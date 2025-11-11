@@ -15,10 +15,10 @@ export default function Dashboard() {
     "/src/assets/banners/3.png",
   ];
 
-  useEffect(() => {
-    const u = localStorage.getItem("authUser");
-    if (u) setUser(u);
-  }, []);
+  useEffect(() => { 
+    const u = localStorage.getItem("authUser"); 
+    if (u) setUser(u); 
+  }, []); 
 
   useEffect(() => {
     startAutoplay();

@@ -37,14 +37,14 @@
 
 /* banner (use an image at src/assets/banner.jpg if available) */
 .ba-banner {
-  width: min(900px, 90%);
-  height: 260px;
-  border-radius: 12px;
+  width: min(700px, 85%);   /* reduz largura máxima */
+  height: 180px;            /* altura menor */
+  border-radius: 10px;
   background-image: url('/src/assets/banners/1.png');
-  background-size: cover;
+  background-size: cover;   /* cobre toda a área */
   background-position: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  border: 4px solid rgba(255,255,255,0.03);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5); /* sombra mais leve */
+  border: 2px solid rgba(255,255,255,0.05); /* borda mais fina */
 }
 
 /* welcome */
@@ -103,12 +103,7 @@
   cursor: pointer;
 }
 
-/* footer / floating button */
-.ba-footer {
-  display: flex;
-  justify-content: center;
-  padding: 18px;
-}
+
 .ba-floating {
   background: #5bd0ff;
   color: #06303d;
@@ -120,16 +115,29 @@
 }
 
 /* carousel */
+:root {
+  --carousel-width: 50%;
+  --carousel-min-width: 320px;
+  --carousel-max-width: 900px;
+  --carousel-height-sm: 216px; /* 180 * 1.2 */
+  --carousel-height-lg: 300px; /* 250 * 1.2 */
+}
+
 .ba-carousel {
-  width: min(900px, 90%);
+  align-self: center; /* centraliza dentro do flex pai */
+  margin: 0 auto;     /* centraliza horizontalmente */
+  width: var(--carousel-width);         /* reduzido para 40% */
+  max-width: var(--carousel-max-width); /* limite superior */
+  min-width: var(--carousel-min-width); /* evita ficar muito estreito em telas pequenas */
   position: relative;
   border-radius: 12px;
   overflow: visible;
 }
+
 .ba-carousel-inner {
   position: relative;
   width: 100%;
-  height: 260px;
+  height: var(--carousel-height-sm);
 }
 .ba-slide {
   position: absolute;
@@ -143,7 +151,9 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   border: 4px solid rgba(255,255,255,0.03);
   z-index: 1; /* abaixa z-index dos slides */
+  height: 100%; /* ocupa a altura do .ba-carousel-inner */
 }
+
 .ba-slide.active {
   opacity: 1;
   transform: scale(1);
@@ -184,7 +194,7 @@
   transform: translateY(-50%) scale(1);
 }
 
-/* dots */
+/* Pontos do carrossel */
 .ba-carousel-dots {
   position: absolute;
   left: 50%;
@@ -209,10 +219,10 @@
   transform: scale(1.15);
 }
 
-/* responsive */
+/* Responsividade */
 @media (min-width: 900px) {
   .ba-actions-grid { grid-template-columns: 1fr 1fr; }
-  .ba-banner { height: 320px; }
-  .ba-carousel-inner { height: 320px; }
-  .ba-slide { height: 320px; }
+  .ba-banner { height: 250px; }
+  .ba-carousel-inner { height: var(--carousel-height-lg); }
+  .ba-slide { height: var(--carousel-height-lg); }
 }
