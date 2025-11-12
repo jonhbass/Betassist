@@ -1,5 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { getAuthUser } from '../utils/auth'
+// import socket.io-client synchronously to avoid dynamic-import races during dev
+import { io as ioClient } from 'socket.io-client'
+import '../css/Dashboard.css'
 
 export default function Chat() {
   const getCurrentUser = () => getAuthUser() || 'Guest'
@@ -20,12 +23,55 @@ export default function Chat() {
 
   const [text, setText] = useState('')
   const [typing, setTyping] = useState('')
+  const [socketState, setSocketState] = useState('disconnected') // disconnected | connecting | connected
   const listRef = useRef(null)
   const socketRef = useRef(null)
   const connectingRef = useRef(false)
   const typingTimeout = useRef(null)
+  // ensure socket is connected (used when user sends before dynamic import finished)
+  const ensureSocketConnected = useCallback(async () => {
+    if (!USE_SOCKET) return null
+    if (socketRef.current) return socketRef.current
+    if (connectingRef.current) {
+      // wait until socketRef.current is set by the ongoing connection attempt
+      return new Promise((resolve) => {
+        const t = setInterval(() => {
+          if (socketRef.current) {
+            clearInterval(t)
+            resolve(socketRef.current)
+          }
+        }, 50)
+      })
+    }
+  connectingRef.current = true
+  const url = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+  const socket = ioClient(url)
+    socketRef.current = socket
+    connectingRef.current = false
+    // re-attach minimal listeners if they were not attached
+  socket.on('connect', () => { console.log('chat socket connected (ensured)', socket.id); setSocketState('connected') })
+    socket.on('chat:message', (msg) => {
+      console.log('socket received chat:message (ensured)', msg)
+      setMessages((m) => [...m, msg])
+    })
+    socket.on('chat:history', (list) => setMessages(list))
+    socket.on('chat:typing', (p) => {
+      setTyping(p.name)
+      if (typingTimeout.current) clearTimeout(typingTimeout.current)
+      typingTimeout.current = setTimeout(() => setTyping(''), 2000)
+    })
+    socket.on('connect_error', (err) => {
+      console.warn('socket connect_error', err && err.message)
+      setSocketState('disconnected')
+    })
+    socket.on('disconnect', (reason) => {
+      console.log('socket disconnected', reason)
+      setSocketState('disconnected')
+    })
+    return socket
+  }, [USE_SOCKET])
 
-  // Socket.IO connection
+  // Socket.IO connection (initial attach for clients that prefer the dynamic import path)
   useEffect(() => {
     if (!USE_SOCKET) return
     // dynamic import to keep bundle small when not used
@@ -58,14 +104,8 @@ export default function Chat() {
         if (typingTimeout.current) clearTimeout(typingTimeout.current)
         typingTimeout.current = setTimeout(() => setTyping(''), 2000)
       })
-
-      socket.on('connect_error', (err) => {
-        console.warn('socket connect_error', err && err.message)
-      })
-
-      socket.on('disconnect', (reason) => {
-        console.log('socket disconnected', reason)
-      })
+      // reflect connection state
+      try { setSocketState(socket && socket.connected ? 'connected' : 'connecting') } catch (e) { void e }
     })()
 
     return () => {
@@ -74,42 +114,18 @@ export default function Chat() {
     }
   }, [USE_SOCKET])
 
-  // ensure socket is connected (used when user sends before dynamic import finished)
-  async function ensureSocketConnected() {
-    if (!USE_SOCKET) return null
-    if (socketRef.current) return socketRef.current
-    if (connectingRef.current) {
-      // wait until socketRef.current is set by the ongoing connection attempt
-      return new Promise((resolve) => {
-        const t = setInterval(() => {
-          if (socketRef.current) {
-            clearInterval(t)
-            resolve(socketRef.current)
-          }
-        }, 50)
-      })
-    }
-    connectingRef.current = true
-    const mod = await import('socket.io-client')
-    const ioFn = mod.io || mod.default || mod
-    const url = import.meta.env.VITE_API_URL || 'http://localhost:4000'
-    const socket = ioFn(url)
-    socketRef.current = socket
-    connectingRef.current = false
-    // re-attach minimal listeners if they were not attached
-    socket.on('connect', () => console.log('chat socket connected (ensured)', socket.id))
-    socket.on('chat:message', (msg) => {
-      console.log('socket received chat:message (ensured)', msg)
-      setMessages((m) => [...m, msg])
-    })
-    socket.on('chat:history', (list) => setMessages(list))
-    socket.on('chat:typing', (p) => {
-      setTyping(p.name)
-      if (typingTimeout.current) clearTimeout(typingTimeout.current)
-      typingTimeout.current = setTimeout(() => setTyping(''), 2000)
-    })
-    return socket
-  }
+  // proactively ensure a socket connection when the component mounts so we receive
+  // messages in real time without requiring the user to type or refresh.
+  useEffect(() => {
+    if (!USE_SOCKET) return
+    ;(async () => {
+      try {
+        await ensureSocketConnected()
+      } catch (e) {
+        void e
+      }
+    })()
+  }, [USE_SOCKET, ensureSocketConnected])
 
   useEffect(() => {
     // persist messages locally as fallback
@@ -175,7 +191,8 @@ export default function Chat() {
     <div className="ba-chat-wrap">
       <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
   <div style={{fontSize:13, color:'rgba(255,255,255,0.7)'}}>Chat</div>
-        <div>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <div className={`ba-socket-badge ${socketState}`}>{socketState}</div>
           <button className="ba-btn small" onClick={clearChat} type="button">Limpar</button>
         </div>
       </div>

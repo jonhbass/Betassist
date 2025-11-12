@@ -70,6 +70,23 @@ app.post('/users', async (req, res) => {
   res.status(201).json({ ok: true })
 })
 
+// Login endpoint (verify password)
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body || {}
+  if (!username || !password) return res.status(400).json({ error: 'missing' })
+  const users = readUsers()
+  const u = users.find(x => x.username === username)
+  if (!u) return res.status(401).json({ error: 'invalid' })
+  try {
+    const ok = await bcrypt.compare(String(password), String(u.passwordHash || ''))
+    if (!ok) return res.status(401).json({ error: 'invalid' })
+    return res.json({ ok: true })
+  } catch (err) {
+    console.error('login error', err)
+    return res.status(500).json({ error: 'error' })
+  }
+})
+
 // Update user password
 app.put('/users/:username', async (req, res) => {
   const username = req.params.username

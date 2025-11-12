@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import '../css/Login.css'
 import Icon from '../assets/icon.svg'
 import { setAuthUser } from '../utils/auth'
+const USE_API = import.meta.env.VITE_USE_API === 'true'
 
 const DEFAULT_USERS = [
   { username: 'jhon', password: 'jhon' },
@@ -31,6 +32,23 @@ export default function Login() {
     e.preventDefault()
     const users = getUsers()
     const ok = users.some(u => u.username === username && u.password === password)
+    if (USE_API) {
+      // call server login
+      ;(async () => {
+        try {
+          const resp = await fetch((import.meta.env.VITE_API_URL || 'http://localhost:4000') + '/login', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password })
+          })
+          if (!resp.ok) throw new Error('invalid')
+          setAuthUser(username)
+          navigate('/home')
+        } catch (err) {
+          console.error('login error', err)
+          setError('Usuário ou senha inválidos (servidor)')
+        }
+      })()
+      return
+    }
 
     if (ok) {
       setAuthUser(username)
