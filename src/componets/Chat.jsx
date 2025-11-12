@@ -22,6 +22,7 @@ export default function Chat() {
   const [typing, setTyping] = useState('')
   const listRef = useRef(null)
   const socketRef = useRef(null)
+  const connectingRef = useRef(false)
   const typingTimeout = useRef(null)
 
   // Socket.IO connection
@@ -73,6 +74,43 @@ export default function Chat() {
     }
   }, [USE_SOCKET])
 
+  // ensure socket is connected (used when user sends before dynamic import finished)
+  async function ensureSocketConnected() {
+    if (!USE_SOCKET) return null
+    if (socketRef.current) return socketRef.current
+    if (connectingRef.current) {
+      // wait until socketRef.current is set by the ongoing connection attempt
+      return new Promise((resolve) => {
+        const t = setInterval(() => {
+          if (socketRef.current) {
+            clearInterval(t)
+            resolve(socketRef.current)
+          }
+        }, 50)
+      })
+    }
+    connectingRef.current = true
+    const mod = await import('socket.io-client')
+    const ioFn = mod.io || mod.default || mod
+    const url = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+    const socket = ioFn(url)
+    socketRef.current = socket
+    connectingRef.current = false
+    // re-attach minimal listeners if they were not attached
+    socket.on('connect', () => console.log('chat socket connected (ensured)', socket.id))
+    socket.on('chat:message', (msg) => {
+      console.log('socket received chat:message (ensured)', msg)
+      setMessages((m) => [...m, msg])
+    })
+    socket.on('chat:history', (list) => setMessages(list))
+    socket.on('chat:typing', (p) => {
+      setTyping(p.name)
+      if (typingTimeout.current) clearTimeout(typingTimeout.current)
+      typingTimeout.current = setTimeout(() => setTyping(''), 2000)
+    })
+    return socket
+  }
+
   useEffect(() => {
     // persist messages locally as fallback
   try { localStorage.setItem('CHAT_MESSAGES', JSON.stringify(messages)) } catch (e) { void e /* ignore storage errors */ }
@@ -87,9 +125,21 @@ export default function Chat() {
     const msg = { id: Date.now(), text: t, from: currentUser, time: new Date().toISOString() }
     console.log('chat send', msg)
 
-    if (USE_SOCKET && socketRef.current) {
-      // emit even if not connected yet — socket.io buffers emits until connected
-      socketRef.current.emit('chat:message', msg)
+    if (USE_SOCKET) {
+      // ensure socket exists and emit — if not ready we'll connect and then emit
+      ;(async () => {
+        try {
+          const s = await ensureSocketConnected()
+          if (s) {
+            s.emit('chat:message', msg)
+            return
+          }
+        } catch (err) {
+          console.warn('socket emit failed, falling back to local', err && err.message)
+        }
+        // fallback if socket not available
+        setMessages((m) => [...m, msg])
+      })()
     } else {
       setMessages((m) => [...m, msg])
     }
@@ -99,8 +149,15 @@ export default function Chat() {
 
   function onTyping(e) {
     setText(e.target.value)
-    if (!USE_SOCKET || !socketRef.current) return
-    socketRef.current.emit('chat:typing', { name: getCurrentUser() })
+    if (!USE_SOCKET) return
+    ;(async () => {
+      try {
+        const s = await ensureSocketConnected()
+        if (s) s.emit('chat:typing', { name: getCurrentUser() })
+      } catch (err) {
+        void err
+      }
+    })()
   }
 
   function formatTime(iso) {
