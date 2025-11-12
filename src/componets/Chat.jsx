@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { getAuthUser } from '../utils/auth'
 
 export default function Chat() {
-  const getCurrentUser = () => localStorage.getItem('authUser') || 'Guest'
+  const getCurrentUser = () => getAuthUser() || 'Guest'
   const USE_SOCKET = import.meta.env.VITE_USE_SOCKET === 'true' || import.meta.env.VITE_USE_API === 'true'
 
   const [messages, setMessages] = useState(() => {

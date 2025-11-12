@@ -4,6 +4,7 @@ import "../css/Dashboard.css";
 import Sidebar from "../componets/Sidebar";
 import Chat from "../componets/Chat";
 import Modal from "../componets/Modal";
+import { getAuthUser, removeAuthUser } from '../utils/auth'
 
 // import banners as ESM so bundler handles them correctly
 import s1 from "../assets/banners/1.png";
@@ -38,13 +39,13 @@ export default function Dashboard() {
   }, [])
 
   useEffect(() => {
-    const u = localStorage.getItem("authUser");
+    const u = getAuthUser();
     if (u) setUser(u);
   }, []);
 
   useEffect(() => {
     // quick debug log to help diagnose blank screen
-    console.log('Dashboard mounted', { user: localStorage.getItem('authUser') })
+    console.log('Dashboard mounted', { user: getAuthUser() })
   }, [])
 
   useEffect(() => {
@@ -82,7 +83,7 @@ export default function Dashboard() {
   }
 
   function handleLogout() {
-    localStorage.removeItem("authUser");
+    removeAuthUser();
     navigate("/login", { replace: true });
   }
 

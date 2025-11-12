@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../css/Login.css'
 import Icon from '../assets/icon.svg'
+import { setAuthUser } from '../utils/auth'
 
 const DEFAULT_USERS = [
   { username: 'jhon', password: 'jhon' },
@@ -32,7 +33,7 @@ export default function Login() {
     const ok = users.some(u => u.username === username && u.password === password)
 
     if (ok) {
-      localStorage.setItem('authUser', username)
+      setAuthUser(username)
       navigate('/home')
     } else {
       setError('Usuário ou senha inválidos')
