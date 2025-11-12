@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Dashboard.css";
+import Sidebar from "../componets/Sidebar";
+import Chat from "../componets/Chat";
+import Modal from "../componets/Modal";
+
+// import banners as ESM so bundler handles them correctly
+import s1 from "../assets/banners/1.png";
+import s2 from "../assets/banners/2.png";
+import s3 from "../assets/banners/3.png";
 
 export default function Dashboard() {
   const [user, setUser] = useState("tute4279");
@@ -9,16 +17,35 @@ export default function Dashboard() {
   const isHovered = useRef(false);
   const navigate = useNavigate();
 
-  const slides = [
-    "/src/assets/banners/1.png",
-    "/src/assets/banners/2.png",
-    "/src/assets/banners/3.png",
-  ];
+  const slides = [s1, s2, s3];
 
-  useEffect(() => { 
-    const u = localStorage.getItem("authUser"); 
-    if (u) setUser(u); 
-  }, []); 
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [toast, setToast] = useState('')
+  const [modal, setModal] = useState(null)
+
+  function toggleSidebar() {
+    setSidebarOpen((s) => !s)
+  }
+
+  function showToast(msg) {
+    setToast(msg)
+    setTimeout(() => setToast(''), 2500)
+  }
+
+  useEffect(() => {
+    // collapse sidebar on small screens by default
+    if (window.innerWidth && window.innerWidth < 900) setSidebarOpen(false)
+  }, [])
+
+  useEffect(() => {
+    const u = localStorage.getItem("authUser");
+    if (u) setUser(u);
+  }, []);
+
+  useEffect(() => {
+    // quick debug log to help diagnose blank screen
+    console.log('Dashboard mounted', { user: localStorage.getItem('authUser') })
+  }, [])
 
   useEffect(() => {
     startAutoplay();
@@ -32,7 +59,7 @@ export default function Dashboard() {
       if (!isHovered.current) {
         setIndex((prev) => (prev + 1) % slides.length);
       }
-    }, 5000); // 5 segundos
+    }, 3000); // 3 segundos
   }
 
   function stopAutoplay() {
@@ -54,94 +81,148 @@ export default function Dashboard() {
     setIndex((i) => (i + 1) % slides.length);
   }
 
-function handleLogout() {
-  localStorage.removeItem("authUser");
-  navigate("/login", { replace: true });
+  function handleLogout() {
+    localStorage.removeItem("authUser");
+    navigate("/login", { replace: true });
   }
 
-return (
+  // sidebar action handlers
+  function handleCopyReferral() {
+    const link = `${window.location.origin}/?ref=${user}`
+    navigator.clipboard
+      .writeText(link)
+      .then(() => showToast('Link copiado para a área de transferência'))
+      .catch(() => showToast('Falha ao copiar link'))
+  }
 
-<div className="ba-dashboard">
-<header className="ba-topbar">
-  <div className="ba-logo">BetAssist</div>
-  <div className="ba-top-actions">
-  <button className="ba-btn small">💬 Mensajes</button>
-  <button className="ba-btn small">🔔 Notificaciones</button>
-  <button className="ba-btn small">☰</button>
-  <button className="ba-btn small" onClick={handleLogout}>
-       Sair
-  </button>
-</div>
-</header>
+  function handlePlay() {
+    window.open('https://clubuno.net', '_blank')
+    showToast('Abrindo CLUBUNO.NET')
+  }
 
-<main className="ba-main">
-  <div
-    className="ba-carousel"
-    onMouseEnter={() => {
-    isHovered.current = true;
-    }}
-    onMouseLeave={() => {
-    isHovered.current = false;
-    }}
-  >
-<div className="ba-carousel-inner">
-      {slides.map((src, i) => (
-      <div
-      key={i}
-      className={`ba-slide ${i === index ? "active" : ""}`}
-      style={{ backgroundImage: `url(${src})` }}
-      aria-hidden={i !== index}
-  />
-   ))}
+  function handleLoad() {
+    setModal('load')
+  }
 
-  </div>
-    <button
-      className="ba-carousel-arrow left"
-      onClick={prev}
-      aria-label="Previous"
-    >
-  ‹
-  </button>
+  function handleWithdraw() {
+    setModal('withdraw')
+  }
 
-  <button
-      className="ba-carousel-arrow right"
-      onClick={next}
-      aria-label="Next"
-    >
-  ›
-  </button>
+  function handleHistory() {
+    setModal('history')
+  }
 
-  <div className="ba-carousel-dots">
-    {slides.map((_, i) => (
-    <button
-      key={i}
-      className={`ba-dot ${i === index ? "active" : ""}`}
-      onClick={() => goTo(i)}
-      aria-label={`Go to slide ${i + 1}`}
-    />
-  ))}
-</div>
-</div>
+  return (
+    <div className="ba-dashboard">
+      <header className="ba-topbar">
+        <div className="ba-logo">BetAssist</div>
+        <div className="ba-top-actions">
+          <button className="ba-btn small">💬 Mensajes</button>
+          <button className="ba-btn small">🔔 Notificações</button>
+          <button className="ba-btn small" onClick={toggleSidebar} aria-label="Toggle sidebar">
+            ☰
+          </button>
+          <button className="ba-btn small" onClick={handleLogout}>
+            Sair
+          </button>
+        </div>
+      </header>
 
-<h1 className="ba-welcome">
-  ¡Hola, <span>{user}</span>!
-</h1>
+      <div className="ba-debug" aria-hidden="false">Debug: user={user}</div>
 
-<div className="ba-actions-grid">
-  <button className="ba-action primary">
-    🔗 Copiar link de referido
-  </button>
-  <button className="ba-action highlight">
-    Ir a jugar <strong>CLUBUNO.NET</strong>
-  </button>
-    <button className="ba-action">💳 Cargar fichas</button>
-    <button className="ba-action">💸 Retirar fichas</button>
-    <button className="ba-action">🧾 Historial</button>
-</div>
-</main>
+      <main className="ba-main">
+        <div className="ba-layout">
+          <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
+            <Sidebar
+              onCopyReferral={handleCopyReferral}
+              onPlay={handlePlay}
+              onLoad={handleLoad}
+              onWithdraw={handleWithdraw}
+              onHistory={handleHistory}
+            />
+          </aside>
 
-<footer className="ba-footer">
-</footer>
-</div>
+          <div className="ba-content">
+            <div
+              className="ba-carousel"
+              onMouseEnter={() => {
+                isHovered.current = true;
+              }}
+              onMouseLeave={() => {
+                isHovered.current = false;
+              }}
+            >
+              <div className="ba-carousel-inner">
+                {slides.map((src, i) => (
+                  <div
+                    key={i}
+                    className={`ba-slide ${i === index ? "active" : ""}`}
+                    style={{ backgroundImage: `url(${src})` }}
+                    aria-hidden={i !== index}
+                  />
+                ))}
+              </div>
+
+              <button
+                className="ba-carousel-arrow left"
+                onClick={prev}
+                aria-label="Previous"
+              >
+                ‹
+              </button>
+
+              <button
+                className="ba-carousel-arrow right"
+                onClick={next}
+                aria-label="Next"
+              >
+                ›
+              </button>
+
+              <div className="ba-carousel-dots">
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`ba-dot ${i === index ? "active" : ""}`}
+                    onClick={() => goTo(i)}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <h1 className="ba-welcome">
+              ¡Hola, <span>{user}</span>!
+            </h1>
+
+            <div className="ba-chat">
+              <Chat />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer className="ba-footer"></footer>
+      {toast && <div className="ba-toast" role="status">{toast}</div>}
+      {modal === 'load' && (
+        <Modal title="Carregar fichas" onClose={() => setModal(null)}>
+          <p>Formulário de carga (placeholder)</p>
+          <button onClick={() => { setModal(null); showToast('Carga solicitada (simulada)') }}>Confirmar</button>
+        </Modal>
+      )}
+
+      {modal === 'withdraw' && (
+        <Modal title="Retirar fichas" onClose={() => setModal(null)}>
+          <p>Formulário de saque (placeholder)</p>
+          <button onClick={() => { setModal(null); showToast('Saque solicitado (simulado)') }}>Confirmar</button>
+        </Modal>
+      )}
+
+      {modal === 'history' && (
+        <Modal title="Histórico" onClose={() => setModal(null)}>
+          <p>Histórico de transações (placeholder)</p>
+        </Modal>
+      )}
+    </div>
   );
 }
