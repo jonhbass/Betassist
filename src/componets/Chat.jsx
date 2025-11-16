@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { getAuthUser } from '../utils/auth'
 // import socket.io-client synchronously to avoid dynamic-import races during dev
 import { io as ioClient } from 'socket.io-client'
-import '../css/Dashboard.css'
+import '../css/chat.css'
 
 export default function Chat() {
   const getCurrentUser = () => getAuthUser() || 'Guest'

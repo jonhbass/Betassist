@@ -7,7 +7,7 @@ const USE_API = import.meta.env.VITE_USE_API === 'true';
 
 const DEFAULT_USERS = [
   { username: 'jhon', password: '1234' },
-  { username: 'tute4279', password: '1234' },
+  { username: 'mila', password: 'mila' },
 ];
 
 function getUsers() {

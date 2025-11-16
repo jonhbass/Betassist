@@ -1,24 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/Dashboard.css';
 import Sidebar from '../componets/Sidebar';
 import Chat from '../componets/Chat';
+import Carrossel from '../componets/Carrossel';
+import Footer from '../componets/Footer';
 import Modal from '../componets/Modal';
+import Topbar from '../componets/Topbar';
+import Toast from '../componets/Toast';
+import LoadModalContent from '../componets/LoadModalContent';
+import WithdrawModalContent from '../componets/WithdrawModalContent';
+import HistoryModalContent from '../componets/HistoryModalContent';
 import { getAuthUser, removeAuthUser } from '../utils/auth';
-
-// import banners as ESM so bundler handles them correctly
-import s1 from '../assets/banners/1.png';
-import s2 from '../assets/banners/2.png';
-import s3 from '../assets/banners/3.png';
 
 export default function Dashboard() {
   const [user, setUser] = useState('tute4279');
-  const [index, setIndex] = useState(0);
-  const intervalRef = useRef(null);
-  const isHovered = useRef(false);
+
   const navigate = useNavigate();
 
-  const slides = [s1, s2, s3];
+  // slides are now handled inside the Carrossel component
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [toast, setToast] = useState('');
@@ -47,40 +47,6 @@ export default function Dashboard() {
     // quick debug log to help diagnose blank screen
     console.log('Dashboard mounted', { user: getAuthUser() });
   }, []);
-
-  useEffect(() => {
-    startAutoplay();
-    return stopAutoplay;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function startAutoplay() {
-    stopAutoplay();
-    intervalRef.current = setInterval(() => {
-      if (!isHovered.current) {
-        setIndex((prev) => (prev + 1) % slides.length);
-      }
-    }, 3000); // 3 segundos
-  }
-
-  function stopAutoplay() {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  }
-
-  function goTo(i) {
-    setIndex(i % slides.length);
-  }
-
-  function prev() {
-    setIndex((i) => (i - 1 + slides.length) % slides.length);
-  }
-
-  function next() {
-    setIndex((i) => (i + 1) % slides.length);
-  }
 
   function handleLogout() {
     removeAuthUser();
@@ -115,25 +81,12 @@ export default function Dashboard() {
 
   return (
     <div className="ba-dashboard">
-      <header className="ba-topbar">
-        <div className="ba-logo">BetAssist</div>
-        <div className="ba-top-actions">
-          <button className="ba-btn small">💬 Mensajes</button>
-          <button className="ba-btn small">🔔 Notificações</button>
-          {/* Botâo retrátil */}
-          <button
-            className="ba-btn small"
-            onClick={toggleSidebar}
-            aria-label="Toggle sidebar"
-          >
-            ☰
-          </button>
-          {/* Botâo sair */}
-          <button className="ba-btn small" onClick={handleLogout}>
-            Sair
-          </button>
-        </div>
-      </header>
+      <Topbar
+        onToggleSidebar={toggleSidebar}
+        onLogout={handleLogout}
+        onMessageClick={() => showToast('Mensagens (simulado)')}
+        onNotifyClick={() => showToast('Notificações (simulado)')}
+      />
       <main className="ba-main">
         <div className="ba-layout">
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
@@ -147,53 +100,7 @@ export default function Dashboard() {
           </aside>
 
           <div className="ba-content">
-            <div
-              className="ba-carousel"
-              onMouseEnter={() => {
-                isHovered.current = true;
-              }}
-              onMouseLeave={() => {
-                isHovered.current = false;
-              }}
-            >
-              <div className="ba-carousel-inner">
-                {slides.map((src, i) => (
-                  <div
-                    key={i}
-                    className={`ba-slide ${i === index ? 'active' : ''}`}
-                    style={{ backgroundImage: `url(${src})` }}
-                    aria-hidden={i !== index}
-                  />
-                ))}
-              </div>
-
-              <button
-                className="ba-carousel-arrow left"
-                onClick={prev}
-                aria-label="Previous"
-              >
-                ‹
-              </button>
-
-              <button
-                className="ba-carousel-arrow right"
-                onClick={next}
-                aria-label="Next"
-              >
-                ›
-              </button>
-
-              <div className="ba-carousel-dots">
-                {slides.map((_, i) => (
-                  <button
-                    key={i}
-                    className={`ba-dot ${i === index ? 'active' : ''}`}
-                    onClick={() => goTo(i)}
-                    aria-label={`Go to slide ${i + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
+            <Carrossel />
 
             <h1 className="ba-welcome">
               ¡Hola, <span>{user}</span>!
@@ -206,43 +113,30 @@ export default function Dashboard() {
         </div>
       </main>
 
-      <footer className="ba-footer"></footer>
-      {toast && (
-        <div className="ba-toast" role="status">
-          {toast}
-        </div>
-      )}
+      <Footer />
+      <Toast message={toast} />
+
       {modal === 'load' && (
         <Modal title="Carregar fichas" onClose={() => setModal(null)}>
-          <p>Formulário de carga (placeholder)</p>
-          <button
-            onClick={() => {
-              setModal(null);
-              showToast('Carga solicitada (simulada)');
-            }}
-          >
-            Confirmar
-          </button>
+          <LoadModalContent
+            onClose={() => setModal(null)}
+            onConfirm={() => showToast('Carga solicitada (simulada)')}
+          />
         </Modal>
       )}
 
       {modal === 'withdraw' && (
         <Modal title="Retirar fichas" onClose={() => setModal(null)}>
-          <p>Formulário de saque (placeholder)</p>
-          <button
-            onClick={() => {
-              setModal(null);
-              showToast('Saque solicitado (simulado)');
-            }}
-          >
-            Confirmar
-          </button>
+          <WithdrawModalContent
+            onClose={() => setModal(null)}
+            onConfirm={() => showToast('Saque solicitado (simulado)')}
+          />
         </Modal>
       )}
 
       {modal === 'history' && (
         <Modal title="Histórico" onClose={() => setModal(null)}>
-          <p>Histórico de transações (placeholder)</p>
+          <HistoryModalContent />
         </Modal>
       )}
     </div>
