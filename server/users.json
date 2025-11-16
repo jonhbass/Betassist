@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "username": "mila",
+    "passwordHash": "$2b$10$XXaBWJrLgx94W3zWM7758.VLZK2RKWU50Rp916KF/t8OxSkB2z.ce"
+  },
+  {
+    "username": "INACIO",
+    "passwordHash": "$2b$10$hQai7MkfT2YIGV1kBJqrqeIvplIykirXGsIaTMM.vz4U/oLHap/Qe"
+  },
+  {
+    "username": "JONH",
+    "passwordHash": "$2b$10$f4rirxUkxtYvciROjTVU1uikiKzMsUVl59kjKDDcd1JoCgk/goram"
+  }
+]
