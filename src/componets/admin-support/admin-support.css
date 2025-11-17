@@ -1,0 +1,195 @@
+/* Styles specific to the admin-support components. This file complements src/css/admin.css */
+
+.ba-admin-support {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.ba-admin-support.ba-chat {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.ba-admin-support .ba-admin-threads {
+  height: 340px;
+  overflow: auto;
+}
+
+/* hide any accidental range sliders inside the threads box */
+.ba-admin-threads input[type='range'] {
+  display: none !important;
+}
+
+/* Thread avatar and badge */
+.ba-thread-avatar {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 700;
+  color: #fff;
+}
+
+.ba-thread-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(35%, -35%);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 9px;
+  background: #e02424;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+  line-height: 1;
+  z-index: 5;
+  white-space: nowrap;
+  animation: ba-badge-in 220ms cubic-bezier(0.2, 0.9, 0.2, 1);
+  transition: transform 140ms cubic-bezier(0.2, 0.9, 0.2, 1), opacity 140ms ease;
+}
+
+@keyframes ba-badge-in {
+  from {
+    transform: translate(35%, -35%) scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: translate(35%, -35%) scale(1);
+    opacity: 1;
+  }
+}
+
+.ba-thread-item.active .ba-thread-badge {
+  transform: translate(40%, -40%) scale(0.95);
+  opacity: 0.98;
+}
+
+.ba-thread-item {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  transition: background 140ms ease, transform 120ms ease;
+}
+
+.ba-thread-item:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 700px) {
+  .ba-admin-support .ba-admin-threads {
+    width: 220px !important;
+  }
+  .ba-thread-avatar {
+    width: 34px;
+    height: 34px;
+  }
+  .ba-thread-badge {
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    font-size: 10px;
+  }
+}
+
+.ba-admin-support .ba-admin-thread-view {
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ba-admin-support .ba-admin-thread-view .ba-chat-list {
+  flex: 1;
+  overflow: auto;
+}
+
+/* AdminSupport specific styles moved from src/css/admin.css */
+.ba-thread-item.active {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ba-admin-support-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ba-admin-support-list {
+  max-height: 360px;
+  overflow: auto;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+}
+
+.ba-admin-msg {
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ba-admin-msg.user {
+  border-left: 4px solid rgba(11, 92, 192, 0.9);
+}
+
+.ba-admin-msg.admin {
+  border-left: 4px solid rgba(67, 233, 123, 0.9);
+  background: linear-gradient(
+    90deg,
+    rgba(10, 50, 80, 0.4),
+    rgba(0, 0, 0, 0.05)
+  );
+}
+
+.ba-admin-msg.handled {
+  opacity: 0.6;
+}
+
+.ba-admin-msg-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
+}
+
+.ba-admin-msg-text {
+  font-size: 14px;
+  color: #e6f7ff;
+}
+
+.ba-admin-msg-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.ba-admin-support-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ba-admin-support-form input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  color: #fff;
+}

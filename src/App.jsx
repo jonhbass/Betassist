@@ -1,14 +1,15 @@
-import './css/App.css'
-import { BrowserRouter } from 'react-router-dom'
-import { Routers } from './routers/routers'
-
+import './css/App.css';
+import { BrowserRouter } from 'react-router-dom';
+import { Routers } from './routers/routers';
+import SupportButton from './componets/SupportButton';
 
 function App() {
-  return ( 
+  return (
     <BrowserRouter>
       <Routers />
-    </BrowserRouter>  
-  )
+      <SupportButton />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

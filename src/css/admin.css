@@ -1,0 +1,116 @@
+/* Admin panel styles matching Dashboard theme */
+.ba-admin-wrap {
+  background: radial-gradient(
+    ellipse at top left,
+    #082c56 0%,
+    #021026 40%,
+    #010309 100%
+  );
+  color: #fff;
+  padding: 20px;
+  min-height: 100vh;
+}
+.ba-admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.ba-admin-header h2 {
+  margin: 0;
+  color: #e9f6ff;
+}
+.ba-admin-list,
+.ba-admin-form {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 16px;
+  border-radius: 8px;
+}
+.ba-admin-main {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Compact thread/item helpers (kept global because several admin components use them) */
+.ba-thread-item.active {
+  background: rgba(255, 255, 255, 0.02);
+}
+.ba-admin-support-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.ba-admin-support-list {
+  max-height: 360px;
+  overflow: auto;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+}
+.ba-admin-msg {
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.ba-admin-msg.user {
+  border-left: 4px solid rgba(11, 92, 192, 0.9);
+}
+.ba-admin-msg.admin {
+  border-left: 4px solid rgba(67, 233, 123, 0.9);
+  background: linear-gradient(
+    90deg,
+    rgba(10, 50, 80, 0.4),
+    rgba(0, 0, 0, 0.05)
+  );
+}
+.ba-admin-msg.handled {
+  opacity: 0.6;
+}
+.ba-admin-msg-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
+}
+.ba-admin-msg-text {
+  font-size: 14px;
+  color: #e6f7ff;
+}
+.ba-admin-msg-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+.ba-admin-support-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.ba-admin-support-form input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  color: #fff;
+}
+.ba-muted {
+  color: rgba(255, 255, 255, 0.45);
+  padding: 12px;
+}
+
+/* small button style reuse */
+.ba-btn.small {
+  background: rgba(255, 255, 255, 0.04);
+  border: none;
+  color: #dff4ff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}

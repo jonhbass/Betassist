@@ -1,0 +1,52 @@
+.ba-support-fab {
+  position: fixed;
+  right: 18px;
+  bottom: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #0ea5e9, #0369a1);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.35);
+  cursor: pointer;
+}
+.ba-support-fab:active {
+  transform: translateY(1px);
+}
+.ba-support-icon {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  font-size: 18px;
+}
+.ba-support-avatar {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+}
+.ba-support-badge {
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  background: #ef4444;
+  color: white;
+  border-radius: 999px;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}

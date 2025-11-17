@@ -84,7 +84,7 @@ export default function Dashboard() {
       <Topbar
         onToggleSidebar={toggleSidebar}
         onLogout={handleLogout}
-        onMessageClick={() => showToast('Mensagens (simulado)')}
+        onMessageClick={() => navigate('/support')}
         onNotifyClick={() => showToast('Notificações (simulado)')}
       />
       <main className="ba-main">
