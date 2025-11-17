@@ -11,6 +11,7 @@ import Toast from '../componets/Toast';
 import LoadModalContent from '../componets/LoadModalContent';
 import WithdrawModalContent from '../componets/WithdrawModalContent';
 import HistoryModalContent from '../componets/HistoryModalContent';
+import SupportButton from '../componets/SupportButton';
 import { getAuthUser, removeAuthUser } from '../utils/auth';
 
 export default function Dashboard() {
@@ -139,6 +140,8 @@ export default function Dashboard() {
           <HistoryModalContent />
         </Modal>
       )}
+
+      <SupportButton />
     </div>
   );
 }

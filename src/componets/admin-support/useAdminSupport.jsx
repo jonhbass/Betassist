@@ -35,9 +35,20 @@ export default function useAdminSupport() {
     } catch (e) {
       void e;
     }
-    if (listRef.current)
-      listRef.current.scrollTo({ top: listRef.current.scrollHeight });
   }, [messages]);
+
+  // Auto-scroll to bottom when activeThread changes or messages update
+  useEffect(() => {
+    if (listRef.current) {
+      const scrollContainer = listRef.current.querySelector('.ba-chat-list');
+      if (scrollContainer) {
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [messages, activeThread]);
 
   useEffect(() => {
     if (!USE_SOCKET) return;

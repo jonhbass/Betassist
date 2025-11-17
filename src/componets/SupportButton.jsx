@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getAuthUser } from '../utils/auth';
+import SupportChatModal from './SupportChatModal';
 import '../css/supportButton.css';
 
 export default function SupportButton() {
-  const navigate = useNavigate();
   const [unread, setUnread] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   function computeUnread() {
     try {
@@ -42,17 +42,26 @@ export default function SupportButton() {
   const user = getAuthUser() || 'Você';
 
   return (
-    <button
-      className="ba-support-fab"
-      title="Fale com o suporte"
-      onClick={() => navigate('/support')}
-      aria-label={`Falar com suporte — ${user}`}
-    >
-      <div className="ba-support-icon">💬</div>
-      <div className="ba-support-avatar">
-        {(user || 'U').slice(0, 1).toUpperCase()}
-      </div>
-      {unread > 0 && <div className="ba-support-badge">{unread}</div>}
-    </button>
+    <>
+      {!isOpen && (
+        <button
+          className="ba-support-fab"
+          title="Fale com o suporte"
+          onClick={() => setIsOpen(true)}
+          aria-label={`Falar com suporte — ${user}`}
+          style={{
+            animation: 'fadeIn 0.3s ease-in-out',
+          }}
+        >
+          <div className="ba-support-icon">💬</div>
+          <div className="ba-support-avatar">
+            {(user || 'U').slice(0, 1).toUpperCase()}
+          </div>
+          {unread > 0 && <div className="ba-support-badge">{unread}</div>}
+        </button>
+      )}
+
+      {isOpen && <SupportChatModal onClose={() => setIsOpen(false)} />}
+    </>
   );
 }
