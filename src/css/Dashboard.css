@@ -50,7 +50,7 @@
 /* layout: sidebar + content */
 .ba-layout {
   width: 100%;
-  display: block flex;
+  display: flex;
   gap: 20px;
   align-items: flex-start;
   justify-content: center;
@@ -58,9 +58,15 @@
 }
 
 .ba-sidebar {
-  width: 300px; /* fixed sidebar width */
-  min-width: 200px;
-  transition: transform 220ms ease, opacity 220ms ease;
+  width: 300px;
+  min-width: 300px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.ba-sidebar.collapsed {
+  width: 70px;
+  min-width: 70px;
 }
 
 .ba-sidebar-nav {
@@ -84,20 +90,15 @@
   flex-direction: column;
   align-items: center;
   gap: 18px;
+  transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Quando sidebar está minimizada, conteúdo se expande */
+.ba-sidebar.collapsed ~ .ba-content {
+  max-width: 1300px;
 }
 
 /* Chat styles moved to `src/css/chat.css` */
-
-.ba-sidebar.collapsed {
-  transform: translateX(-120%);
-  opacity: 0;
-  pointer-events: none;
-}
-.ba-sidebar.open {
-  transform: translateX(0);
-  opacity: 1;
-  pointer-events: auto;
-}
 
 .ba-toggle-button {
   display: inline-flex;
@@ -172,8 +173,37 @@
   transition: transform 0.12s ease, box-shadow 0.12s ease;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 12px;
+  white-space: nowrap;
+  overflow: hidden;
 }
+
+.ba-action-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+}
+
+.ba-action-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ba-sidebar.collapsed .ba-action {
+  justify-content: center;
+  padding: 16px 8px;
+  min-height: 56px;
+}
+
+.ba-sidebar.collapsed .ba-action-icon {
+  font-size: 24px;
+}
+
 .ba-action:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 18px rgba(15, 50, 100, 0.35);
@@ -182,10 +212,18 @@
 .ba-action.primary {
   justify-content: flex-start;
 }
+
+.ba-sidebar.collapsed .ba-action.primary {
+  justify-content: center;
+}
+
 .ba-action.highlight {
   background: linear-gradient(90deg, #0b5cc0, #1aa3ff);
   color: #fff;
   font-weight: 700;
+}
+
+.ba-sidebar.collapsed .ba-action.highlight {
   justify-content: center;
 }
 
@@ -212,6 +250,36 @@
 /* Carousel styles moved to `src/css/carrossel.css` */
 
 /* Responsividade */
+@media (max-width: 899px) {
+  .ba-sidebar {
+    position: fixed;
+    left: 0;
+    top: 72px;
+    bottom: 0;
+    z-index: 100;
+    background: rgba(8, 16, 38, 0.98);
+    backdrop-filter: blur(8px);
+    width: 300px;
+    min-width: 300px;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ba-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .ba-sidebar.collapsed {
+    transform: translateX(-100%);
+    width: 300px;
+    min-width: 300px;
+  }
+
+  .ba-sidebar-nav {
+    padding: 20px;
+  }
+}
+
 @media (min-width: 900px) {
   .ba-actions-grid {
     grid-template-columns: 1fr 1fr;

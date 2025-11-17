@@ -92,6 +92,7 @@ export default function Dashboard() {
         <div className="ba-layout">
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
             <Sidebar
+              isOpen={sidebarOpen}
               onCopyReferral={handleCopyReferral}
               onPlay={handlePlay}
               onLoad={handleLoad}
