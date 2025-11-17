@@ -456,5 +456,31 @@
     "thread": "mila",
     "time": "2025-11-17T02:59:06.057Z",
     "handled": true
+  },
+  {
+    "id": 1763349400069,
+    "text": "sss",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-17T03:16:40.069Z",
+    "handled": true
+  },
+  {
+    "id": 1763349603138,
+    "text": "fala mila",
+    "from": "admin",
+    "thread": "mila",
+    "time": "2025-11-17T03:20:03.138Z",
+    "seenBy": [
+      "mila"
+    ]
+  },
+  {
+    "id": 1763349611122,
+    "text": "fala nacho",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-17T03:20:11.122Z",
+    "handled": true
   }
 ]

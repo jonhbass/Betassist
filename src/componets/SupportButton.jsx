@@ -12,10 +12,11 @@ export default function SupportButton() {
       const raw = localStorage.getItem('ADMIN_MESSAGES');
       const list = raw ? JSON.parse(raw) : [];
       const user = getAuthUser() || 'Você';
-      // unread = admin messages not yet seen by this user
+      // unread = admin messages for this user's thread not yet seen by this user
       const count = list.filter(
         (m) =>
           m.from === 'admin' &&
+          (m.thread === user || m.to === user) &&
           !(m.seenBy && Array.isArray(m.seenBy) && m.seenBy.includes(user))
       ).length;
       return count;
@@ -48,15 +49,12 @@ export default function SupportButton() {
           className="ba-support-fab"
           title="Fale com o suporte"
           onClick={() => setIsOpen(true)}
-          aria-label={`Falar com suporte — ${user}`}
+          aria-label="Falar com suporte"
           style={{
             animation: 'fadeIn 0.3s ease-in-out',
           }}
         >
           <div className="ba-support-icon">💬</div>
-          <div className="ba-support-avatar">
-            {(user || 'U').slice(0, 1).toUpperCase()}
-          </div>
           {unread > 0 && <div className="ba-support-badge">{unread}</div>}
         </button>
       )}
