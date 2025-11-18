@@ -40,7 +40,7 @@ export default function SupportButton() {
     };
   }, []);
 
-  const user = getAuthUser() || 'Você';
+  const _user = getAuthUser() || 'Você';
 
   return (
     <>

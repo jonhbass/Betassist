@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/Dashboard.css';
-import Sidebar from '../componets/Sidebar';
-import Chat from '../componets/Chat';
-import Carrossel from '../componets/Carrossel';
-import Footer from '../componets/Footer';
-import Modal from '../componets/Modal';
-import Topbar from '../componets/Topbar';
-import Toast from '../componets/Toast';
-import LoadModalContent from '../componets/LoadModalContent';
-import WithdrawModalContent from '../componets/WithdrawModalContent';
-import HistoryModalContent from '../componets/HistoryModalContent';
-import SupportButton from '../componets/SupportButton';
+import Sidebar from '../components/Sidebar';
+import Chat from '../components/Chat';
+import Carrossel from '../components/Carrossel';
+import Footer from '../components/Footer';
+import Modal from '../components/Modal';
+import Topbar from '../components/Topbar';
+import Toast from '../components/Toast';
+import LoadModalContent from '../components/LoadModalContent';
+import WithdrawModalContent from '../components/WithdrawModalContent';
+import HistoryModalContent from '../components/HistoryModalContent';
+import SupportButton from '../components/SupportButton';
 import { getAuthUser, removeAuthUser } from '../utils/auth';
 
 export default function Dashboard() {

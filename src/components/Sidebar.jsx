@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import '../css/sidebar.css';
 
 // Sidebar receives callbacks from parent (Dashboard)
@@ -9,8 +8,6 @@ export default function Sidebar({
   onToast = () => {},
   onOpenModal = () => {},
 }) {
-  const navigate = useNavigate();
-
   function handleCopyReferral() {
     const link = `${window.location.origin}/?ref=${user}`;
     navigator.clipboard

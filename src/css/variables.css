@@ -1,0 +1,88 @@
+/* ===================================
+   VARIÁVEIS CSS GLOBAIS
+   =================================== */
+
+:root {
+  /* Cores primárias */
+  --color-primary: #0b5cc0;
+  --color-primary-light: #1aa3ff;
+  --color-primary-dark: #082c56;
+
+  /* Cores de fundo */
+  --bg-main: #010309;
+  --bg-secondary: #021026;
+  --bg-tertiary: #082c56;
+
+  /* Cores de texto */
+  --text-primary: #ffffff;
+  --text-secondary: #e6f7ff;
+  --text-muted: rgba(255, 255, 255, 0.6);
+
+  /* Cores de UI */
+  --ui-border: rgba(255, 255, 255, 0.03);
+  --ui-hover: rgba(255, 255, 255, 0.04);
+  --ui-active: rgba(255, 255, 255, 0.08);
+
+  /* Cores de status */
+  --status-success: #43e97b;
+  --status-error: #dd6666;
+  --status-warning: #ffa500;
+  --status-info: #5bd0ff;
+
+  /* Sombras */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 18px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.3);
+
+  /* Bordas */
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 10px;
+  --border-radius-xl: 12px;
+  --border-radius-full: 999px;
+
+  /* Espaçamentos */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+
+  /* Fontes */
+  --font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 26px;
+
+  /* Transições */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* Light theme (para futuro) */
+[data-theme='light'] {
+  --bg-main: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #e0e0e0;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: rgba(0, 0, 0, 0.6);
+}

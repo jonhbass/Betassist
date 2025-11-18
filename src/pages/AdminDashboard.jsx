@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/Dashboard.css';
 import '../css/admin.css';
-import AdminSupport from '../componets/AdminSupport';
+import AdminSupport from '../components/AdminSupport';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import React from 'react';
-import UserSupport from '../componets/UserSupport';
+import UserSupport from '../components/UserSupport';
 import '../css/Dashboard.css';
 
 export default function Support() {
