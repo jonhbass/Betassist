@@ -29,7 +29,7 @@
     "from": "Usuário",
     "thread": "Usuário",
     "time": "2025-11-18T19:03:54.880Z",
-    "handled": false
+    "handled": true
   },
   {
     "id": 1763492826661,
@@ -37,6 +37,6 @@
     "from": "Usuário",
     "thread": "Usuário",
     "time": "2025-11-18T19:07:06.661Z",
-    "handled": false
+    "handled": true
   }
 ]
