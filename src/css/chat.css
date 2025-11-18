@@ -48,7 +48,7 @@
 .ba-chat-msg.other {
   align-self: flex-start;
   background: rgba(255, 255, 255, 0.04);
-  color: #e6f7ff;
+  color: #ffe6e6;
   padding: 8px 10px;
   border-radius: 10px;
 }
@@ -121,4 +121,55 @@
 }
 .ba-socket-badge.disconnected {
   background: linear-gradient(90deg, #d66, #b22222);
+}
+
+/* Chat header styles */
+.ba-chat-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.ba-chat-title {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.ba-chat-controls {
+  position: absolute;
+  right: 0;
+}
+
+.ba-chat-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Chat message header styles */
+.ba-chat-msg-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ba-chat-msg-user {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ba-chat-msg-time {
+  margin-left: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+/* Typing indicator */
+.ba-chat-typing {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 6px;
 }

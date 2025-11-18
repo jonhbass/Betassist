@@ -254,16 +254,9 @@ export default function Chat() {
 
   return (
     <div className="ba-chat-wrap">
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 8,
-        }}
-      >
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>Chat</div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div className="ba-chat-header">
+        <div className="ba-chat-title">Chat</div>
+        <div className="ba-chat-controls">
           <div className={`ba-socket-badge ${socketState}`}>{socketState}</div>
           <button className="ba-btn small" onClick={clearChat} type="button">
             Limpar
@@ -276,31 +269,16 @@ export default function Chat() {
           const isMe = m.from === getCurrentUser();
           return (
             <div key={m.id} className={`ba-chat-msg ${isMe ? 'me' : 'other'}`}>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: 8,
-                  alignItems: 'center',
-                  marginBottom: 6,
-                }}
-              >
+              <div className="ba-chat-msg-header">
                 <div className="ba-chat-avatar">
                   {m.from === 'system'
                     ? '🔔'
                     : m.from.slice(0, 1).toUpperCase()}
                 </div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>
+                <div className="ba-chat-msg-user">
                   {m.from === 'system' ? 'Sistema' : m.from}
                 </div>
-                <div
-                  style={{
-                    marginLeft: 8,
-                    fontSize: 11,
-                    color: 'rgba(255,255,255,0.38)',
-                  }}
-                >
-                  {formatTime(m.time)}
-                </div>
+                <div className="ba-chat-msg-time">{formatTime(m.time)}</div>
               </div>
               <div className="ba-chat-text">{m.text}</div>
             </div>
@@ -309,11 +287,7 @@ export default function Chat() {
       </div>
 
       {typing && (
-        <div
-          style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 6 }}
-        >
-          {typing} está digitando...
-        </div>
+        <div className="ba-chat-typing">{typing} está digitando...</div>
       )}
 
       <form className="ba-chat-form" onSubmit={send}>
