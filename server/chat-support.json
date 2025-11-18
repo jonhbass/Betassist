@@ -14,5 +14,29 @@
     "thread": "mila",
     "time": "2025-11-18T00:31:22.711Z",
     "handled": true
+  },
+  {
+    "id": 1763489146106,
+    "text": "mandaaaa",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-18T18:05:46.106Z",
+    "handled": true
+  },
+  {
+    "id": 1763492634880,
+    "text": "ola",
+    "from": "Usuário",
+    "thread": "Usuário",
+    "time": "2025-11-18T19:03:54.880Z",
+    "handled": false
+  },
+  {
+    "id": 1763492826661,
+    "text": "alguem?",
+    "from": "Usuário",
+    "thread": "Usuário",
+    "time": "2025-11-18T19:07:06.661Z",
+    "handled": false
   }
 ]

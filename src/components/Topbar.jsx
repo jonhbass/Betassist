@@ -1,4 +1,6 @@
 import React from 'react';
+import Icon from '../assets/icon.svg';
+import '../css/topbar.css';
 
 export default function Topbar({
   onToggleSidebar,
@@ -8,7 +10,10 @@ export default function Topbar({
 }) {
   return (
     <header className="ba-topbar">
-      <div className="ba-logo">BetAssist</div>
+      <div className="ba-top-left">
+        <img src={Icon} alt="StarWin Logo" className="header-icon" />
+        <div className="ba-logo">StarWin</div>
+      </div>
       <div className="ba-top-actions">
         <button
           className="ba-btn small"

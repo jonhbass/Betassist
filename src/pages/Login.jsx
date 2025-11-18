@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import '../css/Login.css';
 import Icon from '../assets/icon.svg';
 import { setAuthUser } from '../utils/auth';
+import SupportButton from '../components/SupportButton';
+import SupportChatModal from '../components/SupportChatModal';
 const USE_API = import.meta.env.VITE_USE_API === 'true';
 
 const DEFAULT_USERS = [
@@ -26,6 +28,7 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [supportOpen, setSupportOpen] = useState(false);
   const navigate = useNavigate();
 
   function handleSubmit(e) {
@@ -73,11 +76,18 @@ export default function Login() {
 
   return (
     <div className="login-wrap">
+      <SupportButton onClick={() => setSupportOpen(true)} />
+      {supportOpen && (
+        <SupportChatModal
+          user={username || 'Visitante'}
+          onClose={() => setSupportOpen(false)}
+        />
+      )}
       <form className="login-card" onSubmit={handleSubmit}>
         {error && <p className="login-error">{error}</p>}
         <div className="login-header">
-          <img src={Icon} alt="BetAssist Logo" className="header-icon" />
-          <h2>BetAssist</h2>
+          <img src={Icon} alt="StarWin Logo" className="header-icon" />
+          <h2>StarWin</h2>
         </div>
 
         <label>

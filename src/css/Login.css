@@ -1,60 +1,76 @@
-.login-wrap { 
+.login-wrap {
   min-height: 100vh; /* Altura mínima para ocupar toda a tela */
   display: grid; /* Usando grid para centralizar */
   place-items: center; /* Centraliza o conteúdo vertical e horizontalmente */
-  background: radial-gradient(circle at 20% 0%, #16213e 10%, #0d0d0d 60%); /*Cores do background da pagina*/
+  background: radial-gradient(
+    circle at 20% 0%,
+    #16213e 10%,
+    #0d0d0d 60%
+  ); /*Cores do background da pagina*/
   color: #fff; /* Cor das letras principais */
 }
 
-.login-card { /*Bordas do Box do login*/
+.login-card {
+  /*Bordas do Box do login*/
   width: 320px; /*largura do box*/
   background: #111; /* Cor de fundo do card */
   border: 1px solid #1f2740; /* Borda do card */
   border-radius: 12px; /* Bordas arredondadas do card */
   padding: 24px; /* Espaçamento interno do card */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4); /* Sombra do card */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Sombra do card */
 }
 
-.login-card h2 { margin-bottom: 16px; } /*Altura Box Login*/
-.login-card label { display: block; margin: 10px 0; font-size: 14px; } /*Altura Box Login*/
+.login-card h2 {
+  margin-bottom: 16px;
+} /*Altura Box Login*/
+.login-card label {
+  display: block;
+  margin: 10px 0;
+  font-size: 14px;
+} /*Altura Box Login*/
 
 .login-card input {
   padding-left: 15px; /* Espaçamento interno à esquerda */
-  display: block;       /* faz o input ocupar a linha inteira */
-  width: 80%;          /* ocupa 80% da largura do card */
-  height: 40px;        /* altura fixa */
-  margin: 6px auto;    /* centraliza horizontalmente */
+  display: block; /* faz o input ocupar a linha inteira */
+  width: 80%; /* ocupa 80% da largura do card */
+  height: 40px; /* altura fixa */
+  margin: 6px auto; /* centraliza horizontalmente */
   background: #0b0f1a; /* Fundo escuro */
   border: 1px solid #26314f; /* Borda padrão */
   border-radius: 8px; /* Bordas arredondadas */
   color: #fff; /* Cor do texto */
   text-align: left; /*Alinhar texto*/
   box-sizing: border-box; /* Inclui padding e border na largura total */
-} 
+}
 
 .login-card input::placeholder {
-  text-align: center;  /* centraliza o placeholder */
-  color: #aaa;         /* cor diferenciada para destacar */
+  text-align: center; /* centraliza o placeholder */
+  color: #aaa; /* cor diferenciada para destacar */
 }
 
 .login-card input:focus {
-  outline: none;               /* remove o contorno azul/branco padrão */
-  background: #0b0f1a;         /* mantém o fundo escuro */
-  border: 1px solid #00adb5;   /* borda azul turquesa personalizada */
+  outline: none; /* remove o contorno azul/branco padrão */
+  background: #0b0f1a; /* mantém o fundo escuro */
+  border: 1px solid #00adb5; /* borda azul turquesa personalizada */
   box-shadow: 0 0 8px #00adb5; /* glow suave */
-  color: #fff;                 /* mantém o texto branco */
+  color: #fff; /* mantém o texto branco */
 }
 
-.login-card button { /* Configuração botão de login*/
-  width: 95%;             /* ocupa 95% da largura do card */
+.login-card button {
+  /* Configuração botão de login*/
+  width: 95%; /* ocupa 95% da largura do card */
   margin-top: 14px; /* Espaçamento acima do botão */
-  padding: 10px;          /* Espaçamento interno do botão */
-  background: linear-gradient(90deg, #00adb5, #006f76); /* Gradiente azul turquesa */
+  padding: 10px; /* Espaçamento interno do botão */
+  background: linear-gradient(
+    90deg,
+    #00adb5,
+    #006f76
+  ); /* Gradiente azul turquesa */
   border: none; /* Remove a borda padrão */
   border-radius: 8px; /* Bordas arredondadas do botão */
   color: #fff; /* Cor do texto do botão */
   cursor: pointer; /* Muda o cursor para indicar que é clicável */
-  transition: transform .2s ease, box-shadow .2s ease; /* Transição suave para hover */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Transição suave para hover */
 }
 
 .login-card button:hover {
@@ -68,17 +84,17 @@
   padding: 8px; /* Espaçamento interno da mensagem de erro */
   border-radius: 6px; /* Bordas arredondadas para a mensagem de erro */
 }
-.login-card label { 
-  display: block;        /* faz o label ocupar a linha inteira */
-  margin: 10px 0;        /* espaçamento entre os labels */
-  font-size: 15px;     /* tamanho da fonte */
-  text-align: center;      /* opcional: alinha o texto à esquerda */
+.login-card label {
+  display: block; /* faz o label ocupar a linha inteira */
+  margin: 10px 0; /* espaçamento entre os labels */
+  font-size: 15px; /* tamanho da fonte */
+  text-align: center; /* opcional: alinha o texto à esquerda */
 }
 
 .login-card label input {
-  display: block;        /* garante que o input fique embaixo do texto */
-  width: 100%;           /* ocupa toda a largura do card */
-  margin-top: 6px;       /* espaço entre o texto e a caixa */
+  display: block; /* garante que o input fique embaixo do texto */
+  width: 100%; /* ocupa toda a largura do card */
+  margin-top: 6px; /* espaço entre o texto e a caixa */
 }
 
 .login-header {
@@ -89,7 +105,8 @@
   margin-bottom: 20px; /* Espaçamento abaixo do cabeçalho */
 }
 
-.login-header h2 { /*Texto BetAssist*/
+.login-header h2 {
+  /*Texto BetAssist*/
   font-family: 'Poppins', sans-serif; /* ou Orbitron se quiser mais tech */
   font-size: 30px; /* Tamanho da fonte */
   font-weight: 700; /* Negrito */
@@ -108,5 +125,7 @@
 /* Aumenta o icone ao passar o mouse */
 .login-header .header-icon:hover {
   transform: scale(1.2); /* Aumenta o tamanho do ícone */
-  filter: drop-shadow(0 0 0.8em #61dafbaa); /* Efeito de brilho ao passar o mouse */
+  filter: drop-shadow(
+    0 0 0.8em #61dafbaa
+  ); /* Efeito de brilho ao passar o mouse */
 }
