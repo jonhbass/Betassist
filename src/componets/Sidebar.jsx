@@ -1,21 +1,48 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../css/sidebar.css';
 
 // Sidebar receives callbacks from parent (Dashboard)
 export default function Sidebar({
   isOpen = true,
-  onCopyReferral = () => {},
-  onPlay = () => {},
-  onLoad = () => {},
-  onWithdraw = () => {},
-  onHistory = () => {},
+  user = '',
+  onToast = () => {},
+  onOpenModal = () => {},
 }) {
+  const navigate = useNavigate();
+
+  function handleCopyReferral() {
+    const link = `${window.location.origin}/?ref=${user}`;
+    navigator.clipboard
+      .writeText(link)
+      .then(() => onToast('Link copiado para a área de transferência'))
+      .catch(() => onToast('Falha ao copiar link'));
+  }
+
+  function handlePlay() {
+    window.open('https://clubuno.net', '_blank');
+    onToast('Abrindo CLUBUNO.NET');
+  }
+
+  function handleLoad() {
+    onOpenModal('load');
+  }
+
+  function handleWithdraw() {
+    onOpenModal('withdraw');
+  }
+
+  function handleHistory() {
+    onOpenModal('history');
+  }
+
   return (
     <nav className="ba-sidebar-nav" aria-label="Main">
       <ul className="ba-sidebar-list">
         <li>
           <button
             className="ba-action primary"
-            onClick={onCopyReferral}
+            onClick={handleCopyReferral}
             title={!isOpen ? 'Copiar link de referido' : ''}
           >
             <span className="ba-action-icon">🔗</span>
@@ -27,7 +54,7 @@ export default function Sidebar({
         <li>
           <button
             className="ba-action highlight"
-            onClick={onPlay}
+            onClick={handlePlay}
             title={!isOpen ? 'Ir a jugar CLUBUNO.NET' : ''}
           >
             <span className="ba-action-icon">🎮</span>
@@ -41,7 +68,7 @@ export default function Sidebar({
         <li>
           <button
             className="ba-action"
-            onClick={onLoad}
+            onClick={handleLoad}
             title={!isOpen ? 'Cargar fichas' : ''}
           >
             <span className="ba-action-icon">💳</span>
@@ -51,7 +78,7 @@ export default function Sidebar({
         <li>
           <button
             className="ba-action"
-            onClick={onWithdraw}
+            onClick={handleWithdraw}
             title={!isOpen ? 'Retirar fichas' : ''}
           >
             <span className="ba-action-icon">💸</span>
@@ -61,7 +88,7 @@ export default function Sidebar({
         <li>
           <button
             className="ba-action"
-            onClick={onHistory}
+            onClick={handleHistory}
             title={!isOpen ? 'Historial' : ''}
           >
             <span className="ba-action-icon">🧾</span>

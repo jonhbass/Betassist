@@ -21,16 +21,30 @@
   left: 0;
   right: 0;
   top: -8px;
-  height: 6px;
+  height: 3px;
   background: linear-gradient(
     90deg,
     rgba(11, 92, 192, 0.9),
+    rgba(26, 163, 255, 0.9),
+    rgba(11, 92, 192, 0.9),
     rgba(26, 163, 255, 0.9)
   );
+  background-size: 200% 100%;
+  animation: gradientShift 8s ease-in-out infinite;
   box-shadow: 0 6px 18px rgba(10, 40, 80, 0.12);
   border-radius: 4px 4px 0 0;
   opacity: 0.95;
   z-index: 2;
+}
+
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @media (max-width: 900px) {

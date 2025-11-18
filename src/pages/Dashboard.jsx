@@ -54,32 +54,6 @@ export default function Dashboard() {
     navigate('/login', { replace: true });
   }
 
-  // sidebar action handlers
-  function handleCopyReferral() {
-    const link = `${window.location.origin}/?ref=${user}`;
-    navigator.clipboard
-      .writeText(link)
-      .then(() => showToast('Link copiado para a área de transferência'))
-      .catch(() => showToast('Falha ao copiar link'));
-  }
-
-  function handlePlay() {
-    window.open('https://clubuno.net', '_blank');
-    showToast('Abrindo CLUBUNO.NET');
-  }
-
-  function handleLoad() {
-    setModal('load');
-  }
-
-  function handleWithdraw() {
-    setModal('withdraw');
-  }
-
-  function handleHistory() {
-    setModal('history');
-  }
-
   return (
     <div className="ba-dashboard">
       <Topbar
@@ -93,11 +67,9 @@ export default function Dashboard() {
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
             <Sidebar
               isOpen={sidebarOpen}
-              onCopyReferral={handleCopyReferral}
-              onPlay={handlePlay}
-              onLoad={handleLoad}
-              onWithdraw={handleWithdraw}
-              onHistory={handleHistory}
+              user={user}
+              onToast={showToast}
+              onOpenModal={setModal}
             />
           </aside>
 
