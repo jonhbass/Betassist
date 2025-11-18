@@ -13,7 +13,8 @@ app.use(cors());
 app.use(express.json());
 
 const DATA = path.join(process.cwd(), 'server', 'users.json');
-const CHAT = path.join(process.cwd(), 'server', 'chat.json');
+const CHAT_MAIN = path.join(process.cwd(), 'server', 'chat-main.json');
+const CHAT_SUPPORT = path.join(process.cwd(), 'server', 'chat-support.json');
 const PORT =
   typeof process !== 'undefined' && process.env && process.env.PORT
     ? process.env.PORT
@@ -33,9 +34,9 @@ function writeUsers(list) {
   fs.writeFileSync(DATA, JSON.stringify(list, null, 2), 'utf-8');
 }
 
-function readChat() {
+function readChatMain() {
   try {
-    const raw = fs.readFileSync(CHAT, 'utf-8');
+    const raw = fs.readFileSync(CHAT_MAIN, 'utf-8');
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
@@ -43,8 +44,22 @@ function readChat() {
   }
 }
 
-function writeChat(list) {
-  fs.writeFileSync(CHAT, JSON.stringify(list, null, 2), 'utf-8');
+function writeChatMain(list) {
+  fs.writeFileSync(CHAT_MAIN, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+function readChatSupport() {
+  try {
+    const raw = fs.readFileSync(CHAT_SUPPORT, 'utf-8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeChatSupport(list) {
+  fs.writeFileSync(CHAT_SUPPORT, JSON.stringify(list, null, 2), 'utf-8');
 }
 
 app.get('/health', (req, res) => res.json({ ok: true }));
@@ -55,9 +70,15 @@ app.get('/users', (req, res) => {
   res.json(users.map((u) => ({ username: u.username })));
 });
 
-// Chat history
+// Chat history - retorna mensagens de suporte (admin/user)
 app.get('/messages', (req, res) => {
-  const msgs = readChat();
+  const msgs = readChatSupport();
+  res.json(msgs);
+});
+
+// Chat principal - mensagens do chat geral
+app.get('/messages/main', (req, res) => {
+  const msgs = readChatMain();
   res.json(msgs);
 });
 
@@ -137,18 +158,32 @@ const io = new Server(server, { cors: { origin: '*' } });
 io.on('connection', (socket) => {
   console.log('socket connected', socket.id);
 
-  // send current chat history
-  socket.emit('chat:history', readChat());
+  // send current chat history (support messages)
+  socket.emit('chat:history', readChatSupport());
+  // send main chat history
+  socket.emit('chat:main-history', readChatMain());
 
   socket.on('chat:message', (msg) => {
     try {
-      console.log('server received chat:message', msg);
-      const list = readChat();
+      console.log('server received chat:message (support)', msg);
+      const list = readChatSupport();
       const next = [...list, msg];
-      writeChat(next);
+      writeChatSupport(next);
       io.emit('chat:message', msg);
     } catch (e) {
-      console.error('chat write failed', e);
+      console.error('support chat write failed', e);
+    }
+  });
+
+  socket.on('chat:main-message', (msg) => {
+    try {
+      console.log('server received chat:main-message', msg);
+      const list = readChatMain();
+      const next = [...list, msg];
+      writeChatMain(next);
+      io.emit('chat:main-message', msg);
+    } catch (e) {
+      console.error('main chat write failed', e);
     }
   });
 
@@ -157,13 +192,13 @@ io.on('connection', (socket) => {
   });
 });
 
-// Persist a message via REST and broadcast to connected sockets
+// Persist a support message via REST and broadcast to connected sockets
 app.post('/messages', (req, res) => {
   const msg = req.body || {};
   try {
-    const list = readChat();
+    const list = readChatSupport();
     const next = [...list, msg];
-    writeChat(next);
+    writeChatSupport(next);
     // broadcast to all connected clients
     try {
       io.emit('chat:message', msg);
@@ -177,12 +212,31 @@ app.post('/messages', (req, res) => {
   }
 });
 
+// Persist a main chat message via REST and broadcast
+app.post('/messages/main', (req, res) => {
+  const msg = req.body || {};
+  try {
+    const list = readChatMain();
+    const next = [...list, msg];
+    writeChatMain(next);
+    try {
+      io.emit('chat:main-message', msg);
+    } catch {
+      /* ignore if sockets not ready */
+    }
+    return res.status(201).json({ ok: true });
+  } catch (e) {
+    console.error('failed to persist main message', e);
+    return res.status(500).json({ error: 'failed' });
+  }
+});
+
 // Mark admin messages in a thread as seen by a username
 app.post('/messages/seen', (req, res) => {
   const { thread, username } = req.body || {};
   if (!thread || !username) return res.status(400).json({ error: 'missing' });
   try {
-    const list = readChat();
+    const list = readChatSupport();
     const next = list.map((m) => {
       if (m.from === 'admin' && m.thread === thread) {
         const seen = Array.isArray(m.seenBy)
@@ -192,7 +246,7 @@ app.post('/messages/seen', (req, res) => {
       }
       return m;
     });
-    writeChat(next);
+    writeChatSupport(next);
     try {
       io.emit('chat:history', next);
     } catch {
@@ -210,7 +264,7 @@ app.post('/messages/mark-handled', (req, res) => {
   const { thread } = req.body || {};
   if (!thread) return res.status(400).json({ error: 'missing' });
   try {
-    const list = readChat();
+    const list = readChatSupport();
     const target = String(thread || '').toLowerCase();
     const next = list.map((m) => {
       try {
@@ -222,7 +276,7 @@ app.post('/messages/mark-handled', (req, res) => {
         return m;
       }
     });
-    writeChat(next);
+    writeChatSupport(next);
     try {
       io.emit('chat:history', next);
     } catch {
