@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { getAuthUser } from '../utils/auth';
+import { getOrCreateVisitorId } from '../utils/visitorId';
 import {
   ensureSocket,
   on as socketOn,
@@ -24,7 +25,7 @@ export default function SupportChatModal({ onClose }) {
   const [text, setText] = useState('');
   const listRef = useRef(null);
   const socketRef = useRef(null);
-  const username = getAuthUser() || 'Usuário';
+  const username = getAuthUser() || getOrCreateVisitorId();
 
   useEffect(() => {
     try {

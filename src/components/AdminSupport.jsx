@@ -17,6 +17,7 @@ export default function AdminSupport() {
     sendReply,
     openThread,
     markAllHandled,
+    deleteThread,
   } = useAdminSupport();
 
   const activeObj = threads.find((t) => t.id === activeThread);
@@ -33,6 +34,7 @@ export default function AdminSupport() {
           knownUsers={knownUsers}
           activeThread={activeThread}
           openThread={openThread}
+          onDeleteThread={deleteThread}
         />
         <ThreadView
           activeThread={activeThread}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../css/Login.css';
 import Icon from '../assets/icon.svg';
 import { setAuthUser } from '../utils/auth';
+import { getOrCreateVisitorId, clearVisitorId } from '../utils/visitorId';
 import SupportButton from '../components/SupportButton';
 import SupportChatModal from '../components/SupportChatModal';
 const USE_API = import.meta.env.VITE_USE_API === 'true';
@@ -67,6 +68,7 @@ export default function Login() {
     }
 
     if (ok) {
+      clearVisitorId(); // Limpa o ID de visitante após login bem-sucedido
       setAuthUser(username);
       navigate('/home');
     } else {
@@ -74,12 +76,14 @@ export default function Login() {
     }
   }
 
+  const visitorId = getOrCreateVisitorId();
+
   return (
     <div className="login-wrap">
       <SupportButton onClick={() => setSupportOpen(true)} />
       {supportOpen && (
         <SupportChatModal
-          user={username || 'Visitante'}
+          user={visitorId}
           onClose={() => setSupportOpen(false)}
         />
       )}

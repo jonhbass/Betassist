@@ -78,6 +78,25 @@ export default function useAdminSupport() {
     await markThreadHandled(activeThread);
   }
 
+  function deleteThread(threadId) {
+    // Remove todas as mensagens do thread localmente
+    setMessages((m) =>
+      m.filter((msg) => {
+        const msgThread =
+          msg.thread || (msg.from !== 'admin' ? msg.from : msg.to);
+        return msgThread !== threadId;
+      })
+    );
+
+    // Se o thread deletado era o ativo, limpa a seleção
+    if (activeThread === threadId) {
+      setActiveThread(null);
+    }
+
+    // TODO: Implementar exclusão no servidor se necessário
+    // await deleteThreadOnServer(threadId);
+  }
+
   useEffect(() => {
     activeThreadRef.current = activeThread;
     if (!activeThread) return;
@@ -116,5 +135,6 @@ export default function useAdminSupport() {
     sendReply,
     openThread,
     markAllHandled,
+    deleteThread,
   };
 }

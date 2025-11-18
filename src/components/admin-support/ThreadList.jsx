@@ -6,6 +6,7 @@ export default function ThreadList({
   knownUsers,
   activeThread,
   openThread,
+  onDeleteThread,
 }) {
   if (!threads) return null;
   return (
@@ -14,12 +15,17 @@ export default function ThreadList({
       style={{ width: 280, maxHeight: 520, overflow: 'auto' }}
     >
       {threads.length === 0 && <div className="ba-muted">Nenhuma mensagem</div>}
-      {threads
-        .filter((t) => {
-          if (knownUsersFetched) return knownUsers.includes(String(t.id));
-          return true;
-        })
-        .map((t) => (
+      {threads.map((t) => {
+        const isExternalVisitor = t.id.startsWith('usuario');
+        const avatarBg = isExternalVisitor
+          ? 'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(249, 115, 22, 0.25))'
+          : 'rgba(255,255,255,0.06)';
+        const avatarColor = isExternalVisitor ? '#fb923c' : '#fff';
+        const avatarIcon = isExternalVisitor
+          ? '👤'
+          : t.id.slice(0, 1).toUpperCase();
+
+        return (
           <div
             key={t.id}
             className={`ba-thread-item ${
@@ -50,16 +56,20 @@ export default function ThreadList({
                   width: 40,
                   height: 40,
                   borderRadius: 20,
-                  background: 'rgba(255,255,255,0.06)',
+                  background: avatarBg,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 700,
                   flex: '0 0 40px',
                   position: 'relative',
+                  color: avatarColor,
+                  border: isExternalVisitor
+                    ? '2px solid rgba(251, 146, 60, 0.3)'
+                    : 'none',
                 }}
               >
-                {t.id.slice(0, 1).toUpperCase()}
+                {avatarIcon}
                 {t.unread > 0 && (
                   <div
                     className="ba-thread-badge"
@@ -69,12 +79,64 @@ export default function ThreadList({
                   </div>
                 )}
               </div>
-              <div style={{ fontWeight: 700 }}>{t.id}</div>
+              <div
+                style={{
+                  fontWeight: 700,
+                  color: isExternalVisitor ? '#fb923c' : '#fff',
+                }}
+              >
+                {t.id}
+                {isExternalVisitor && (
+                  <span
+                    style={{
+                      marginLeft: 6,
+                      fontSize: 10,
+                      background: 'rgba(251, 146, 60, 0.2)',
+                      padding: '2px 6px',
+                      borderRadius: 4,
+                      color: '#fb923c',
+                      fontWeight: 600,
+                    }}
+                  >
+                    VISITANTE
+                  </span>
+                )}
+              </div>
             </div>
 
-            {/* badge moved into avatar for overlay positioning */}
+            {onDeleteThread && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm(`Excluir conversa com ${t.id}?`)) {
+                    onDeleteThread(t.id);
+                  }
+                }}
+                style={{
+                  background: 'rgba(220, 38, 38, 0.1)',
+                  border: '1px solid rgba(220, 38, 38, 0.3)',
+                  color: '#f87171',
+                  padding: '4px 8px',
+                  borderRadius: 4,
+                  cursor: 'pointer',
+                  fontSize: 12,
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(220, 38, 38, 0.2)';
+                  e.currentTarget.style.borderColor = 'rgba(220, 38, 38, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(220, 38, 38, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(220, 38, 38, 0.3)';
+                }}
+              >
+                🗑️
+              </button>
+            )}
           </div>
-        ))}
+        );
+      })}
     </div>
   );
 }

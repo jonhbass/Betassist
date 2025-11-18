@@ -38,5 +38,75 @@
     "thread": "Usuário",
     "time": "2025-11-18T19:07:06.661Z",
     "handled": true
+  },
+  {
+    "id": 1763493180358,
+    "text": "manda",
+    "from": "Usuário",
+    "thread": "Usuário",
+    "time": "2025-11-18T19:13:00.358Z",
+    "handled": true
+  },
+  {
+    "id": 1763493194350,
+    "text": "ola",
+    "from": "Usuário",
+    "thread": "Usuário",
+    "time": "2025-11-18T19:13:14.350Z",
+    "handled": true
+  },
+  {
+    "id": 1763493656635,
+    "text": "ola",
+    "from": "usuario1",
+    "thread": "usuario1",
+    "time": "2025-11-18T19:20:56.635Z",
+    "handled": true
+  },
+  {
+    "id": 1763494053654,
+    "text": "ola",
+    "from": "usuario1",
+    "thread": "usuario1",
+    "time": "2025-11-18T19:27:33.654Z",
+    "handled": true
+  },
+  {
+    "id": 1763494386807,
+    "text": "ola",
+    "from": "usuario1",
+    "thread": "usuario1",
+    "time": "2025-11-18T19:33:06.807Z",
+    "handled": true
+  },
+  {
+    "id": 1763505720183,
+    "text": "olaaa",
+    "from": "usuario1",
+    "thread": "usuario1",
+    "time": "2025-11-18T22:42:00.183Z",
+    "handled": true
+  },
+  {
+    "id": 1763505726167,
+    "text": "como vao?",
+    "from": "usuario1",
+    "thread": "usuario1",
+    "time": "2025-11-18T22:42:06.167Z",
+    "handled": true
+  },
+  {
+    "id": 1763505735911,
+    "text": "tranquilo",
+    "from": "admin",
+    "thread": "Usuário",
+    "time": "2025-11-18T22:42:15.911Z"
+  },
+  {
+    "id": 1763505748055,
+    "text": "tranquilo",
+    "from": "admin",
+    "thread": "usuario1",
+    "time": "2025-11-18T22:42:28.055Z"
   }
 ]
