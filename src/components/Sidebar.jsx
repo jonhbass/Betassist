@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/sidebar.css';
 
 // Sidebar receives callbacks from parent (Dashboard)
@@ -8,6 +9,8 @@ export default function Sidebar({
   onToast = () => {},
   onOpenModal = () => {},
 }) {
+  const navigate = useNavigate();
+
   function handleCopyReferral() {
     const link = `${window.location.origin}/?ref=${user}`;
     navigator.clipboard
@@ -17,12 +20,12 @@ export default function Sidebar({
   }
 
   function handlePlay() {
-    window.open('https://clubuno.net', '_blank');
+    window.open('https://www.pulpobet.net/es/?pc=true', '_blank');
     onToast('Abrindo CLUBUNO.NET');
   }
 
   function handleLoad() {
-    onOpenModal('load');
+    navigate('/load-chips');
   }
 
   function handleWithdraw() {

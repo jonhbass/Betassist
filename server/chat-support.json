@@ -107,6 +107,9 @@
     "text": "tranquilo",
     "from": "admin",
     "thread": "usuario1",
-    "time": "2025-11-18T22:42:28.055Z"
+    "time": "2025-11-18T22:42:28.055Z",
+    "seenBy": [
+      "usuario1"
+    ]
   }
 ]
