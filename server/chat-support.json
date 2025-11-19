@@ -100,7 +100,10 @@
     "text": "tranquilo",
     "from": "admin",
     "thread": "Usuário",
-    "time": "2025-11-18T22:42:15.911Z"
+    "time": "2025-11-18T22:42:15.911Z",
+    "seenBy": [
+      "Usuário"
+    ]
   },
   {
     "id": 1763505748055,
@@ -143,5 +146,12 @@
     "thread": "mila",
     "time": "2025-11-19T12:47:30.531Z",
     "handled": true
+  },
+  {
+    "id": 1763592376502,
+    "text": "olaaa",
+    "from": "admin",
+    "thread": "mila",
+    "time": "2025-11-19T22:46:16.502Z"
   }
 ]

@@ -13,10 +13,6 @@ export default function AdminSidebar({
     onNavigateToSection('create');
   }
 
-  function handleUserList() {
-    onNavigateToSection('users');
-  }
-
   function handleDepositRequests() {
     navigate('/admin/deposit-requests');
   }
@@ -31,6 +27,14 @@ export default function AdminSidebar({
 
   function handleAdminManagement() {
     navigate('/admin/manage-admins');
+  }
+
+  function handleBannerManagement() {
+    navigate('/admin/manage-banners');
+  }
+
+  function handleCbuManagement() {
+    navigate('/admin/manage-cbu');
   }
 
   return (
@@ -52,21 +56,11 @@ export default function AdminSidebar({
           <button
             className="ba-action"
             onClick={handleCreateUser}
-            title={!isOpen ? 'Criar Usuário' : ''}
-          >
-            <span className="ba-action-icon">👤</span>
-            {isOpen && <span className="ba-action-text">Criar Usuário</span>}
-          </button>
-        </li>
-        <li>
-          <button
-            className="ba-action"
-            onClick={handleUserList}
-            title={!isOpen ? 'Usuários Existentes' : ''}
+            title={!isOpen ? 'Gerenciar Usuários' : ''}
           >
             <span className="ba-action-icon">👥</span>
             {isOpen && (
-              <span className="ba-action-text">Usuários Existentes</span>
+              <span className="ba-action-text">Gerenciar Usuários</span>
             )}
           </button>
         </li>
@@ -100,6 +94,28 @@ export default function AdminSidebar({
           >
             <span className="ba-action-icon">🔐</span>
             {isOpen && <span className="ba-action-text">Gerenciar Admins</span>}
+          </button>
+        </li>
+        <li>
+          <button
+            className="ba-action"
+            onClick={handleBannerManagement}
+            title={!isOpen ? 'Gerenciar Banners' : ''}
+          >
+            <span className="ba-action-icon">🖼️</span>
+            {isOpen && (
+              <span className="ba-action-text">Gerenciar Banners</span>
+            )}
+          </button>
+        </li>
+        <li>
+          <button
+            className="ba-action"
+            onClick={handleCbuManagement}
+            title={!isOpen ? 'Gerenciar CBU' : ''}
+          >
+            <span className="ba-action-icon">🏦</span>
+            {isOpen && <span className="ba-action-text">Gerenciar CBU</span>}
           </button>
         </li>
       </ul>

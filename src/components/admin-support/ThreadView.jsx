@@ -14,7 +14,7 @@ export default function ThreadView({
       className="ba-admin-thread-view"
       style={{
         flex: 1,
-        maxHeight: 520,
+        maxHeight: 600,
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -56,12 +56,15 @@ export default function ThreadView({
                   <div
                     style={{
                       display: 'flex',
-                      gap: 8,
+                      gap: 6,
                       alignItems: 'center',
-                      marginBottom: 6,
+                      marginBottom: 4,
                     }}
                   >
-                    <div className="ba-chat-avatar">
+                    <div
+                      className="ba-chat-avatar"
+                      style={{ width: 28, height: 28, fontSize: 13 }}
+                    >
                       {m.from === 'admin'
                         ? 'A'
                         : String(m.from || '')
@@ -69,7 +72,11 @@ export default function ThreadView({
                             .toUpperCase()}
                     </div>
                     <div
-                      style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}
+                      style={{
+                        fontSize: 12,
+                        color: 'rgba(255,255,255,0.6)',
+                        fontWeight: 500,
+                      }}
                     >
                       {m.from === 'admin' ? 'Admin' : m.from}
                     </div>
@@ -87,7 +94,7 @@ export default function ThreadView({
                     </div>
                   </div>
                   <div className="ba-chat-text">{m.text}</div>
-                  <div style={{ marginTop: 6 }} />
+                  <div style={{ marginTop: 4 }} />
                 </div>
               );
             })}

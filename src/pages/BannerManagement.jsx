@@ -1,0 +1,415 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Topbar from '../components/Topbar';
+import Footer from '../components/Footer';
+import AdminSidebar from '../components/AdminSidebar';
+import Toast from '../components/Toast';
+import { removeAuthUser } from '../utils/auth';
+import '../css/admin.css';
+
+export default function BannerManagement() {
+  const navigate = useNavigate();
+
+  const [banners, setBanners] = useState(() => {
+    try {
+      const stored = localStorage.getItem('CUSTOM_BANNERS');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [bannerUrl, setBannerUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadMode, setUploadMode] = useState('url'); // 'url' ou 'file'
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [toast, setToast] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+    if (!isAdmin) {
+      navigate('/login', { replace: true });
+    }
+  }, [navigate]);
+
+  function showToast(msg) {
+    setToast(msg);
+    setTimeout(() => setToast(''), 3000);
+  }
+
+  function toggleSidebar() {
+    setSidebarOpen((prev) => !prev);
+  }
+
+  function handleLogout() {
+    removeAuthUser();
+    navigate('/admin-login', { replace: true });
+  }
+
+  function handlePreview() {
+    if (uploadMode === 'url') {
+      if (!bannerUrl.trim()) {
+        showToast('❌ Insira uma URL válida');
+        return;
+      }
+      setPreviewUrl(bannerUrl.trim());
+    } else if (uploadMode === 'file') {
+      if (!selectedFile) {
+        showToast('❌ Selecione um arquivo');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  }
+
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) {
+      // Validar se é imagem
+      if (!file.type.startsWith('image/')) {
+        showToast('❌ Selecione apenas arquivos de imagem');
+        e.target.value = '';
+        return;
+      }
+      // Validar tamanho (máx 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('❌ Imagem muito grande. Máximo 5MB');
+        e.target.value = '';
+        return;
+      }
+      setSelectedFile(file);
+    }
+  }
+
+  function handleAddBanner(e) {
+    e.preventDefault();
+
+    let bannerData;
+
+    if (uploadMode === 'url') {
+      if (!bannerUrl.trim()) {
+        showToast('❌ Insira uma URL de imagem');
+        return;
+      }
+
+      // Validação básica de URL
+      try {
+        new URL(bannerUrl.trim());
+      } catch {
+        showToast('❌ URL inválida');
+        return;
+      }
+
+      bannerData = {
+        id: Date.now(),
+        url: bannerUrl.trim(),
+        type: 'url',
+        addedAt: new Date().toISOString(),
+      };
+    } else {
+      // Upload de arquivo local
+      if (!selectedFile) {
+        showToast('❌ Selecione um arquivo');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newBanner = {
+          id: Date.now(),
+          url: reader.result, // base64
+          type: 'file',
+          fileName: selectedFile.name,
+          addedAt: new Date().toISOString(),
+        };
+
+        const updatedBanners = [...banners, newBanner];
+        setBanners(updatedBanners);
+        localStorage.setItem('CUSTOM_BANNERS', JSON.stringify(updatedBanners));
+
+        setSelectedFile(null);
+        setPreviewUrl('');
+        showToast('✅ Banner adicionado com sucesso');
+
+        // Reset file input
+        document.getElementById('banner-file').value = '';
+      };
+      reader.readAsDataURL(selectedFile);
+      return;
+    }
+
+    const updatedBanners = [...banners, bannerData];
+    setBanners(updatedBanners);
+    localStorage.setItem('CUSTOM_BANNERS', JSON.stringify(updatedBanners));
+
+    setBannerUrl('');
+    setPreviewUrl('');
+    showToast('✅ Banner adicionado com sucesso');
+  }
+
+  function handleDeleteBanner(bannerId) {
+    if (!confirm('Tem certeza que deseja excluir este banner?')) return;
+
+    const updatedBanners = banners.filter((b) => b.id !== bannerId);
+    setBanners(updatedBanners);
+    localStorage.setItem('CUSTOM_BANNERS', JSON.stringify(updatedBanners));
+    showToast('✅ Banner excluído');
+  }
+
+  function handleImageError(e) {
+    e.target.src =
+      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="400"%3E%3Crect fill="%23333" width="800" height="400"/%3E%3Ctext fill="%23fff" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle" font-size="24"%3EImagem não encontrada%3C/text%3E%3C/svg%3E';
+  }
+
+  function formatDate(isoString) {
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return 'Data inválida';
+    }
+  }
+
+  return (
+    <div className="ba-dashboard">
+      {toast && <Toast message={toast} />}
+
+      <Topbar
+        onToggleSidebar={toggleSidebar}
+        onLogout={handleLogout}
+        simpleMode={true}
+      />
+
+      <main className="ba-main">
+        <div className="ba-layout">
+          <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
+            <AdminSidebar
+              isOpen={sidebarOpen}
+              onNavigateToSection={(section) => navigate('/admin')}
+              onToast={showToast}
+            />
+          </aside>
+
+          <div className="ba-content">
+            <div className="ba-admin-container">
+              <h1 className="ba-admin-title">Gerenciar Banners</h1>
+
+              {/* Formulário para adicionar banner */}
+              <div className="ba-admin-section">
+                <h2 className="ba-section-title">Adicionar Novo Banner</h2>
+
+                {/* Seletor de modo */}
+                <div className="ba-upload-mode-selector">
+                  <button
+                    type="button"
+                    className={`ba-mode-btn ${
+                      uploadMode === 'url' ? 'active' : ''
+                    }`}
+                    onClick={() => setUploadMode('url')}
+                  >
+                    🔗 URL
+                  </button>
+                  <button
+                    type="button"
+                    className={`ba-mode-btn ${
+                      uploadMode === 'file' ? 'active' : ''
+                    }`}
+                    onClick={() => setUploadMode('file')}
+                  >
+                    📁 Arquivo Local
+                  </button>
+                </div>
+
+                <form className="ba-admin-form" onSubmit={handleAddBanner}>
+                  {uploadMode === 'url' ? (
+                    <div className="ba-form-group">
+                      <label htmlFor="banner-url">
+                        URL da Imagem do Banner
+                      </label>
+                      <input
+                        id="banner-url"
+                        type="text"
+                        value={bannerUrl}
+                        onChange={(e) => setBannerUrl(e.target.value)}
+                        placeholder="https://exemplo.com/banner.jpg"
+                        autoComplete="off"
+                      />
+                      <small
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          marginTop: '0.5rem',
+                        }}
+                      >
+                        Recomendado: 1920x600px ou proporção 16:5
+                      </small>
+                    </div>
+                  ) : (
+                    <div className="ba-form-group">
+                      <label htmlFor="banner-file">Selecionar Imagem</label>
+                      <input
+                        id="banner-file"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileSelect}
+                        className="ba-file-input"
+                      />
+                      {selectedFile && (
+                        <div className="ba-file-info">
+                          <span>📎 {selectedFile.name}</span>
+                          <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+                            {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                          </span>
+                        </div>
+                      )}
+                      <small
+                        style={{
+                          color: 'rgba(255,255,255,0.6)',
+                          marginTop: '0.5rem',
+                        }}
+                      >
+                        Formatos: JPG, PNG, GIF, WEBP | Máximo: 5MB
+                      </small>
+                    </div>
+                  )}
+
+                  <div className="ba-form-actions">
+                    <button
+                      type="button"
+                      className="ba-btn secondary"
+                      onClick={handlePreview}
+                    >
+                      👁️ Visualizar
+                    </button>
+                    <button type="submit" className="ba-btn primary">
+                      ➕ Adicionar Banner
+                    </button>
+                  </div>
+                </form>
+
+                {/* Preview do banner */}
+                {previewUrl && (
+                  <div className="ba-banner-preview">
+                    <h3 style={{ color: '#b3e5fc', marginBottom: '1rem' }}>
+                      Prévia do Banner:
+                    </h3>
+                    <div className="ba-preview-container">
+                      <img
+                        src={previewUrl}
+                        alt="Preview do banner"
+                        onError={handleImageError}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Lista de banners */}
+              <div className="ba-admin-section">
+                <h2 className="ba-section-title">
+                  Banners Cadastrados ({banners.length})
+                </h2>
+
+                {banners.length === 0 ? (
+                  <div className="ba-empty-state">
+                    <p>Nenhum banner cadastrado ainda.</p>
+                    <p>
+                      Use o formulário acima para adicionar banners via URL ou
+                      arquivo local.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="ba-banners-grid">
+                    {banners.map((banner) => (
+                      <div key={banner.id} className="ba-banner-card">
+                        <div className="ba-banner-image">
+                          <img
+                            src={banner.url}
+                            alt={banner.fileName || `Banner ${banner.id}`}
+                            onError={handleImageError}
+                          />
+                        </div>
+                        <div className="ba-banner-info">
+                          <div className="ba-banner-url">
+                            <strong>
+                              {banner.type === 'file' ? 'Arquivo:' : 'URL:'}
+                            </strong>
+                            {banner.type === 'file' ? (
+                              <span className="ba-banner-filename">
+                                {banner.fileName}
+                              </span>
+                            ) : (
+                              <a
+                                href={banner.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="ba-banner-link"
+                              >
+                                {banner.url.length > 50
+                                  ? banner.url.substring(0, 50) + '...'
+                                  : banner.url}
+                              </a>
+                            )}
+                          </div>
+                          <div className="ba-banner-date">
+                            <strong>Adicionado em:</strong>{' '}
+                            {formatDate(banner.addedAt)}
+                          </div>
+                          <button
+                            className="ba-btn small danger"
+                            onClick={() => handleDeleteBanner(banner.id)}
+                          >
+                            🗑️ Excluir
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="ba-info-box">
+                <h3>ℹ️ Informações Importantes</h3>
+                <ul>
+                  <li>
+                    Os banners personalizados serão exibidos no carrossel do
+                    Dashboard
+                  </li>
+                  <li>
+                    Recomenda-se usar imagens com proporção 16:5 (ex:
+                    1920x600px)
+                  </li>
+                  <li>
+                    Você pode adicionar banners via URL ou upload de arquivo
+                    local
+                  </li>
+                  <li>Formatos suportados: JPG, PNG, GIF, WEBP (máx 5MB)</li>
+                  <li>
+                    Os banners serão exibidos automaticamente no carrossel do
+                    Dashboard
+                  </li>
+                  <li>
+                    Mantenha sempre pelo menos 1 banner cadastrado para melhor
+                    experiência
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

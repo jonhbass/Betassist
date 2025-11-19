@@ -9,6 +9,16 @@ import '../css/admin.css';
 
 export default function AdminManagement() {
   const navigate = useNavigate();
+
+  // Admin padrão do sistema (não pode ser excluído)
+  const DEFAULT_ADMIN = {
+    id: 'default-admin',
+    username: 'admin',
+    password: 'admin123',
+    isDefault: true,
+    createdAt: new Date().toISOString(),
+  };
+
   const [admins, setAdmins] = useState(() => {
     try {
       const stored = localStorage.getItem('ADMINS');
@@ -17,6 +27,9 @@ export default function AdminManagement() {
       return [];
     }
   });
+
+  // Adiciona admin padrão à lista para exibição
+  const allAdmins = [DEFAULT_ADMIN, ...admins];
   const [newAdminUsername, setNewAdminUsername] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
   const [toast, setToast] = useState('');
@@ -80,6 +93,12 @@ export default function AdminManagement() {
   }
 
   function handleDeleteAdmin(adminId) {
+    // Prevenir exclusão do admin padrão
+    if (adminId === 'default-admin') {
+      showToast('❌ O administrador padrão não pode ser excluído');
+      return;
+    }
+
     if (!confirm('Tem certeza que deseja excluir este administrador?')) return;
 
     const updatedAdmins = admins.filter((admin) => admin.id !== adminId);
@@ -164,38 +183,54 @@ export default function AdminManagement() {
               {/* Lista de administradores */}
               <div className="ba-admin-section">
                 <h2 className="ba-section-title">
-                  Administradores Cadastrados ({admins.length})
+                  Administradores Cadastrados ({allAdmins.length})
                 </h2>
 
-                {admins.length === 0 ? (
-                  <div className="ba-empty-state">
-                    <p>Nenhum administrador cadastrado ainda.</p>
-                    <p>
-                      Crie o primeiro administrador usando o formulário acima.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="ba-table-wrapper">
-                    <table className="ba-table">
-                      <thead>
-                        <tr>
-                          <th>Nome de Usuário</th>
-                          <th>Senha</th>
-                          <th>Criado em</th>
-                          <th>Ações</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {admins.map((admin) => (
-                          <tr key={admin.id}>
-                            <td>
-                              <strong>{admin.username}</strong>
-                            </td>
-                            <td>
-                              <code>{'•'.repeat(admin.password.length)}</code>
-                            </td>
-                            <td>{formatDate(admin.createdAt)}</td>
-                            <td>
+                <div className="ba-table-wrapper">
+                  <table className="ba-table">
+                    <thead>
+                      <tr>
+                        <th>Nome de Usuário</th>
+                        <th>Senha</th>
+                        <th>Criado em</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allAdmins.map((admin) => (
+                        <tr key={admin.id}>
+                          <td>
+                            <strong>{admin.username}</strong>
+                            {admin.isDefault && (
+                              <span
+                                style={{
+                                  marginLeft: '8px',
+                                  padding: '2px 8px',
+                                  backgroundColor: '#ffc107',
+                                  color: '#000',
+                                  borderRadius: '12px',
+                                  fontSize: '11px',
+                                  fontWeight: 'bold',
+                                }}
+                              >
+                                PADRÃO
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            <code>{'•'.repeat(admin.password.length)}</code>
+                          </td>
+                          <td>
+                            {admin.isDefault
+                              ? '—'
+                              : formatDate(admin.createdAt)}
+                          </td>
+                          <td>
+                            {admin.isDefault ? (
+                              <span style={{ color: '#999', fontSize: '13px' }}>
+                                🔒 Protegido
+                              </span>
+                            ) : (
                               <button
                                 className="ba-btn small danger"
                                 onClick={() => handleDeleteAdmin(admin.id)}
@@ -203,13 +238,13 @@ export default function AdminManagement() {
                               >
                                 🗑️ Excluir
                               </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
               <div className="ba-info-box">

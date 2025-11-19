@@ -210,88 +210,108 @@ export default function AdminDashboard() {
 
           <div className="ba-content" style={{ padding: '2rem' }}>
             {activeSection === 'create' && (
-              <section className="ba-admin-form">
-                <h3>Criar novo usuário</h3>
-                <form onSubmit={handleCreate}>
-                  <label>
-                    Usuário
-                    <input
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Senha
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </label>
-                  <button type="submit">Criar</button>
-                </form>
-              </section>
-            )}
+              <>
+                <section
+                  className="ba-admin-form"
+                  style={{
+                    borderLeft: '4px solid #3b82f6',
+                    paddingLeft: '1.5rem',
+                    marginBottom: '2rem',
+                  }}
+                >
+                  <h3>Criar novo usuário</h3>
+                  <form onSubmit={handleCreate}>
+                    <label>
+                      Usuário
+                      <input
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                      />
+                    </label>
+                    <label>
+                      Senha
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </label>
+                    <button type="submit">Criar</button>
+                  </form>
+                </section>
 
-            {activeSection === 'users' && (
-              <section className="ba-admin-list">
-                <h3>Usuários existentes</h3>
-                <ul>
-                  {users.map((u) => (
-                    <li key={u.username}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          gap: 12,
-                          alignItems: 'center',
-                        }}
-                      >
-                        <strong>{u.username}</strong>
-                        {editing === u.username ? (
-                          <>
-                            <input
-                              placeholder="Nova senha"
-                              value={editingPassword}
-                              onChange={(e) =>
-                                setEditingPassword(e.target.value)
-                              }
-                            />
-                            <button onClick={() => handleSaveEdit(u)}>
-                              Salvar
-                            </button>
-                            <button
-                              onClick={() => {
-                                setEditing(null);
-                                setEditingPassword('');
-                              }}
-                            >
-                              Cancelar
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => {
-                                setEditing(u.username);
-                                setEditingPassword('');
-                              }}
-                            >
-                              Editar senha
-                            </button>
-                            <button onClick={() => handleDelete(u)}>
-                              Remover
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+                <section
+                  className="ba-admin-list"
+                  style={{
+                    borderLeft: '4px solid #3b82f6',
+                    paddingLeft: '1.5rem',
+                  }}
+                >
+                  <h3>Usuários existentes</h3>
+                  <ul>
+                    {users.map((u) => (
+                      <li key={u.username}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: 12,
+                            alignItems: 'center',
+                          }}
+                        >
+                          <strong>{u.username}</strong>
+                          {editing === u.username ? (
+                            <>
+                              <input
+                                placeholder="Nova senha"
+                                value={editingPassword}
+                                onChange={(e) =>
+                                  setEditingPassword(e.target.value)
+                                }
+                              />
+                              <button onClick={() => handleSaveEdit(u)}>
+                                Salvar
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setEditing(null);
+                                  setEditingPassword('');
+                                }}
+                              >
+                                Cancelar
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setEditing(u.username);
+                                  setEditingPassword('');
+                                }}
+                              >
+                                Editar senha
+                              </button>
+                              <button onClick={() => handleDelete(u)}>
+                                Remover
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </>
             )}
 
             {activeSection === 'support' && (
-              <section style={{ width: '100%', maxWidth: '600px' }}>
+              <section
+                style={{
+                  width: '100%',
+                  maxWidth: '1200px',
+                  borderLeft: '4px solid #3b82f6',
+                  paddingLeft: '1.5rem',
+                }}
+              >
                 <AdminSupport />
               </section>
             )}

@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/LoadChips.css';
 
+const DEFAULT_CBU = '0000133100000000537023';
+
 export default function LoadChips() {
   const navigate = useNavigate();
   const [amount, setAmount] = useState('');
   const [holder, setHolder] = useState('');
+  const [cbu, setCbu] = useState(DEFAULT_CBU);
+
+  useEffect(() => {
+    // Carregar CBU do localStorage ou usar padrão
+    const storedCbu = localStorage.getItem('DEPOSIT_CBU');
+    if (storedCbu) {
+      setCbu(storedCbu);
+    }
+  }, []);
 
   const handleBack = () => {
     navigate(-1);
@@ -44,7 +55,7 @@ export default function LoadChips() {
             siguiente CBU:
           </p>
 
-          <div className="ba-cbu-box">📄 0000133100000000537023</div>
+          <div className="ba-cbu-box">📄 {cbu}</div>
 
           <p className="ba-load-instructions">
             Luego debes informar el importe que transferiste a continuación, el

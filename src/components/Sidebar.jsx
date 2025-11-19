@@ -24,7 +24,7 @@ export default function Sidebar({
 
   function handlePlay() {
     window.open('https://www.pulpobet.net/es/?pc=true', '_blank');
-    onToast('Abrindo CLUBUNO.NET');
+    onToast('Abrindo PULPOBET.NET');
   }
 
   function handleLoad() {
@@ -96,12 +96,12 @@ export default function Sidebar({
           <button
             className="ba-action highlight"
             onClick={handlePlay}
-            title={!isOpen ? 'Ir a jugar CLUBUNO.NET' : ''}
+            title={!isOpen ? 'Ir a jugar PULPOBET.NET' : ''}
           >
             <span className="ba-action-icon">🎮</span>
             {isOpen && (
               <span className="ba-action-text">
-                Ir a jugar <strong>CLUBUNO.NET</strong>
+                jugar <strong>PULPOBET.NET</strong>
               </span>
             )}
           </button>

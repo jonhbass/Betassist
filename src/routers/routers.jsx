@@ -4,6 +4,8 @@ import Dashboard from '../pages/Dashboard';
 import AdminLogin from '../pages/AdminLogin';
 import AdminDashboard from '../pages/AdminDashboard';
 import AdminManagement from '../pages/AdminManagement';
+import BannerManagement from '../pages/BannerManagement';
+import CbuManagement from '../pages/CbuManagement';
 import Support from '../pages/Support';
 import LoadChips from '../pages/LoadChips';
 import WithdrawChips from '../pages/WithdrawChips';
@@ -22,6 +24,8 @@ export function Routers() {
       <Route path="/admin-login" element={<AdminLogin />} />
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/admin/manage-admins" element={<AdminManagement />} />
+      <Route path="/admin/manage-banners" element={<BannerManagement />} />
+      <Route path="/admin/manage-cbu" element={<CbuManagement />} />
       <Route path="/admin/deposit-requests" element={<DepositRequests />} />
       <Route path="/support" element={<Support />} />
     </Routes>

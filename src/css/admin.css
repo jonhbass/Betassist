@@ -308,3 +308,246 @@
     padding: 1rem;
   }
 }
+
+/* Banner Management Styles */
+.ba-form-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.ba-btn.secondary {
+  background: linear-gradient(135deg, #455a64 0%, #263238 100%);
+  color: #fff;
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ba-btn.secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(69, 90, 100, 0.4);
+}
+
+.ba-banner-preview {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ba-preview-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.ba-preview-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.ba-banners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.ba-banner-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ba-banner-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(11, 92, 192, 0.2);
+  border-color: rgba(11, 92, 192, 0.3);
+}
+
+.ba-banner-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.ba-banner-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.ba-banner-card:hover .ba-banner-image img {
+  transform: scale(1.05);
+}
+
+.ba-banner-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ba-banner-url,
+.ba-banner-date {
+  color: #e9f6ff;
+  font-size: 0.9rem;
+}
+
+.ba-banner-url strong,
+.ba-banner-date strong {
+  color: #b3e5fc;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.ba-banner-link {
+  color: #64b5f6;
+  text-decoration: none;
+  word-break: break-all;
+  transition: color 0.2s ease;
+}
+
+.ba-banner-link:hover {
+  color: #90caf9;
+  text-decoration: underline;
+}
+
+/* Upload Mode Selector */
+.ba-upload-mode-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.ba-mode-btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ba-mode-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(11, 92, 192, 0.4);
+}
+
+.ba-mode-btn.active {
+  background: linear-gradient(135deg, #0b5cc0 0%, #084a9a 100%);
+  border-color: #0b5cc0;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* File Input Styles */
+.ba-file-input {
+  padding: 0.75rem !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 2px dashed rgba(255, 255, 255, 0.2) !important;
+  cursor: pointer !important;
+}
+
+.ba-file-input:hover {
+  border-color: rgba(11, 92, 192, 0.5) !important;
+  background: rgba(11, 92, 192, 0.05) !important;
+}
+
+.ba-file-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(67, 233, 123, 0.1);
+  border: 1px solid rgba(67, 233, 123, 0.3);
+  border-radius: 6px;
+  color: #43e97b;
+}
+
+/* Banner Card Default Style */
+.ba-banner-card.default {
+  border-color: rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.05);
+}
+
+.ba-banner-card.default:hover {
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.15);
+}
+
+.ba-banner-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(251, 191, 36, 0.9);
+  color: #000;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ba-banner-image {
+  position: relative;
+}
+
+.ba-banner-name {
+  color: #fbbf24;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.ba-banner-type {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+.ba-banner-filename {
+  color: #64b5f6;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .ba-banners-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ba-form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ba-form-actions button {
+    width: 100%;
+  }
+
+  .ba-upload-mode-selector {
+    flex-direction: column;
+  }
+}

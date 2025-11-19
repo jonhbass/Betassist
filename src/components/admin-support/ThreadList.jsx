@@ -10,7 +10,7 @@ export default function ThreadList({
   return (
     <div
       className="ba-admin-threads"
-      style={{ width: 280, maxHeight: 520, overflow: 'auto' }}
+      style={{ width: 240, maxHeight: 600, overflow: 'auto' }}
     >
       {threads.length === 0 && <div className="ba-muted">Nenhuma mensagem</div>}
       {threads.map((t) => {
@@ -31,8 +31,8 @@ export default function ThreadList({
             }`}
             style={{
               display: 'flex',
-              gap: 12,
-              padding: 10,
+              gap: 8,
+              padding: '8px 10px',
               alignItems: 'center',
               cursor: 'pointer',
               borderBottom: '1px solid rgba(255,255,255,0.03)',
@@ -43,7 +43,7 @@ export default function ThreadList({
             <div
               style={{
                 display: 'flex',
-                gap: 12,
+                gap: 8,
                 alignItems: 'center',
                 flex: 1,
               }}
@@ -51,15 +51,16 @@ export default function ThreadList({
               <div
                 className="ba-thread-avatar"
                 style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 20,
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
                   background: avatarBg,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 700,
-                  flex: '0 0 40px',
+                  fontSize: 14,
+                  flex: '0 0 32px',
                   position: 'relative',
                   color: avatarColor,
                   border: isExternalVisitor
@@ -79,7 +80,8 @@ export default function ThreadList({
               </div>
               <div
                 style={{
-                  fontWeight: 700,
+                  fontWeight: 600,
+                  fontSize: 14,
                   color: isExternalVisitor ? '#fb923c' : '#fff',
                 }}
               >
