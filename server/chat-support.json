@@ -119,5 +119,13 @@
     "thread": "usuario1",
     "time": "2025-11-19T02:00:42.446Z",
     "handled": true
+  },
+  {
+    "id": 1763550832165,
+    "text": "mandddaaa2",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-19T11:13:52.165Z",
+    "handled": false
   }
 ]
