@@ -1,0 +1,279 @@
+.ba-requests-panel-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 50%, #0b1e47 0%, #040b1c 100%);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ba-requests-panel-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.ba-requests-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.ba-btn-back {
+  position: absolute;
+  left: 0;
+  background-color: #ffcc00;
+  color: #000;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.ba-btn-back:hover {
+  background-color: #e6b800;
+}
+
+.ba-requests-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ba-filter-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.ba-filter-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.ba-filter-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.ba-filter-btn.primary {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+.ba-filter-btn.secondary {
+  background-color: #1e3a8a;
+  color: #fff;
+}
+
+.ba-filter-btn.primary:hover {
+  background-color: #e6b800;
+}
+
+.ba-filter-btn.secondary:hover {
+  background-color: #2a4db0;
+}
+
+.ba-filter-btn.active {
+  box-shadow: 0 0 0 2px #ffcc00;
+}
+
+.ba-requests-table-container {
+  width: 100%;
+  background-color: rgba(13, 28, 66, 0.8);
+  border: 1px solid #1e3a8a;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.ba-requests-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ba-requests-table thead {
+  background-color: rgba(30, 58, 138, 0.5);
+}
+
+.ba-requests-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #1e3a8a;
+}
+
+.ba-requests-table tbody tr {
+  border-bottom: 1px solid rgba(30, 58, 138, 0.3);
+  transition: background 0.2s;
+}
+
+.ba-requests-table tbody tr:hover {
+  background-color: rgba(30, 58, 138, 0.2);
+}
+
+.ba-requests-table td {
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+.ba-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.ba-status-indicator.success {
+  background-color: #4ade80;
+}
+
+.ba-status-indicator.pending {
+  background-color: #fbbf24;
+}
+
+.ba-status-indicator.rejected {
+  background-color: #ef4444;
+}
+
+.ba-status-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.ba-status-badge.success {
+  background-color: #4ade80;
+  color: #000;
+}
+
+.ba-status-badge.rejected {
+  background-color: #6b7280;
+  color: #fff;
+}
+
+.ba-action-btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+  transition: all 0.2s;
+}
+
+.ba-action-btn.success {
+  background-color: #4ade80;
+  color: #000;
+}
+
+.ba-action-btn.danger {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.ba-action-btn:hover {
+  opacity: 0.8;
+}
+
+.ba-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: rgba(30, 58, 138, 0.3);
+}
+
+.ba-pagination-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.ba-pagination-btn {
+  padding: 0.5rem 1rem;
+  background-color: #1e3a8a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.ba-pagination-btn:hover:not(:disabled) {
+  background-color: #2a4db0;
+}
+
+.ba-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ba-pagination-info {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.ba-items-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ba-items-select {
+  padding: 0.5rem;
+  background-color: #1e3a8a;
+  color: #fff;
+  border: 1px solid #2a4db0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .ba-requests-table {
+    font-size: 0.8rem;
+  }
+
+  .ba-requests-table th,
+  .ba-requests-table td {
+    padding: 0.5rem;
+  }
+
+  .ba-filter-row {
+    flex-direction: column;
+  }
+
+  .ba-filter-btn {
+    width: 100%;
+  }
+}

@@ -29,11 +29,11 @@ export default function Sidebar({
   }
 
   function handleWithdraw() {
-    onOpenModal('withdraw');
+    navigate('/withdraw-chips');
   }
 
   function handleHistory() {
-    onOpenModal('history');
+    navigate('/requests');
   }
 
   return (
