@@ -111,5 +111,13 @@
     "seenBy": [
       "usuario1"
     ]
+  },
+  {
+    "id": 1763517642446,
+    "text": "plaa",
+    "from": "usuario1",
+    "thread": "usuario1",
+    "time": "2025-11-19T02:00:42.446Z",
+    "handled": true
   }
 ]
