@@ -57,6 +57,8 @@ export default function Login() {
             }
           );
           if (!resp.ok) throw new Error('invalid');
+          sessionStorage.removeItem('isAdmin'); // Garante que usuário normal não tenha flag de admin
+          sessionStorage.removeItem('adminUsername');
           setAuthUser(username);
           navigate('/home');
         } catch (err) {
@@ -69,6 +71,8 @@ export default function Login() {
 
     if (ok) {
       clearVisitorId(); // Limpa o ID de visitante após login bem-sucedido
+      sessionStorage.removeItem('isAdmin'); // Garante que usuário normal não tenha flag de admin
+      sessionStorage.removeItem('adminUsername');
       setAuthUser(username);
       navigate('/home');
     } else {

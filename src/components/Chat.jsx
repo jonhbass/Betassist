@@ -4,11 +4,13 @@ import { getAuthUser } from '../utils/auth';
 import { io as ioClient } from 'socket.io-client';
 import '../css/chat.css';
 
-export default function Chat() {
+export default function Chat({ enabled = true }) {
   const getCurrentUser = () => getAuthUser() || 'Guest';
+  const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
   const USE_SOCKET =
-    import.meta.env.VITE_USE_SOCKET === 'true' ||
-    import.meta.env.VITE_USE_API === 'true';
+    (import.meta.env.VITE_USE_SOCKET === 'true' ||
+      import.meta.env.VITE_USE_API === 'true') &&
+    enabled;
 
   const [messages, setMessages] = useState(() => {
     try {
@@ -133,6 +135,18 @@ export default function Chat() {
         if (typingTimeout.current) clearTimeout(typingTimeout.current);
         typingTimeout.current = setTimeout(() => setTyping(''), 2000);
       });
+
+      socket.on('chat:cleared', () => {
+        if (!mounted) return;
+        console.log('Chat limpo globalmente pelo admin');
+        setMessages([]);
+        try {
+          localStorage.removeItem('CHAT_MESSAGES');
+        } catch (e) {
+          void e;
+        }
+      });
+
       // reflect connection state
       try {
         setSocketState(socket && socket.connected ? 'connected' : 'connecting');
@@ -146,6 +160,16 @@ export default function Chat() {
       if (socketRef.current) socketRef.current.disconnect();
     };
   }, [USE_SOCKET]);
+
+  // Disconnect socket when chat is disabled
+  useEffect(() => {
+    if (!enabled && socketRef.current) {
+      console.log('Chat disabled - disconnecting socket');
+      socketRef.current.disconnect();
+      socketRef.current = null;
+      setSocketState('disconnected');
+    }
+  }, [enabled]);
 
   // proactively ensure a socket connection when the component mounts so we receive
   // messages in real time without requiring the user to type or refresh.
@@ -236,20 +260,34 @@ export default function Chat() {
   }
 
   function clearChat() {
-    if (!confirm('Limpar histórico do chat local?')) return;
+    const confirmMsg = isAdmin
+      ? 'Limpar histórico do chat para TODOS os usuários?'
+      : 'Limpar histórico do chat local?';
+
+    if (!confirm(confirmMsg)) return;
+
     setMessages([]);
+
     try {
       localStorage.removeItem('CHAT_MESSAGES');
     } catch (e) {
       void e;
     }
-    if (USE_SOCKET && socketRef.current)
-      socketRef.current.emit('chat:main-message', {
-        id: Date.now(),
-        text: `${getCurrentUser()} limpou o chat`,
-        from: 'system',
-        time: new Date().toISOString(),
-      });
+
+    if (USE_SOCKET && socketRef.current) {
+      if (isAdmin) {
+        // Admin limpa para todos
+        socketRef.current.emit('chat:clear-global');
+      } else {
+        // Usuário normal apenas notifica que limpou localmente
+        socketRef.current.emit('chat:main-message', {
+          id: Date.now(),
+          text: `${getCurrentUser()} limpou o chat local`,
+          from: 'system',
+          time: new Date().toISOString(),
+        });
+      }
+    }
   }
 
   return (
@@ -258,11 +296,34 @@ export default function Chat() {
         <div className="ba-chat-title">Chat</div>
         <div className="ba-chat-controls">
           <div className={`ba-socket-badge ${socketState}`}>{socketState}</div>
-          <button className="ba-btn small" onClick={clearChat} type="button">
-            Limpar
-          </button>
+          {!enabled && (
+            <div className="ba-socket-badge disabled">desativado</div>
+          )}
+          {isAdmin && (
+            <button className="ba-btn small" onClick={clearChat} type="button">
+              Limpar
+            </button>
+          )}
         </div>
       </div>
+
+      {!enabled && (
+        <div
+          style={{
+            padding: '2rem',
+            textAlign: 'center',
+            color: '#fbbf24',
+            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+            border: '1px solid rgba(251, 191, 36, 0.3)',
+            borderRadius: '8px',
+            margin: '1rem',
+          }}
+        >
+          <p style={{ margin: 0, fontWeight: 'bold' }}>
+            ⚠️ Chat desativado pelo administrador
+          </p>
+        </div>
+      )}
 
       <div className="ba-chat-list" ref={listRef}>
         {messages.map((m) => {
@@ -286,7 +347,7 @@ export default function Chat() {
         })}
       </div>
 
-      {typing && (
+      {typing && enabled && (
         <div className="ba-chat-typing">{typing} está digitando...</div>
       )}
 
@@ -294,9 +355,12 @@ export default function Chat() {
         <input
           value={text}
           onChange={onTyping}
-          placeholder={`Escreva uma mensagem...`}
+          placeholder={enabled ? `Escreva uma mensagem...` : 'Chat desativado'}
+          disabled={!enabled}
         />
-        <button type="submit">Enviar</button>
+        <button type="submit" disabled={!enabled}>
+          Enviar
+        </button>
       </form>
     </div>
   );

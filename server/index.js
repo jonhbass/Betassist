@@ -190,6 +190,29 @@ io.on('connection', (socket) => {
   socket.on('chat:typing', (payload) => {
     socket.broadcast.emit('chat:typing', payload);
   });
+
+  socket.on('chat:toggle-global', (data) => {
+    console.log('Admin alterou estado do chat globalmente:', data.enabled);
+    io.emit('chat:state-changed', { enabled: data.enabled });
+  });
+
+  socket.on('chat:disable-global', () => {
+    console.log('Admin desativou o chat globalmente');
+    io.emit('chat:disabled');
+  });
+
+  socket.on('chat:clear-global', () => {
+    console.log('Admin limpou o chat globalmente');
+    // Limpa o histórico no servidor
+    try {
+      writeChatMain([]);
+      console.log('Histórico do chat principal limpo no servidor');
+    } catch (e) {
+      console.error('Erro ao limpar chat no servidor:', e);
+    }
+    // Notifica todos os clientes para limparem
+    io.emit('chat:cleared');
+  });
 });
 
 // Persist a support message via REST and broadcast to connected sockets

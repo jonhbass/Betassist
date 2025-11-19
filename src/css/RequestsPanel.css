@@ -175,6 +175,11 @@
   color: #000;
 }
 
+.ba-status-badge.pending {
+  background-color: #fbbf24;
+  color: #000;
+}
+
 .ba-status-badge.rejected {
   background-color: #6b7280;
   color: #fff;

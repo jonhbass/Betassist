@@ -126,6 +126,22 @@
     "from": "mila",
     "thread": "mila",
     "time": "2025-11-19T11:13:52.165Z",
-    "handled": false
+    "handled": true
+  },
+  {
+    "id": 1763556420930,
+    "text": "suporteee",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-19T12:47:00.930Z",
+    "handled": true
+  },
+  {
+    "id": 1763556450531,
+    "text": "suporteee",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-19T12:47:30.531Z",
+    "handled": true
   }
 ]

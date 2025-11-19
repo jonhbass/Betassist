@@ -24,6 +24,12 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [toast, setToast] = useState('');
   const [modal, setModal] = useState(null);
+  const [chatEnabled, setChatEnabled] = useState(() => {
+    const stored = localStorage.getItem('chatEnabled');
+    return stored === null ? true : stored === 'true';
+  });
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [socket, setSocket] = useState(null);
 
   function toggleSidebar() {
     setSidebarOpen((s) => !s);
@@ -42,6 +48,27 @@ export default function Dashboard() {
   useEffect(() => {
     const u = getAuthUser();
     if (u) setUser(u);
+
+    // SEMPRE re-verificar status de admin para evitar que usuário normal veja opções de admin
+    const adminStatus = sessionStorage.getItem('isAdmin') === 'true';
+    setIsAdmin(adminStatus);
+
+    // Se não for admin, garantir que não há flag de admin
+    if (!adminStatus) {
+      sessionStorage.removeItem('isAdmin');
+    }
+  }, []);
+
+  // Re-verificar isAdmin sempre que o componente ganhar foco (usuário voltar para a aba)
+  useEffect(() => {
+    const handleFocus = () => {
+      const adminStatus = sessionStorage.getItem('isAdmin') === 'true';
+      setIsAdmin(adminStatus);
+      console.log('Dashboard focus - isAdmin:', adminStatus);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   useEffect(() => {
@@ -49,9 +76,61 @@ export default function Dashboard() {
     console.log('Dashboard mounted', { user: getAuthUser() });
   }, []);
 
+  // Listener para sincronizar estado do chat globalmente via socket
+  useEffect(() => {
+    const USE_SOCKET =
+      import.meta.env.VITE_USE_SOCKET === 'true' ||
+      import.meta.env.VITE_USE_API === 'true';
+
+    if (!USE_SOCKET) return;
+
+    let socketInstance;
+    import('socket.io-client').then((mod) => {
+      const ioFn = mod.io || mod.default || mod;
+      const url = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+      socketInstance = ioFn(url);
+      setSocket(socketInstance);
+
+      socketInstance.on('connect', () => {
+        console.log('Dashboard socket conectado:', socketInstance.id);
+      });
+
+      socketInstance.on('chat:state-changed', (data) => {
+        console.log('Chat estado alterado globalmente:', data.enabled);
+        localStorage.setItem('chatEnabled', String(data.enabled));
+        setChatEnabled(data.enabled);
+        showToast(
+          data.enabled
+            ? 'Chat ativado pelo admin'
+            : 'Chat desativado pelo admin'
+        );
+      });
+    });
+
+    return () => {
+      if (socketInstance) {
+        socketInstance.disconnect();
+        setSocket(null);
+      }
+    };
+  }, []);
+
   function handleLogout() {
     removeAuthUser();
     navigate('/login', { replace: true });
+  }
+
+  function toggleChat() {
+    const newState = !chatEnabled;
+    setChatEnabled(newState);
+    localStorage.setItem('chatEnabled', String(newState));
+    showToast(newState ? 'Chat ativado' : 'Chat desativado');
+
+    // Admin notifica todos os usuários sobre mudança de estado do chat
+    if (isAdmin && socket) {
+      console.log('Emitindo chat:toggle-global com enabled:', newState);
+      socket.emit('chat:toggle-global', { enabled: newState });
+    }
   }
 
   return (
@@ -70,6 +149,9 @@ export default function Dashboard() {
               user={user}
               onToast={showToast}
               onOpenModal={setModal}
+              isAdmin={isAdmin}
+              onToggleChat={isAdmin ? toggleChat : undefined}
+              chatEnabled={chatEnabled}
             />
           </aside>
 
@@ -81,7 +163,7 @@ export default function Dashboard() {
             </h1>
 
             <div className="ba-chat">
-              <Chat />
+              <Chat enabled={chatEnabled} />
             </div>
           </div>
         </div>

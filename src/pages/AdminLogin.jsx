@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../css/Login.css';
 
 export default function AdminLogin() {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -13,12 +14,34 @@ export default function AdminLogin() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
+    // Primeiro verifica a senha master
     if (password === ADMIN_PASSWORD) {
-      localStorage.setItem('isAdmin', 'true');
+      sessionStorage.setItem('isAdmin', 'true');
       navigate('/admin');
-    } else {
-      setError('Senha de administrador inválida');
+      return;
     }
+
+    // Se não for a senha master, verifica na lista de admins cadastrados
+    try {
+      const storedAdmins = localStorage.getItem('ADMINS');
+      if (storedAdmins) {
+        const admins = JSON.parse(storedAdmins);
+        const admin = admins.find(
+          (a) => a.username === username && a.password === password
+        );
+
+        if (admin) {
+          sessionStorage.setItem('isAdmin', 'true');
+          sessionStorage.setItem('adminUsername', admin.username);
+          navigate('/admin');
+          return;
+        }
+      }
+    } catch (err) {
+      console.error('Erro ao verificar admins:', err);
+    }
+    setError('Credenciais de administrador inválidas');
   }
 
   return (
@@ -30,12 +53,24 @@ export default function AdminLogin() {
         </div>
 
         <label>
+          Nome de usuário (opcional)
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Digite seu nome de usuário"
+            autoComplete="username"
+          />
+        </label>
+
+        <label>
           Senha de administrador
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Digite a senha de admin"
+            autoComplete="current-password"
           />
         </label>
 

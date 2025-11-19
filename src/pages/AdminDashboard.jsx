@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import '../css/Dashboard.css';
 import '../css/admin.css';
 import AdminSupport from '../components/AdminSupport';
+import AdminSidebar from '../components/AdminSidebar';
+import Topbar from '../components/Topbar';
+import Footer from '../components/Footer';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -12,6 +15,8 @@ export default function AdminDashboard() {
   const [toast, setToast] = useState('');
   const [editing, setEditing] = useState(null);
   const [editingPassword, setEditingPassword] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeSection, setActiveSection] = useState('create');
 
   const USE_API = import.meta.env.VITE_USE_API === 'true';
 
@@ -44,7 +49,7 @@ export default function AdminDashboard() {
   }, [USE_API, showToast]);
 
   useEffect(() => {
-    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
     if (!isAdmin) {
       navigate('/admin-login');
       return;
@@ -171,89 +176,131 @@ export default function AdminDashboard() {
   }
 
   function handleLogout() {
-    localStorage.removeItem('isAdmin');
+    sessionStorage.removeItem('isAdmin');
+    sessionStorage.removeItem('adminUsername');
     navigate('/login');
   }
 
+  function toggleSidebar() {
+    setSidebarOpen((s) => !s);
+  }
+
+  function handleNavigateToSection(section) {
+    setActiveSection(section);
+  }
+
   return (
-    <div className="ba-admin-wrap">
-      <header className="ba-admin-header">
-        <h2>Painel de Administração</h2>
-        <div>
-          <button onClick={handleLogout}>Sair Admin</button>
+    <div className="ba-dashboard">
+      <Topbar
+        onToggleSidebar={toggleSidebar}
+        onLogout={handleLogout}
+        onMessageClick={() => showToast('Mensagens admin (simulado)')}
+        onNotifyClick={() => showToast('Notificações admin (simulado)')}
+      />
+
+      <main className="ba-main">
+        <div className="ba-layout">
+          <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
+            <AdminSidebar
+              isOpen={sidebarOpen}
+              onNavigateToSection={handleNavigateToSection}
+              onToast={showToast}
+            />
+          </aside>
+
+          <div className="ba-content" style={{ padding: '2rem' }}>
+            {activeSection === 'create' && (
+              <section className="ba-admin-form">
+                <h3>Criar novo usuário</h3>
+                <form onSubmit={handleCreate}>
+                  <label>
+                    Usuário
+                    <input
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Senha
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </label>
+                  <button type="submit">Criar</button>
+                </form>
+              </section>
+            )}
+
+            {activeSection === 'users' && (
+              <section className="ba-admin-list">
+                <h3>Usuários existentes</h3>
+                <ul>
+                  {users.map((u) => (
+                    <li key={u.username}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: 12,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <strong>{u.username}</strong>
+                        {editing === u.username ? (
+                          <>
+                            <input
+                              placeholder="Nova senha"
+                              value={editingPassword}
+                              onChange={(e) =>
+                                setEditingPassword(e.target.value)
+                              }
+                            />
+                            <button onClick={() => handleSaveEdit(u)}>
+                              Salvar
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditing(null);
+                                setEditingPassword('');
+                              }}
+                            >
+                              Cancelar
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => {
+                                setEditing(u.username);
+                                setEditingPassword('');
+                              }}
+                            >
+                              Editar senha
+                            </button>
+                            <button onClick={() => handleDelete(u)}>
+                              Remover
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {activeSection === 'support' && (
+              <section style={{ width: '100%', maxWidth: '600px' }}>
+                <AdminSupport />
+              </section>
+            )}
+          </div>
         </div>
-      </header>
-
-      <main className="ba-admin-main">
-        <section className="ba-admin-form">
-          <h3>Criar novo usuário</h3>
-          <form onSubmit={handleCreate}>
-            <label>
-              Usuário
-              <input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </label>
-            <label>
-              Senha
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </label>
-            <button type="submit">Criar</button>
-          </form>
-        </section>
-
-        <section style={{ width: '420px' }}>
-          <AdminSupport />
-        </section>
-
-        <section className="ba-admin-list">
-          <h3>Usuários existentes</h3>
-          <ul>
-            {users.map((u) => (
-              <li key={u.username}>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                  <strong>{u.username}</strong>
-                  {editing === u.username ? (
-                    <>
-                      <input
-                        placeholder="Nova senha"
-                        value={editingPassword}
-                        onChange={(e) => setEditingPassword(e.target.value)}
-                      />
-                      <button onClick={() => handleSaveEdit(u)}>Salvar</button>
-                      <button
-                        onClick={() => {
-                          setEditing(null);
-                          setEditingPassword('');
-                        }}
-                      >
-                        Cancelar
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => {
-                          setEditing(u.username);
-                          setEditingPassword('');
-                        }}
-                      >
-                        Editar senha
-                      </button>
-                      <button onClick={() => handleDelete(u)}>Remover</button>
-                    </>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
       </main>
+
+      <Footer />
+
       {toast && (
         <div className="ba-toast" role="status">
           {toast}

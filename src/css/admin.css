@@ -114,3 +114,197 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* Admin Management Styles */
+.ba-admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.ba-admin-title {
+  color: #e9f6ff;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.ba-admin-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.ba-section-title {
+  color: #b3e5fc;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.ba-admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ba-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ba-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ba-form-group label {
+  color: #b3e5fc;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.ba-form-group input {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.ba-form-group input:focus {
+  outline: none;
+  border-color: rgba(11, 92, 192, 0.8);
+  background: rgba(11, 92, 192, 0.05);
+}
+
+.ba-btn.primary {
+  background: linear-gradient(135deg, #0b5cc0 0%, #084a9a 100%);
+  color: #fff;
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.ba-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(11, 92, 192, 0.4);
+}
+
+.ba-btn.danger {
+  background: linear-gradient(135deg, #c62828 0%, #8e0000 100%);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ba-btn.danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(198, 40, 40, 0.4);
+}
+
+.ba-table-wrapper {
+  overflow-x: auto;
+}
+
+.ba-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ba-table thead {
+  background: rgba(11, 92, 192, 0.15);
+}
+
+.ba-table th {
+  padding: 1rem;
+  text-align: left;
+  color: #b3e5fc;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.ba-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #e9f6ff;
+}
+
+.ba-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.ba-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ba-table code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: #fbbf24;
+}
+
+.ba-empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ba-empty-state p {
+  margin: 0.5rem 0;
+}
+
+.ba-info-box {
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #fbbf24;
+}
+
+.ba-info-box h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #fbbf24;
+}
+
+.ba-info-box ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.ba-info-box li {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .ba-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ba-table-wrapper {
+    overflow-x: scroll;
+  }
+
+  .ba-admin-container {
+    padding: 1rem;
+  }
+}
