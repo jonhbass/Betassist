@@ -95,7 +95,10 @@ export default function Login() {
         {error && <p className="login-error">{error}</p>}
         <div className="login-header">
           <img src={Icon} alt="StarWin Logo" className="header-icon" />
-          <h2>StarWin</h2>
+          <h2>
+            <span style={{ color: '#1ca3ff' }}>Star</span>
+            <span style={{ color: '#ffc107' }}>Win</span>
+          </h2>
         </div>
 
         <label>

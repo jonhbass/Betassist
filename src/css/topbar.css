@@ -11,7 +11,7 @@
 .ba-top-left {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0px;
 }
 
 /* Hover glow for icon and logo (light, appears on hover) */
@@ -33,6 +33,7 @@
   letter-spacing: 0.6px;
   display: inline-block;
   vertical-align: middle;
+  margin-left: -4px;
 }
 
 /* Menu Popup */

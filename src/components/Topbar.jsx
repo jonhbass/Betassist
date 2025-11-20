@@ -140,7 +140,10 @@ export default function Topbar({
     <header className="ba-topbar">
       <div className="ba-top-left">
         <img src={Icon} alt="StarWin Logo" className="header-icon" />
-        <div className="ba-logo">StarWin</div>
+        <div className="ba-logo">
+          <span style={{ color: '#1ca3ff' }}>Star</span>
+          <span style={{ color: '#ffc107' }}>Win</span>
+        </div>
       </div>
       {!simpleMode && (
         <div className="ba-top-actions">
