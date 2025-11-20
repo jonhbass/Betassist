@@ -11,6 +11,7 @@ export default function Sidebar({
   isAdmin = false,
   onToggleChat = () => {},
   chatEnabled = true,
+  onToggleSidebar = () => {},
 }) {
   const navigate = useNavigate();
 
@@ -46,6 +47,21 @@ export default function Sidebar({
   return (
     <nav className="ba-sidebar-nav" aria-label="Main">
       <ul className="ba-sidebar-list">
+        <li>
+          <button
+            className="ba-action ba-toggle-btn"
+            onClick={onToggleSidebar}
+            title={isOpen ? 'Retrair sidebar' : 'Expandir sidebar'}
+            aria-label="Toggle sidebar"
+          >
+            <span className="ba-action-icon">{isOpen ? '«' : '»'}</span>
+            {isOpen && (
+              <span className="ba-action-text">
+                {isOpen ? 'Retrair' : 'Expandir'}
+              </span>
+            )}
+          </button>
+        </li>
         {isAdmin && (
           <li>
             <button

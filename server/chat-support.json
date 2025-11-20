@@ -152,6 +152,9 @@
     "text": "olaaa",
     "from": "admin",
     "thread": "mila",
-    "time": "2025-11-19T22:46:16.502Z"
+    "time": "2025-11-19T22:46:16.502Z",
+    "seenBy": [
+      "mila"
+    ]
   }
 ]

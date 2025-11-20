@@ -4,30 +4,104 @@ import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/LoadChips.css';
 
-const DEFAULT_CBU = '0000133100000000537023';
-
 export default function LoadChips() {
   const navigate = useNavigate();
   const [amount, setAmount] = useState('');
   const [holder, setHolder] = useState('');
-  const [cbu, setCbu] = useState(DEFAULT_CBU);
+  const [cbu, setCbu] = useState('');
+  const [receiptFile, setReceiptFile] = useState(null);
+  const [receiptPreview, setReceiptPreview] = useState('');
 
   useEffect(() => {
-    // Carregar CBU do localStorage ou usar padrão
+    // Carregar CBU do localStorage
     const storedCbu = localStorage.getItem('DEPOSIT_CBU');
-    if (storedCbu) {
-      setCbu(storedCbu);
-    }
+    setCbu(storedCbu || '');
   }, []);
 
   const handleBack = () => {
     navigate(-1);
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validar tipo de arquivo
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor, selecione apenas imagens');
+        return;
+      }
+
+      // Validar tamanho (máx 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('A imagem deve ter no máximo 5MB');
+        return;
+      }
+
+      setReceiptFile(file);
+
+      // Criar preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setReceiptPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Logic to submit request would go here
-    alert('Solicitud enviada (simulado)');
+
+    // Validações
+    if (!amount || parseFloat(amount) <= 0) {
+      alert('Por favor, ingrese un monto válido');
+      return;
+    }
+
+    if (!holder.trim()) {
+      alert('Por favor, ingrese el nombre del titular');
+      return;
+    }
+
+    if (!receiptFile) {
+      alert('Por favor, adjunte el comprobante de transferencia');
+      return;
+    }
+
+    // Obter usuário logado
+    const authUser = sessionStorage.getItem('authUser') || 'Anônimo';
+
+    // Criar objeto da solicitação
+    const newRequest = {
+      id: Date.now(),
+      user: authUser,
+      date: new Date().toLocaleString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      amount: parseFloat(amount),
+      cbu: holder, // CBU do usuário que está fazendo depósito
+      holder: holder,
+      receipt: receiptPreview, // Base64 da imagem
+      status: 'Pendiente',
+    };
+
+    // Recuperar solicitações existentes
+    const existingRequests = JSON.parse(
+      localStorage.getItem('DEPOSIT_REQUESTS') || '[]'
+    );
+
+    // Adicionar nova solicitação
+    existingRequests.push(newRequest);
+
+    // Salvar no localStorage
+    localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(existingRequests));
+
+    alert(
+      '✅ Solicitud enviada con éxito! Será revisada por un administrador.'
+    );
     navigate('/home');
   };
 
@@ -87,9 +161,35 @@ export default function LoadChips() {
               />
             </div>
 
-            <button type="button" className="ba-btn-attach">
-              Adjuntar comprobante
-            </button>
+            <div className="ba-form-group">
+              <label>Comprobante de transferencia:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                id="receipt-upload"
+              />
+              <label htmlFor="receipt-upload" className="ba-btn-attach">
+                {receiptFile
+                  ? '✓ ' + receiptFile.name
+                  : '📎 Adjuntar comprobante'}
+              </label>
+              {receiptPreview && (
+                <div style={{ marginTop: '10px' }}>
+                  <img
+                    src={receiptPreview}
+                    alt="Preview"
+                    style={{
+                      maxWidth: '200px',
+                      maxHeight: '200px',
+                      borderRadius: '8px',
+                      border: '2px solid #ffc107',
+                    }}
+                  />
+                </div>
+              )}
+            </div>
 
             <p className="ba-warning-text">
               Recuerda revisar que el CBU informado sea el correcto para evitar

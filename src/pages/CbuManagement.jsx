@@ -7,8 +7,6 @@ import Toast from '../components/Toast';
 import { removeAuthUser } from '../utils/auth';
 import '../css/admin.css';
 
-const DEFAULT_CBU = '0000133100000000537023';
-
 export default function CbuManagement() {
   const navigate = useNavigate();
   const [cbu, setCbu] = useState('');
@@ -23,9 +21,9 @@ export default function CbuManagement() {
       return;
     }
 
-    // Carregar CBU do localStorage ou usar padrão
+    // Carregar CBU do localStorage
     const storedCbu = localStorage.getItem('DEPOSIT_CBU');
-    setCbu(storedCbu || DEFAULT_CBU);
+    setCbu(storedCbu || '');
   }, [navigate]);
 
   const toggleSidebar = () => {
@@ -57,22 +55,10 @@ export default function CbuManagement() {
       return;
     }
 
-    if (cleanCbu.length !== 22) {
-      showToast('⚠️ CBU padrão tem 22 dígitos, verifique se está correto');
-    }
-
     // Salvar no localStorage
     localStorage.setItem('DEPOSIT_CBU', cleanCbu);
     setCbu(cleanCbu);
     showToast('✅ CBU atualizado com sucesso!');
-  };
-
-  const handleReset = () => {
-    if (window.confirm('Deseja restaurar o CBU padrão?')) {
-      localStorage.setItem('DEPOSIT_CBU', DEFAULT_CBU);
-      setCbu(DEFAULT_CBU);
-      showToast('🔄 CBU restaurado para o valor padrão');
-    }
   };
 
   const handleCopy = () => {
@@ -109,26 +95,14 @@ export default function CbuManagement() {
 
                 <form onSubmit={handleSaveCbu} className="ba-admin-form">
                   <div className="ba-form-group">
-                    <label htmlFor="cbu-input">
-                      Número CBU *
-                      <span
-                        style={{
-                          fontSize: '13px',
-                          color: '#999',
-                          marginLeft: '8px',
-                        }}
-                      >
-                        (22 dígitos)
-                      </span>
-                    </label>
+                    <label htmlFor="cbu-input">Número CBU *</label>
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <input
                         id="cbu-input"
                         type="text"
                         value={cbu}
                         onChange={(e) => setCbu(e.target.value)}
-                        placeholder="Digite o CBU (apenas números)"
-                        maxLength="22"
+                        placeholder="Digite o número da conta (apenas números)"
                         style={{
                           flex: 1,
                           fontFamily: 'monospace',
@@ -153,20 +127,12 @@ export default function CbuManagement() {
                       }}
                     >
                       {cbu.length} caracteres digitados
-                      {cbu.length === 22 && ' ✓'}
                     </small>
                   </div>
 
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button type="submit" className="ba-btn primary">
                       💾 Salvar CBU
-                    </button>
-                    <button
-                      type="button"
-                      className="ba-btn secondary"
-                      onClick={handleReset}
-                    >
-                      🔄 Restaurar Padrão
                     </button>
                   </div>
                 </form>
@@ -223,17 +189,16 @@ export default function CbuManagement() {
                 <h3>ℹ️ Informações Importantes</h3>
                 <ul>
                   <li>
-                    O CBU configurado será exibido para todos os usuários na
+                    O número configurado será exibido para todos os usuários na
                     página de carga de fichas
                   </li>
-                  <li>CBU padrão argentino possui 22 dígitos numéricos</li>
+                  <li>
+                    Você pode configurar qualquer número de conta que desejar
+                  </li>
                   <li>
                     Sempre verifique o número antes de salvar para evitar erros
                   </li>
-                  <li>
-                    Use "Restaurar Padrão" para voltar ao CBU original:{' '}
-                    {DEFAULT_CBU}
-                  </li>
+                  <li>O número deve conter apenas dígitos numéricos</li>
                 </ul>
               </div>
             </div>

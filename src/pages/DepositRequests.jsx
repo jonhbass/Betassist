@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
@@ -9,57 +9,73 @@ export default function DepositRequests() {
   const [statusFilter, setStatusFilter] = useState('Todas');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [requests, setRequests] = useState([]);
+  const [selectedReceipt, setSelectedReceipt] = useState(null);
 
-  // Dados de exemplo (simulados)
-  const [requests] = useState([
-    {
-      id: 1,
-      user: 'tute4279',
-      date: '19/11/2025, 14:30',
-      amount: 10000,
-      cbu: '0000133100000000537023',
-      holder: 'Carlos Silva',
-      status: 'Pendiente',
-    },
-    {
-      id: 2,
-      user: 'joao123',
-      date: '19/11/2025, 12:15',
-      amount: 15000,
-      cbu: '0000133100000000123456',
-      holder: 'João Santos',
-      status: 'Pendiente',
-    },
-    {
-      id: 3,
-      user: 'maria456',
-      date: '18/11/2025, 18:45',
-      amount: 8000,
-      cbu: '0000133100000000789012',
-      holder: 'Maria Oliveira',
-      status: 'Aprobada',
-    },
-    {
-      id: 4,
-      user: 'pedro789',
-      date: '18/11/2025, 16:20',
-      amount: 12000,
-      cbu: '0000133100000000345678',
-      holder: 'Pedro Martinez',
-      status: 'Rechazada',
-    },
-  ]);
+  // Carregar solicitações do localStorage
+  useEffect(() => {
+    const loadRequests = () => {
+      try {
+        const stored = localStorage.getItem('DEPOSIT_REQUESTS');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          setRequests(Array.isArray(parsed) ? parsed : []);
+        } else {
+          setRequests([]);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar solicitações:', error);
+        setRequests([]);
+      }
+    };
+
+    loadRequests();
+
+    // Atualizar a cada 5 segundos para pegar novas solicitações
+    const interval = setInterval(loadRequests, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleBack = () => {
     navigate('/admin');
   };
 
   const handleApprove = (req) => {
-    alert(`Solicitud de ${req.user} aprobada (simulado)`);
+    if (
+      window.confirm(
+        `¿Aprobar solicitud de ${req.user} por $${req.amount.toLocaleString(
+          'es-AR'
+        )}?`
+      )
+    ) {
+      const updatedRequests = requests.map((r) =>
+        r.id === req.id ? { ...r, status: 'Aprobada' } : r
+      );
+      setRequests(updatedRequests);
+      localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
+      alert(`✅ Solicitud de ${req.user} aprobada`);
+    }
   };
 
   const handleReject = (req) => {
-    alert(`Solicitud de ${req.user} rechazada (simulado)`);
+    if (
+      window.confirm(
+        `¿Rechazar solicitud de ${req.user} por $${req.amount.toLocaleString(
+          'es-AR'
+        )}?`
+      )
+    ) {
+      const updatedRequests = requests.map((r) =>
+        r.id === req.id ? { ...r, status: 'Rechazada' } : r
+      );
+      setRequests(updatedRequests);
+      localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
+      alert(`❌ Solicitud de ${req.user} rechazada`);
+    }
+  };
+
+  const handleViewReceipt = (receipt) => {
+    setSelectedReceipt(receipt);
   };
 
   // Filtrar solicitudes
@@ -146,6 +162,7 @@ export default function DepositRequests() {
                 <th>Monto</th>
                 <th>CBU</th>
                 <th>Titular</th>
+                <th>Comprobante</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -169,6 +186,19 @@ export default function DepositRequests() {
                   <td>$ {req.amount.toLocaleString('es-AR')}</td>
                   <td>{req.cbu}</td>
                   <td>{req.holder}</td>
+                  <td>
+                    {req.receipt ? (
+                      <button
+                        className="ba-action-btn primary"
+                        onClick={() => handleViewReceipt(req.receipt)}
+                        style={{ fontSize: '12px', padding: '4px 8px' }}
+                      >
+                        📎 Ver
+                      </button>
+                    ) : (
+                      <span style={{ color: '#888' }}>-</span>
+                    )}
+                  </td>
                   <td>
                     <span
                       className={`ba-status-badge ${
@@ -260,6 +290,65 @@ export default function DepositRequests() {
             <div style={{ width: '100px' }}></div>
           </div>
         </div>
+
+        {/* Modal de visualização de comprovante */}
+        {selectedReceipt && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+              padding: '20px',
+            }}
+            onClick={() => setSelectedReceipt(null)}
+          >
+            <div
+              style={{
+                position: 'relative',
+                maxWidth: '90%',
+                maxHeight: '90%',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setSelectedReceipt(null)}
+                style={{
+                  position: 'absolute',
+                  top: '-40px',
+                  right: '0',
+                  background: '#ffc107',
+                  border: 'none',
+                  color: '#000',
+                  fontSize: '24px',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                }}
+              >
+                ×
+              </button>
+              <img
+                src={selectedReceipt}
+                alt="Comprobante"
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '80vh',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+                }}
+              />
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />

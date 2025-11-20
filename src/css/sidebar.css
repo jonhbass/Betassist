@@ -98,6 +98,34 @@
   justify-content: center;
 }
 
+/* Toggle button styles */
+.ba-action.ba-toggle-btn {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 193, 7, 0.15),
+    rgba(255, 193, 7, 0.05)
+  );
+  border: 2px solid rgba(255, 193, 7, 0.4);
+  color: #ffc107;
+  font-weight: 600;
+  min-height: 50px;
+}
+
+.ba-action.ba-toggle-btn:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 193, 7, 0.25),
+    rgba(255, 193, 7, 0.1)
+  );
+  border-color: rgba(255, 193, 7, 0.6);
+  box-shadow: 0 6px 16px rgba(255, 193, 7, 0.2);
+}
+
+.ba-action.ba-toggle-btn .ba-action-icon {
+  font-size: 20px;
+  font-weight: bold;
+}
+
 /* Responsividade mobile */
 @media (max-width: 899px) {
   .ba-sidebar {

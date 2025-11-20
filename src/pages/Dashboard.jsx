@@ -152,6 +152,7 @@ export default function Dashboard() {
               isAdmin={isAdmin}
               onToggleChat={isAdmin ? toggleChat : undefined}
               chatEnabled={chatEnabled}
+              onToggleSidebar={toggleSidebar}
             />
           </aside>
 
