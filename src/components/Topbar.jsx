@@ -16,6 +16,7 @@ export default function Topbar({
   const [isClosing, setIsClosing] = useState(false);
   const [username, setUsername] = useState('');
   const [balance, setBalance] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -45,6 +46,29 @@ export default function Topbar({
 
     calculateBalance();
     const interval = setInterval(calculateBalance, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Contar notificações não lidas
+  useEffect(() => {
+    const countUnread = () => {
+      try {
+        const user = getAuthUser();
+        const notifications = JSON.parse(
+          localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
+        );
+        const unread = notifications.filter(
+          (n) => n.user === user && !n.read
+        ).length;
+        setUnreadCount(unread);
+      } catch (error) {
+        console.error('Erro ao contar notificações:', error);
+        setUnreadCount(0);
+      }
+    };
+
+    countUnread();
+    const interval = setInterval(countUnread, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -127,10 +151,13 @@ export default function Topbar({
             💬 Mensajes
           </button>
           <button
-            className="ba-btn small"
+            className="ba-btn small ba-notify-btn"
             onClick={() => onNotifyClick && onNotifyClick()}
           >
             🔔 Notificações
+            {unreadCount > 0 && (
+              <span className="ba-notify-badge">{unreadCount}</span>
+            )}
           </button>
           <button
             className={`ba-btn small ${showMenu ? 'active' : ''}`}
@@ -138,9 +165,6 @@ export default function Topbar({
             aria-label="Toggle menu"
           >
             ☰
-          </button>
-          <button className="ba-btn small" onClick={onLogout}>
-            Sair
           </button>
         </div>
       )}

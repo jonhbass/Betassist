@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/Dashboard.css';
+import '../css/NotificationsModal.css';
 import Sidebar from '../components/Sidebar';
 import Chat from '../components/Chat';
 import Carrossel from '../components/Carrossel';
@@ -12,6 +13,7 @@ import LoadModalContent from '../components/LoadModalContent';
 import WithdrawModalContent from '../components/WithdrawModalContent';
 import HistoryModalContent from '../components/HistoryModalContent';
 import SupportButton from '../components/SupportButton';
+import NotificationsModal from '../components/NotificationsModal';
 import { getAuthUser, removeAuthUser } from '../utils/auth';
 
 export default function Dashboard() {
@@ -30,6 +32,7 @@ export default function Dashboard() {
   });
   const [isAdmin, setIsAdmin] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   function toggleSidebar() {
     setSidebarOpen((s) => !s);
@@ -139,7 +142,7 @@ export default function Dashboard() {
         onToggleSidebar={toggleSidebar}
         onLogout={handleLogout}
         onMessageClick={() => navigate('/support')}
-        onNotifyClick={() => showToast('Notificações (simulado)')}
+        onNotifyClick={() => setShowNotifications(!showNotifications)}
       />
       <main className="ba-main">
         <div className="ba-layout">
@@ -198,6 +201,10 @@ export default function Dashboard() {
       )}
 
       <SupportButton />
+      <NotificationsModal
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
     </div>
   );
 }

@@ -53,6 +53,31 @@ export default function DepositRequests() {
       );
       setRequests(updatedRequests);
       localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
+
+      // Criar notificação de depósito aprovado
+      const notifications = JSON.parse(
+        localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
+      );
+      const newNotification = {
+        id: Date.now(),
+        user: req.user,
+        amount: req.amount,
+        date: new Date().toLocaleString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        read: false,
+        type: 'approved',
+      };
+      notifications.push(newNotification);
+      localStorage.setItem(
+        'DEPOSIT_NOTIFICATIONS',
+        JSON.stringify(notifications)
+      );
+
       alert(`✅ Solicitud de ${req.user} aprobada`);
     }
   };

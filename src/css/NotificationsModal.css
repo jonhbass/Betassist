@@ -1,0 +1,203 @@
+/* Popup de Notificações - Estilo similar ao menu hamburger */
+.ba-notifications-popup {
+  position: absolute;
+  top: 60px;
+  right: 80px;
+  width: 280px;
+  max-height: 400px;
+  background: linear-gradient(135deg, #082c56 0%, #021026 100%);
+  border: 2px solid rgba(14, 165, 233, 0.6);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  animation: slideDown 0.25s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.ba-notifications-popup.closing {
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Header do popup */
+.ba-notifications-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(14, 165, 233, 0.3);
+}
+
+.ba-notifications-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Botão marcar todas como lidas */
+.ba-mark-all-read {
+  width: 100%;
+  padding: 8px;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(14, 165, 233, 0.5);
+  border-radius: 8px;
+  color: #0ea5e9;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: all 0.2s;
+}
+
+.ba-mark-all-read:hover {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: rgba(14, 165, 233, 0.8);
+  transform: translateY(-1px);
+}
+
+/* Lista de notificações */
+.ba-notifications-list {
+  overflow-y: auto;
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Scrollbar customizada */
+.ba-notifications-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ba-notifications-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.ba-notifications-list::-webkit-scrollbar-thumb {
+  background: rgba(14, 165, 233, 0.4);
+  border-radius: 3px;
+}
+
+.ba-notifications-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(14, 165, 233, 0.6);
+}
+
+/* Item de notificação */
+.ba-notification-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ba-notification-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(14, 165, 233, 0.5);
+  transform: translateX(2px);
+}
+
+/* Notificação não lida */
+.ba-notification-item.unread {
+  background: linear-gradient(
+    135deg,
+    rgba(130, 71, 229, 0.15) 0%,
+    rgba(14, 165, 233, 0.15) 100%
+  );
+  border-color: rgba(130, 71, 229, 0.5);
+  box-shadow: 0 0 10px rgba(130, 71, 229, 0.2);
+}
+
+.ba-notification-item.unread:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(130, 71, 229, 0.25) 0%,
+    rgba(14, 165, 233, 0.25) 100%
+  );
+  border-color: rgba(130, 71, 229, 0.7);
+  box-shadow: 0 0 15px rgba(130, 71, 229, 0.3);
+}
+
+/* Notificação lida - opacidade reduzida */
+.ba-notification-item.read {
+  opacity: 0.5;
+}
+
+/* Header da notificação */
+.ba-notification-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ba-notification-date {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.ba-notification-badge {
+  background: linear-gradient(135deg, #8247e5, #0ea5e9);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Conteúdo da notificação */
+.ba-notification-content {
+  margin: 0;
+}
+
+.ba-notification-title {
+  margin: 0;
+  font-size: 13px;
+  color: #fff;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Estado vazio */
+.ba-notifications-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ba-notifications-empty p {
+  margin: 0;
+  font-size: 14px;
+}

@@ -176,6 +176,37 @@
   box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
 }
 
+/* Badge de notificações não lidas */
+.ba-notify-btn {
+  position: relative;
+}
+
+.ba-notify-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #8247e5, #0ea5e9);
+  color: white;
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 18px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(130, 71, 229, 0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .ba-menu-popup {
