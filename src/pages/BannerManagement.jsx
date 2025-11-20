@@ -21,7 +21,7 @@ export default function BannerManagement() {
 
   const [bannerUrl, setBannerUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadMode, setUploadMode] = useState('url'); // 'url' ou 'file'
+  const [uploadMode, setUploadMode] = useState('file'); // 'url' ou 'file'
   const [previewUrl, setPreviewUrl] = useState('');
   const [toast, setToast] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -214,20 +214,20 @@ export default function BannerManagement() {
                   <button
                     type="button"
                     className={`ba-mode-btn ${
-                      uploadMode === 'url' ? 'active' : ''
-                    }`}
-                    onClick={() => setUploadMode('url')}
-                  >
-                    🔗 URL
-                  </button>
-                  <button
-                    type="button"
-                    className={`ba-mode-btn ${
                       uploadMode === 'file' ? 'active' : ''
                     }`}
                     onClick={() => setUploadMode('file')}
                   >
                     📁 Arquivo Local
+                  </button>
+                  <button
+                    type="button"
+                    className={`ba-mode-btn ${
+                      uploadMode === 'url' ? 'active' : ''
+                    }`}
+                    onClick={() => setUploadMode('url')}
+                  >
+                    🔗 URL
                   </button>
                 </div>
 
@@ -284,15 +284,15 @@ export default function BannerManagement() {
                   )}
 
                   <div className="ba-form-actions">
+                    <button type="submit" className="ba-btn primary">
+                      ➕ Adicionar Banner
+                    </button>
                     <button
                       type="button"
                       className="ba-btn secondary"
                       onClick={handlePreview}
                     >
                       👁️ Visualizar
-                    </button>
-                    <button type="submit" className="ba-btn primary">
-                      ➕ Adicionar Banner
                     </button>
                   </div>
                 </form>

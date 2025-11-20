@@ -185,6 +185,27 @@
   background: rgba(11, 92, 192, 0.05);
 }
 
+.ba-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff !important;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.ba-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ba-input:focus {
+  outline: none;
+  border-color: rgba(11, 92, 192, 0.8);
+  background: rgba(11, 92, 192, 0.05);
+}
+
 .ba-btn.primary {
   background: linear-gradient(135deg, #0b5cc0 0%, #084a9a 100%);
   color: #fff;
@@ -314,6 +335,11 @@
   display: flex;
   gap: 1rem;
   align-items: center;
+  justify-content: center;
+}
+
+.ba-form-actions button {
+  min-width: 200px;
 }
 
 .ba-btn.secondary {
@@ -550,4 +576,356 @@
   .ba-upload-mode-selector {
     flex-direction: column;
   }
+}
+
+/* User Create Form Styles - Modern Design */
+.ba-user-create-form {
+  margin: 0;
+  padding: 0;
+}
+
+.ba-form-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ba-form-label {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.ba-form-input {
+  width: 200px;
+  height: 40px;
+  padding: 0 12px;
+  background: #0b0f1a;
+  border: 1px solid #26314f;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.ba-form-input::placeholder {
+  color: #aaa;
+}
+
+.ba-form-input:focus {
+  outline: none;
+  background: #0b0f1a;
+  border: 1px solid #00adb5;
+  box-shadow: 0 0 8px #00adb5;
+  color: #fff;
+}
+
+.ba-form-submit {
+  height: 40px;
+  padding: 0 24px;
+  background: linear-gradient(135deg, #0b5cc0 0%, #084a9a 100%);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.ba-form-submit:hover {
+  background: linear-gradient(135deg, #0a4fa8 0%, #073d82 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(11, 92, 192, 0.4);
+}
+
+.ba-form-submit:active {
+  transform: translateY(0);
+}
+
+/* Users List Styles - Modern Cards Design */
+.ba-users-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Scrollbar customizada */
+.ba-users-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ba-users-grid::-webkit-scrollbar-track {
+  background: rgba(11, 15, 26, 0.5);
+  border-radius: 4px;
+}
+
+.ba-users-grid::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #0b5cc0 0%, #00adb5 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.ba-users-grid::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #00adb5 0%, #0b5cc0 100%);
+  box-shadow: 0 0 6px rgba(0, 173, 181, 0.5);
+}
+
+.ba-user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(11, 15, 26, 0.6);
+  border: 1px solid #26314f;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.ba-user-card:hover {
+  background: rgba(11, 15, 26, 0.8);
+  border-color: #00adb5;
+  box-shadow: 0 2px 8px rgba(0, 173, 181, 0.2);
+}
+
+.ba-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ba-user-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.ba-user-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ba-edit-input {
+  width: 180px;
+  height: 36px;
+  padding: 0 12px;
+  background: #0b0f1a;
+  border: 1px solid #26314f;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.ba-edit-input:focus {
+  outline: none;
+  border-color: #00adb5;
+  box-shadow: 0 0 6px #00adb5;
+}
+
+.ba-edit-input::placeholder {
+  color: #aaa;
+}
+
+.ba-btn-edit,
+.ba-btn-delete,
+.ba-btn-save,
+.ba-btn-cancel {
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ba-btn-edit {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.ba-btn-edit:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.ba-btn-delete {
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #f44336;
+}
+
+.ba-btn-delete:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.5);
+  transform: translateY(-1px);
+}
+
+.ba-btn-save {
+  background: linear-gradient(135deg, #0b5cc0 0%, #084a9a 100%);
+  color: #fff;
+}
+
+.ba-btn-save:hover {
+  background: linear-gradient(135deg, #0a4fa8 0%, #073d82 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(11, 92, 192, 0.4);
+}
+
+.ba-btn-cancel {
+  background: rgba(158, 158, 158, 0.2);
+  border: 1px solid rgba(158, 158, 158, 0.3);
+  color: #ccc;
+}
+
+.ba-btn-cancel:hover {
+  background: rgba(158, 158, 158, 0.3);
+  border-color: rgba(158, 158, 158, 0.4);
+  transform: translateY(-1px);
+}
+
+/* User Management List Styles */
+.ba-create-user-form {
+  margin: 0;
+  padding: 0;
+}
+
+.ba-inline-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ba-inline-inputs label {
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.ba-styled-input {
+  flex: 0 0 auto;
+  width: 200px;
+  padding: 8px 12px !important;
+  background: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 6px !important;
+  color: #000 !important;
+  font-size: 14px !important;
+  transition: all 0.2s;
+}
+
+.ba-styled-input:focus {
+  outline: none !important;
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1) !important;
+}
+
+.ba-btn-create {
+  padding: 8px 24px !important;
+  background: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 6px !important;
+  color: #000 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.ba-btn-create:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ba-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ba-user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.ba-user-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(14, 165, 233, 0.5);
+}
+
+.ba-username {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ba-default-badge {
+  padding: 2px 8px;
+  background: #ffc107;
+  color: #000;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ba-user-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ba-btn-user-action {
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ba-btn-user-action:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.ba-btn-remove {
+  background: rgba(244, 67, 54, 0.1);
+  border-color: rgba(244, 67, 54, 0.3);
+  color: #f44336;
+}
+
+.ba-btn-remove:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.5);
 }

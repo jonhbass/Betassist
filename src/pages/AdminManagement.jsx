@@ -148,102 +148,116 @@ export default function AdminManagement() {
 
               {/* Formulário para criar novo admin */}
               <div className="ba-admin-section">
-                <h2 className="ba-section-title">Criar Novo Administrador</h2>
-                <form className="ba-admin-form" onSubmit={handleCreateAdmin}>
-                  <div className="ba-form-row">
-                    <div className="ba-form-group">
-                      <label htmlFor="admin-username">Nome de usuário</label>
-                      <input
-                        id="admin-username"
-                        type="text"
-                        value={newAdminUsername}
-                        onChange={(e) => setNewAdminUsername(e.target.value)}
-                        placeholder="Digite o nome de usuário"
-                        autoComplete="off"
-                      />
-                    </div>
-                    <div className="ba-form-group">
-                      <label htmlFor="admin-password">Senha</label>
-                      <input
-                        id="admin-password"
-                        type="password"
-                        value={newAdminPassword}
-                        onChange={(e) => setNewAdminPassword(e.target.value)}
-                        placeholder="Mínimo 6 caracteres"
-                        autoComplete="new-password"
-                      />
-                    </div>
+                <h2 className="ba-section-title">Criar novo usuário</h2>
+                <form
+                  className="ba-create-user-form"
+                  onSubmit={handleCreateAdmin}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <label
+                      style={{
+                        color: '#fff',
+                        fontWeight: 500,
+                        fontSize: '14px',
+                      }}
+                    >
+                      Usuário
+                    </label>
+                    <input
+                      id="admin-username"
+                      type="text"
+                      value={newAdminUsername}
+                      onChange={(e) => setNewAdminUsername(e.target.value)}
+                      autoComplete="off"
+                      style={{
+                        width: '200px',
+                        padding: '8px 12px',
+                        background: '#fff',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '6px',
+                        color: '#000',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <label
+                      style={{
+                        color: '#fff',
+                        fontWeight: 500,
+                        fontSize: '14px',
+                      }}
+                    >
+                      Senha
+                    </label>
+                    <input
+                      id="admin-password"
+                      type="password"
+                      value={newAdminPassword}
+                      onChange={(e) => setNewAdminPassword(e.target.value)}
+                      autoComplete="new-password"
+                      style={{
+                        width: '200px',
+                        padding: '8px 12px',
+                        background: '#fff',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '6px',
+                        color: '#000',
+                        fontSize: '14px',
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      style={{
+                        padding: '8px 24px',
+                        background: '#fff',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '6px',
+                        color: '#000',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Criar
+                    </button>
                   </div>
-                  <button type="submit" className="ba-btn primary">
-                    ➕ Criar Administrador
-                  </button>
                 </form>
               </div>
 
               {/* Lista de administradores */}
               <div className="ba-admin-section">
-                <h2 className="ba-section-title">
-                  Administradores Cadastrados ({allAdmins.length})
-                </h2>
+                <h2 className="ba-section-title">Usuários existentes</h2>
 
-                <div className="ba-table-wrapper">
-                  <table className="ba-table">
-                    <thead>
-                      <tr>
-                        <th>Nome de Usuário</th>
-                        <th>Senha</th>
-                        <th>Criado em</th>
-                        <th>Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {allAdmins.map((admin) => (
-                        <tr key={admin.id}>
-                          <td>
-                            <strong>{admin.username}</strong>
-                            {admin.isDefault && (
-                              <span
-                                style={{
-                                  marginLeft: '8px',
-                                  padding: '2px 8px',
-                                  backgroundColor: '#ffc107',
-                                  color: '#000',
-                                  borderRadius: '12px',
-                                  fontSize: '11px',
-                                  fontWeight: 'bold',
-                                }}
-                              >
-                                PADRÃO
-                              </span>
-                            )}
-                          </td>
-                          <td>
-                            <code>{'•'.repeat(admin.password.length)}</code>
-                          </td>
-                          <td>
-                            {admin.isDefault
-                              ? '—'
-                              : formatDate(admin.createdAt)}
-                          </td>
-                          <td>
-                            {admin.isDefault ? (
-                              <span style={{ color: '#999', fontSize: '13px' }}>
-                                🔒 Protegido
-                              </span>
-                            ) : (
-                              <button
-                                className="ba-btn small danger"
-                                onClick={() => handleDeleteAdmin(admin.id)}
-                                title="Excluir administrador"
-                              >
-                                🗑️ Excluir
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="ba-users-list">
+                  {allAdmins.map((admin) => (
+                    <div key={admin.id} className="ba-user-item">
+                      <span className="ba-username">
+                        {admin.username}
+                        {admin.isDefault && (
+                          <span className="ba-default-badge">PADRÃO</span>
+                        )}
+                      </span>
+                      <div className="ba-user-actions">
+                        <button className="ba-btn-user-action">
+                          Editar senha
+                        </button>
+                        {!admin.isDefault && (
+                          <button
+                            className="ba-btn-user-action ba-btn-remove"
+                            onClick={() => handleDeleteAdmin(admin.id)}
+                          >
+                            Remover
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 

@@ -220,23 +220,25 @@ export default function AdminDashboard() {
                   }}
                 >
                   <h3>Criar novo usuário</h3>
-                  <form onSubmit={handleCreate}>
-                    <label>
-                      Usuário
+                  <form onSubmit={handleCreate} className="ba-user-create-form">
+                    <div className="ba-form-inline">
+                      <label className="ba-form-label">Usuário</label>
                       <input
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        className="ba-form-input"
                       />
-                    </label>
-                    <label>
-                      Senha
+                      <label className="ba-form-label">Senha</label>
                       <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="ba-form-input"
                       />
-                    </label>
-                    <button type="submit">Criar</button>
+                      <button type="submit" className="ba-form-submit">
+                        Criar
+                      </button>
+                    </div>
                   </form>
                 </section>
 
@@ -248,17 +250,13 @@ export default function AdminDashboard() {
                   }}
                 >
                   <h3>Usuários existentes</h3>
-                  <ul>
+                  <div className="ba-users-grid">
                     {users.map((u) => (
-                      <li key={u.username}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            gap: 12,
-                            alignItems: 'center',
-                          }}
-                        >
-                          <strong>{u.username}</strong>
+                      <div key={u.username} className="ba-user-card">
+                        <div className="ba-user-info">
+                          <span className="ba-user-name">{u.username}</span>
+                        </div>
+                        <div className="ba-user-actions-row">
                           {editing === u.username ? (
                             <>
                               <input
@@ -267,8 +265,12 @@ export default function AdminDashboard() {
                                 onChange={(e) =>
                                   setEditingPassword(e.target.value)
                                 }
+                                className="ba-edit-input"
                               />
-                              <button onClick={() => handleSaveEdit(u)}>
+                              <button
+                                onClick={() => handleSaveEdit(u)}
+                                className="ba-btn-save"
+                              >
                                 Salvar
                               </button>
                               <button
@@ -276,6 +278,7 @@ export default function AdminDashboard() {
                                   setEditing(null);
                                   setEditingPassword('');
                                 }}
+                                className="ba-btn-cancel"
                               >
                                 Cancelar
                               </button>
@@ -287,18 +290,22 @@ export default function AdminDashboard() {
                                   setEditing(u.username);
                                   setEditingPassword('');
                                 }}
+                                className="ba-btn-edit"
                               >
                                 Editar senha
                               </button>
-                              <button onClick={() => handleDelete(u)}>
+                              <button
+                                onClick={() => handleDelete(u)}
+                                className="ba-btn-delete"
+                              >
                                 Remover
                               </button>
                             </>
                           )}
                         </div>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </section>
               </>
             )}

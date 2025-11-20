@@ -18,6 +18,27 @@
   overflow: auto;
 }
 
+/* Scrollbar customizada - Lista de threads */
+.ba-admin-threads::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ba-admin-threads::-webkit-scrollbar-track {
+  background: rgba(11, 15, 26, 0.5);
+  border-radius: 4px;
+}
+
+.ba-admin-threads::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #0b5cc0 0%, #00adb5 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.ba-admin-threads::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #00adb5 0%, #0b5cc0 100%);
+  box-shadow: 0 0 6px rgba(0, 173, 181, 0.5);
+}
+
 /* hide any accidental range sliders inside the threads box */
 .ba-admin-threads input[type='range'] {
   display: none !important;
@@ -115,6 +136,27 @@
   overflow: auto;
 }
 
+/* Scrollbar customizada - Chat de thread */
+.ba-admin-thread-view .ba-chat-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ba-admin-thread-view .ba-chat-list::-webkit-scrollbar-track {
+  background: rgba(11, 15, 26, 0.5);
+  border-radius: 4px;
+}
+
+.ba-admin-thread-view .ba-chat-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #0b5cc0 0%, #00adb5 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.ba-admin-thread-view .ba-chat-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #00adb5 0%, #0b5cc0 100%);
+  box-shadow: 0 0 6px rgba(0, 173, 181, 0.5);
+}
+
 /* AdminSupport specific styles moved from src/css/admin.css */
 .ba-thread-item.active {
   background: rgba(255, 255, 255, 0.02);
@@ -133,6 +175,27 @@
   padding: 8px;
   background: rgba(0, 0, 0, 0.08);
   border-radius: 6px;
+}
+
+/* Scrollbar customizada - Lista de mensagens admin */
+.ba-admin-support-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ba-admin-support-list::-webkit-scrollbar-track {
+  background: rgba(11, 15, 26, 0.5);
+  border-radius: 4px;
+}
+
+.ba-admin-support-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #0b5cc0 0%, #00adb5 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.ba-admin-support-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #00adb5 0%, #0b5cc0 100%);
+  box-shadow: 0 0 6px rgba(0, 173, 181, 0.5);
 }
 
 .ba-admin-msg {

@@ -98,17 +98,19 @@
 }
 
 .ba-notifications-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(11, 15, 26, 0.5);
   border-radius: 3px;
 }
 
 .ba-notifications-list::-webkit-scrollbar-thumb {
-  background: rgba(14, 165, 233, 0.4);
+  background: linear-gradient(135deg, #0b5cc0 0%, #00adb5 100%);
   border-radius: 3px;
+  transition: all 0.3s ease;
 }
 
 .ba-notifications-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(14, 165, 233, 0.6);
+  background: linear-gradient(135deg, #00adb5 0%, #0b5cc0 100%);
+  box-shadow: 0 0 6px rgba(0, 173, 181, 0.5);
 }
 
 /* Item de notificação */
