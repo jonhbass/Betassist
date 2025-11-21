@@ -19,7 +19,7 @@ export default function AdminLogin() {
 
     // Validar campos obrigatórios
     if (!username.trim() || !password.trim()) {
-      setError('Usuário e senha são obrigatórios');
+      setError('Usuario y contraseña son obligatorios');
       return;
     }
 
@@ -54,7 +54,7 @@ export default function AdminLogin() {
       console.error('Erro ao verificar admins:', err);
     }
 
-    setError('Usuário ou senha incorretos');
+    setError('Usuario o contraseña incorrectos');
   }
 
   return (
@@ -62,34 +62,34 @@ export default function AdminLogin() {
       <form className="login-card" onSubmit={handleSubmit}>
         {error && <p className="login-error">{error}</p>}
         <div className="login-header">
-          <h2>Administração</h2>
+          <h2>Administración</h2>
         </div>
 
         <label>
-          Nome de usuário *
+          Nombre de usuario *
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Digite seu nome de usuário"
+            placeholder="Ingrese su nombre de usuario"
             autoComplete="username"
             required
           />
         </label>
 
         <label>
-          Senha *
+          Contraseña *
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Digite sua senha"
+            placeholder="Ingrese su contraseña"
             autoComplete="current-password"
             required
           />
         </label>
 
-        <button type="submit">Entrar como Admin</button>
+        <button type="submit">Ingresar como Admin</button>
       </form>
     </div>
   );

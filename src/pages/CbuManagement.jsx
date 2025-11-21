@@ -73,7 +73,7 @@ export default function CbuManagement() {
       <Topbar
         onToggleSidebar={toggleSidebar}
         onLogout={handleLogout}
-        simpleMode={true}
+        adminMode={true}
       />
 
       <main className="ba-main">
@@ -88,7 +88,7 @@ export default function CbuManagement() {
 
           <div className="ba-content">
             <div className="ba-admin-container">
-              <h1 className="ba-admin-title">Gerenciar CBU para Depósitos</h1>
+              <h1 className="ba-admin-title">Gestionar CBU para Depósitos</h1>
               {/* Formulário de edição */}
               <div className="ba-admin-section">
                 <h2 className="ba-section-title">Configurar CBU</h2>
@@ -102,7 +102,7 @@ export default function CbuManagement() {
                         type="text"
                         value={cbu}
                         onChange={(e) => setCbu(e.target.value)}
-                        placeholder="Digite o número da conta (apenas números)"
+                        placeholder="Ingrese el número de cuenta (solo números)"
                         style={{
                           flex: 1,
                           fontFamily: 'monospace',
@@ -185,26 +185,25 @@ export default function CbuManagement() {
                       letterSpacing: '1px',
                     }}
                   >
-                    📄 {cbu || 'CBU não configurado'}
+                    📄 {cbu || 'CBU no configurado'}
                   </div>
                 </div>
               </div>
 
               {/* Informações */}
               <div className="ba-info-box">
-                <h3>ℹ️ Informações Importantes</h3>
+                <h3>ℹ️ Información Importante</h3>
                 <ul>
                   <li>
-                    O número configurado será exibido para todos os usuários na
+                    El número configurado se mostrará a todos los usuarios en la
                     página de carga de fichas
                   </li>
+                  <li>Puede configurar cualquier número de cuenta que desee</li>
                   <li>
-                    Você pode configurar qualquer número de conta que desejar
+                    Siempre verifique el número antes de guardar para evitar
+                    errores
                   </li>
-                  <li>
-                    Sempre verifique o número antes de salvar para evitar erros
-                  </li>
-                  <li>O número deve conter apenas dígitos numéricos</li>
+                  <li>El número debe contener solo dígitos numéricos</li>
                 </ul>
               </div>
             </div>

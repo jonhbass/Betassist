@@ -76,8 +76,8 @@ export default function Carrossel({ slides = [] }) {
         {usedSlides.length === 0 ? (
           <div className="ba-slide active ba-slide-placeholder">
             <div className="ba-placeholder-content">
-              <h2>🖼️ Nenhum banner cadastrado</h2>
-              <p>Configure os banners no painel de administração</p>
+              <h2>🖼️ Ningún banner registrado</h2>
+              <p>Configure los banners en el panel de administración</p>
             </div>
           </div>
         ) : (

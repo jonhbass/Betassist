@@ -63,7 +63,7 @@ export default function Login() {
           navigate('/home');
         } catch (err) {
           console.error('login error', err);
-          setError('Usuário ou senha inválidos (servidor)');
+          setError('Usuario o contraseña inválidos (servidor)');
         }
       })();
       return;
@@ -76,7 +76,7 @@ export default function Login() {
       setAuthUser(username);
       navigate('/home');
     } else {
-      setError('Usuário ou senha inválidos');
+      setError('Usuario o contraseña inválidos');
     }
   }
 
@@ -102,25 +102,25 @@ export default function Login() {
         </div>
 
         <label>
-          Usuário
+          Usuario
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Digite seu usuário"
+            placeholder="Ingrese su usuario"
           />
         </label>
 
         <label>
-          Senha
+          Contraseña
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Digite sua senha"
+            placeholder="Ingrese su contraseña"
           />
         </label>
 
-        <button type="submit">Login</button>
+        <button type="submit">Iniciar Sesión</button>
         <div
           style={{
             marginTop: 12,
@@ -137,7 +137,7 @@ export default function Login() {
               cursor: 'pointer',
             }}
           >
-            Entrar como administrador
+            Ingresar como administrador
           </button>
         </div>
       </form>

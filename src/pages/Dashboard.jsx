@@ -11,7 +11,6 @@ import Topbar from '../components/Topbar';
 import Toast from '../components/Toast';
 import LoadModalContent from '../components/LoadModalContent';
 import WithdrawModalContent from '../components/WithdrawModalContent';
-import HistoryModalContent from '../components/HistoryModalContent';
 import SupportButton from '../components/SupportButton';
 import NotificationsModal from '../components/NotificationsModal';
 import { getAuthUser, removeAuthUser } from '../utils/auth';
@@ -208,12 +207,6 @@ export default function Dashboard() {
             onClose={() => setModal(null)}
             onConfirm={() => showToast('Saque solicitado (simulado)')}
           />
-        </Modal>
-      )}
-
-      {modal === 'history' && (
-        <Modal title="Histórico" onClose={() => setModal(null)}>
-          <HistoryModalContent />
         </Modal>
       )}
 

@@ -7,10 +7,15 @@ import cors from 'cors';
 import bcrypt from 'bcrypt';
 import http from 'http';
 import { Server } from 'socket.io';
+import dotenv from 'dotenv';
+import { uploadReceipt } from './cloudinary.js';
+
+// Carregar variáveis de ambiente
+dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Aumentar limite para base64
 
 const DATA = path.join(process.cwd(), 'server', 'users.json');
 const CHAT_MAIN = path.join(process.cwd(), 'server', 'chat-main.json');
@@ -149,6 +154,32 @@ app.post('/users/sync', (req, res) => {
   }));
   writeUsers(mapped);
   res.json({ ok: true });
+});
+
+// Upload de comprovante de depósito
+app.post('/upload-receipt', async (req, res) => {
+  try {
+    const { base64Image, username, amount, holder } = req.body;
+
+    if (!base64Image || !username || !amount || !holder) {
+      return res.status(400).json({ error: 'Dados incompletos' });
+    }
+
+    // Upload para Cloudinary (ou retorna base64 se não configurado)
+    const receiptUrl = await uploadReceipt(base64Image);
+
+    // Retorna URL ou base64 para o frontend salvar
+    res.json({
+      ok: true,
+      receiptUrl,
+      message: receiptUrl.startsWith('http')
+        ? 'Upload realizado com sucesso'
+        : 'Usando armazenamento local',
+    });
+  } catch (error) {
+    console.error('Erro no upload:', error);
+    res.status(500).json({ error: 'Erro no upload do comprovante' });
+  }
 });
 
 // Create HTTP server and attach socket.io
@@ -312,6 +343,18 @@ app.post('/messages/mark-handled', (req, res) => {
   }
 });
 
+// Servir arquivos estáticos do build em produção
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(process.cwd(), 'dist');
+  app.use(express.static(distPath));
+
+  // Rota catch-all para SPA (React Router)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 server.listen(PORT, () => {
-  console.log('User API listening on port', PORT);
+  console.log('🚀 StarWin Server listening on port', PORT);
+  console.log('📁 Environment:', process.env.NODE_ENV || 'development');
 });

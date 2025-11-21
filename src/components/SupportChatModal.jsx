@@ -249,7 +249,7 @@ export default function SupportChatModal({ onClose }) {
               padding: 20,
             }}
           >
-            Nenhuma mensagem ainda. Envie uma mensagem para iniciar a conversa.
+            Ningún mensaje aún. Envíe un mensaje para iniciar la conversación.
           </div>
         )}
         {userMessages.map((m) => {
@@ -288,7 +288,7 @@ export default function SupportChatModal({ onClose }) {
                     {m.from === 'system'
                       ? 'Sistema'
                       : m.from === username
-                      ? 'Você'
+                      ? 'Usted'
                       : m.from}
                   </span>
                   <span
@@ -319,7 +319,7 @@ export default function SupportChatModal({ onClose }) {
       >
         <input
           type="text"
-          placeholder="Digite sua mensagem..."
+          placeholder="Escriba su mensaje..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           style={{

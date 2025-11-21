@@ -133,7 +133,7 @@ export default function AdminDashboard() {
         return;
       } catch (err) {
         console.error('API saveUsers failed', err);
-        showToast('Falha ao salvar no servidor, usando localStorage');
+        showToast('Fallo al guardar en el servidor, usando localStorage');
       }
     }
 
@@ -144,11 +144,11 @@ export default function AdminDashboard() {
   async function handleCreate(e) {
     e.preventDefault();
     if (!username || !password) {
-      showToast('Preencha usuário e senha');
+      showToast('Complete usuario y contraseña');
       return;
     }
     if (users.some((u) => u.username === username)) {
-      showToast('Usuário já existe');
+      showToast('Usuario ya existe');
       return;
     }
 
@@ -160,14 +160,14 @@ export default function AdminDashboard() {
           body: JSON.stringify({ username, password }),
         });
         if (!res.ok) throw new Error('failed');
-        showToast('Usuário criado (servidor)');
+        showToast('Usuario creado (servidor)');
         setUsername('');
         setPassword('');
         loadUsers();
         return;
       } catch (err) {
         console.error('API create failed', err);
-        showToast('Falha ao criar no servidor');
+        showToast('Fallo al crear en el servidor');
       }
     }
 
@@ -175,11 +175,11 @@ export default function AdminDashboard() {
     saveUsers(next);
     setUsername('');
     setPassword('');
-    showToast('Usuário criado');
+    showToast('Usuario creado');
   }
 
   async function handleDelete(u) {
-    if (!confirm(`Remover usuário ${u.username}?`)) return;
+    if (!confirm(`¿Eliminar usuario ${u.username}?`)) return;
 
     if (USE_API) {
       try {
@@ -188,23 +188,23 @@ export default function AdminDashboard() {
           { method: 'DELETE' }
         );
         if (!res.ok) throw new Error('failed');
-        showToast('Usuário removido (servidor)');
+        showToast('Usuario eliminado (servidor)');
         loadUsers();
         return;
       } catch (err) {
         console.error('API delete failed', err);
-        showToast('Falha ao remover no servidor');
+        showToast('Fallo al eliminar en el servidor');
       }
     }
 
     const next = users.filter((x) => x.username !== u.username);
     saveUsers(next);
-    showToast('Usuário removido');
+    showToast('Usuario eliminado');
   }
 
   async function handleSaveEdit(u) {
     if (!editingPassword) {
-      showToast('Digite uma nova senha');
+      showToast('Ingrese una nueva contraseña');
       return;
     }
 
@@ -219,14 +219,14 @@ export default function AdminDashboard() {
           }
         );
         if (!res.ok) throw new Error('failed');
-        showToast('Senha atualizada (servidor)');
+        showToast('Contraseña actualizada (servidor)');
         setEditing(null);
         setEditingPassword('');
         loadUsers();
         return;
       } catch (err) {
         console.error('API edit failed', err);
-        showToast('Falha ao atualizar no servidor');
+        showToast('Fallo al actualizar en el servidor');
       }
     }
 
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
     saveUsers(next);
     setEditing(null);
     setEditingPassword('');
-    showToast('Senha atualizada');
+    showToast('Contraseña actualizada');
   }
 
   function handleLogout() {
@@ -297,16 +297,16 @@ export default function AdminDashboard() {
                     marginBottom: '2rem',
                   }}
                 >
-                  <h3>Criar novo usuário</h3>
+                  <h3>Crear nuevo usuario</h3>
                   <form onSubmit={handleCreate} className="ba-user-create-form">
                     <div className="ba-form-inline">
-                      <label className="ba-form-label">Usuário</label>
+                      <label className="ba-form-label">Usuario</label>
                       <input
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         className="ba-form-input"
                       />
-                      <label className="ba-form-label">Senha</label>
+                      <label className="ba-form-label">Contraseña</label>
                       <input
                         type="password"
                         value={password}
@@ -314,7 +314,7 @@ export default function AdminDashboard() {
                         className="ba-form-input"
                       />
                       <button type="submit" className="ba-form-submit">
-                        Criar
+                        Crear
                       </button>
                     </div>
                   </form>
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
                     paddingLeft: '1.5rem',
                   }}
                 >
-                  <h3>Usuários existentes</h3>
+                  <h3>Usuarios existentes</h3>
                   <div className="ba-users-grid">
                     {users.map((u) => (
                       <div key={u.username} className="ba-user-card">
@@ -338,7 +338,7 @@ export default function AdminDashboard() {
                           {editing === u.username ? (
                             <>
                               <input
-                                placeholder="Nova senha"
+                                placeholder="Nueva contraseña"
                                 value={editingPassword}
                                 onChange={(e) =>
                                   setEditingPassword(e.target.value)
@@ -349,7 +349,7 @@ export default function AdminDashboard() {
                                 onClick={() => handleSaveEdit(u)}
                                 className="ba-btn-save"
                               >
-                                Salvar
+                                Guardar
                               </button>
                               <button
                                 onClick={() => {
@@ -370,13 +370,13 @@ export default function AdminDashboard() {
                                 }}
                                 className="ba-btn-edit"
                               >
-                                Editar senha
+                                Editar contraseña
                               </button>
                               <button
                                 onClick={() => handleDelete(u)}
                                 className="ba-btn-delete"
                               >
-                                Remover
+                                Eliminar
                               </button>
                             </>
                           )}

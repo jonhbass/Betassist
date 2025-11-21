@@ -10,6 +10,7 @@ export default function WithdrawRequests() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [requests, setRequests] = useState([]);
+  const [adminMessages, setAdminMessages] = useState({});
 
   // Carregar solicitações do localStorage
   useEffect(() => {
@@ -39,7 +40,15 @@ export default function WithdrawRequests() {
     navigate('/admin');
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAdmin');
+    sessionStorage.removeItem('adminUsername');
+    navigate('/login');
+  };
+
   const handleApprove = (req) => {
+    const adminMessage = adminMessages[req.id] || 'Solicitud de retiro';
+
     if (
       window.confirm(
         `¿Aprobar retiro de ${req.user} por $${req.amount.toLocaleString(
@@ -49,13 +58,33 @@ export default function WithdrawRequests() {
     ) {
       // Atualizar status da solicitação
       const updatedRequests = requests.map((r) =>
-        r.id === req.id ? { ...r, status: 'Aprobada' } : r
+        r.id === req.id ? { ...r, status: 'Aprobada', adminMessage } : r
       );
       setRequests(updatedRequests);
       localStorage.setItem(
         'WITHDRAW_REQUESTS',
         JSON.stringify(updatedRequests)
       );
+
+      // Adicionar ao histórico do usuário
+      const history = JSON.parse(localStorage.getItem('USER_HISTORY') || '[]');
+      history.push({
+        id: Date.now(),
+        user: req.user,
+        date: new Date().toLocaleString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        amount: req.amount,
+        type: 'Retiros',
+        message: adminMessage,
+        status: 'Exitosa',
+        canClaim: false,
+      });
+      localStorage.setItem('USER_HISTORY', JSON.stringify(history));
 
       // Subtrair saldo do usuário
       try {
@@ -67,7 +96,7 @@ export default function WithdrawRequests() {
               const currentBalance = user.balance || 0;
               const newBalance = Math.max(0, currentBalance - req.amount);
               console.log(
-                `💸 Retirada aprovada: ${req.user} - Saldo anterior: $${currentBalance} → Novo saldo: $${newBalance}`
+                `💸 Retiro aprobado: ${req.user} - Saldo anterior: $${currentBalance} → Nuevo saldo: $${newBalance}`
               );
               return { ...user, balance: newBalance };
             }
@@ -108,6 +137,8 @@ export default function WithdrawRequests() {
   };
 
   const handleReject = (req) => {
+    const adminMessage = adminMessages[req.id] || 'Rechazo automático';
+
     if (
       window.confirm(
         `¿Rechazar retiro de ${req.user} por $${req.amount.toLocaleString(
@@ -116,13 +147,34 @@ export default function WithdrawRequests() {
       )
     ) {
       const updatedRequests = requests.map((r) =>
-        r.id === req.id ? { ...r, status: 'Rechazada' } : r
+        r.id === req.id ? { ...r, status: 'Rechazada', adminMessage } : r
       );
       setRequests(updatedRequests);
       localStorage.setItem(
         'WITHDRAW_REQUESTS',
         JSON.stringify(updatedRequests)
       );
+
+      // Adicionar ao histórico do usuário
+      const history = JSON.parse(localStorage.getItem('USER_HISTORY') || '[]');
+      history.push({
+        id: Date.now(),
+        user: req.user,
+        date: new Date().toLocaleString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        amount: req.amount,
+        type: 'Retiros',
+        message: adminMessage,
+        status: 'Rechazada',
+        canClaim: true,
+      });
+      localStorage.setItem('USER_HISTORY', JSON.stringify(history));
+
       alert(`❌ Retiro de ${req.user} rechazado`);
     }
   };
@@ -152,14 +204,14 @@ export default function WithdrawRequests() {
 
   return (
     <div className="ba-requests-panel-page">
-      <Topbar simpleMode={true} />
+      <Topbar adminMode={true} onLogout={handleLogout} />
 
       <main className="ba-requests-panel-main">
         <div className="ba-requests-header">
           <button className="ba-btn-back" onClick={handleBack}>
             ← Volver
           </button>
-          <h2 className="ba-requests-title">💸 Solicitações de Retirada</h2>
+          <h2 className="ba-requests-title">💸 Solicitudes de Retiro</h2>
         </div>
 
         {/* Filtros */}
@@ -211,6 +263,7 @@ export default function WithdrawRequests() {
                 <th>Monto</th>
                 <th>CBU/CVU</th>
                 <th>Titular</th>
+                <th>Mensaje</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -234,6 +287,34 @@ export default function WithdrawRequests() {
                   <td>$ {req.amount.toLocaleString('es-AR')}</td>
                   <td>{req.cbu}</td>
                   <td>{req.holder}</td>
+                  <td>
+                    {req.status === 'Pendiente' ? (
+                      <input
+                        type="text"
+                        placeholder="Mensaje (opcional)"
+                        value={adminMessages[req.id] || ''}
+                        onChange={(e) =>
+                          setAdminMessages({
+                            ...adminMessages,
+                            [req.id]: e.target.value,
+                          })
+                        }
+                        style={{
+                          width: '150px',
+                          padding: '4px 8px',
+                          fontSize: '12px',
+                          border: '1px solid #444',
+                          borderRadius: '4px',
+                          background: '#1a1a2e',
+                          color: '#fff',
+                        }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: '12px', color: '#aaa' }}>
+                        {req.adminMessage || '-'}
+                      </span>
+                    )}
+                  </td>
                   <td>
                     <span
                       className={`ba-status-badge ${

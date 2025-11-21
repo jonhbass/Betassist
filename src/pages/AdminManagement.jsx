@@ -61,18 +61,18 @@ export default function AdminManagement() {
     e.preventDefault();
 
     if (!newAdminUsername.trim() || !newAdminPassword.trim()) {
-      showToast('❌ Preencha todos os campos');
+      showToast('❌ Complete todos los campos');
       return;
     }
 
     if (newAdminPassword.length < 6) {
-      showToast('❌ A senha deve ter no mínimo 6 caracteres');
+      showToast('❌ La contraseña debe tener al menos 6 caracteres');
       return;
     }
 
     // Verifica se o username já existe
     if (admins.some((admin) => admin.username === newAdminUsername.trim())) {
-      showToast('❌ Este nome de administrador já existe');
+      showToast('❌ Este nombre de administrador ya existe');
       return;
     }
 
@@ -89,22 +89,23 @@ export default function AdminManagement() {
 
     setNewAdminUsername('');
     setNewAdminPassword('');
-    showToast('✅ Administrador criado com sucesso');
+    showToast('✅ Administrador creado con éxito');
   }
 
   function handleDeleteAdmin(adminId) {
     // Prevenir exclusão do admin padrão
     if (adminId === 'default-admin') {
-      showToast('❌ O administrador padrão não pode ser excluído');
+      showToast('❌ El administrador predeterminado no puede ser eliminado');
       return;
     }
 
-    if (!confirm('Tem certeza que deseja excluir este administrador?')) return;
+    if (!confirm('¿Está seguro de que desea eliminar este administrador?'))
+      return;
 
     const updatedAdmins = admins.filter((admin) => admin.id !== adminId);
     setAdmins(updatedAdmins);
     localStorage.setItem('ADMINS', JSON.stringify(updatedAdmins));
-    showToast('✅ Administrador excluído');
+    showToast('✅ Administrador eliminado');
   }
 
   function formatDate(isoString) {
@@ -129,7 +130,7 @@ export default function AdminManagement() {
       <Topbar
         onToggleSidebar={toggleSidebar}
         onLogout={handleLogout}
-        simpleMode={true}
+        adminMode={true}
       />
 
       <main className="ba-main">
@@ -144,11 +145,11 @@ export default function AdminManagement() {
 
           <div className="ba-content">
             <div className="ba-admin-container">
-              <h1 className="ba-admin-title">Gerenciar Administradores</h1>
+              <h1 className="ba-admin-title">Gestionar Administradores</h1>
 
               {/* Formulário para criar novo admin */}
               <div className="ba-admin-section">
-                <h2 className="ba-section-title">Criar novo usuário</h2>
+                <h2 className="ba-section-title">Crear nuevo usuario</h2>
                 <form
                   className="ba-create-user-form"
                   onSubmit={handleCreateAdmin}
@@ -232,7 +233,7 @@ export default function AdminManagement() {
 
               {/* Lista de administradores */}
               <div className="ba-admin-section">
-                <h2 className="ba-section-title">Usuários existentes</h2>
+                <h2 className="ba-section-title">Usuarios existentes</h2>
 
                 <div className="ba-users-list">
                   {allAdmins.map((admin) => (
@@ -240,19 +241,21 @@ export default function AdminManagement() {
                       <span className="ba-username">
                         {admin.username}
                         {admin.isDefault && (
-                          <span className="ba-default-badge">PADRÃO</span>
+                          <span className="ba-default-badge">
+                            PREDETERMINADO
+                          </span>
                         )}
                       </span>
                       <div className="ba-user-actions">
                         <button className="ba-btn-user-action">
-                          Editar senha
+                          Editar contraseña
                         </button>
                         {!admin.isDefault && (
                           <button
                             className="ba-btn-user-action ba-btn-remove"
                             onClick={() => handleDeleteAdmin(admin.id)}
                           >
-                            Remover
+                            Eliminar
                           </button>
                         )}
                       </div>
@@ -262,20 +265,21 @@ export default function AdminManagement() {
               </div>
 
               <div className="ba-info-box">
-                <h3>ℹ️ Informações Importantes</h3>
+                <h3>ℹ️ Información Importante</h3>
                 <ul>
                   <li>
-                    Os administradores criados aqui poderão fazer login via{' '}
+                    Los administradores creados aquí podrán iniciar sesión vía{' '}
                     <strong>/admin-login</strong>
                   </li>
                   <li>
-                    Cada administrador terá acesso total ao painel
+                    Cada administrador tendrá acceso total al panel
                     administrativo
                   </li>
                   <li>
-                    Recomenda-se criar senhas fortes (mínimo 6 caracteres)
+                    Se recomienda crear contraseñas fuertes (mínimo 6
+                    caracteres)
                   </li>
-                  <li>Guarde as credenciais em local seguro</li>
+                  <li>Guarde las credenciales en un lugar seguro</li>
                 </ul>
               </div>
             </div>

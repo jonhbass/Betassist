@@ -19,13 +19,13 @@ export default function Sidebar({
     const link = `${window.location.origin}/?ref=${user}`;
     navigator.clipboard
       .writeText(link)
-      .then(() => onToast('Link copiado para a área de transferência'))
-      .catch(() => onToast('Falha ao copiar link'));
+      .then(() => onToast('Enlace copiado al portapapeles'))
+      .catch(() => onToast('Fallo al copiar enlace'));
   }
 
   function handlePlay() {
     window.open('https://www.pulpobet.net/es/?pc=true', '_blank');
-    onToast('Abrindo PULPOBET.NET');
+    onToast('Abriendo PULPOBET.NET');
   }
 
   function handleLoad() {
@@ -51,13 +51,13 @@ export default function Sidebar({
           <button
             className="ba-action ba-toggle-btn"
             onClick={onToggleSidebar}
-            title={isOpen ? 'Retrair sidebar' : 'Expandir sidebar'}
+            title={isOpen ? 'Contraer sidebar' : 'Expandir sidebar'}
             aria-label="Toggle sidebar"
           >
             <span className="ba-action-icon">{isOpen ? '«' : '»'}</span>
             {isOpen && (
               <span className="ba-action-text">
-                {isOpen ? 'Retrair' : 'Expandir'}
+                {isOpen ? 'Contraer' : 'Expandir'}
               </span>
             )}
           </button>
@@ -67,12 +67,10 @@ export default function Sidebar({
             <button
               className="ba-action highlight"
               onClick={handleAdminPanel}
-              title={!isOpen ? 'Painel de Admin' : ''}
+              title={!isOpen ? 'Panel de Admin' : ''}
             >
               <span className="ba-action-icon">⚙️</span>
-              {isOpen && (
-                <span className="ba-action-text">Painel de Admin</span>
-              )}
+              {isOpen && <span className="ba-action-text">Panel de Admin</span>}
             </button>
           </li>
         )}

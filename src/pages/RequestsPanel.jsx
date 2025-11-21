@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
@@ -6,75 +6,44 @@ import '../css/RequestsPanel.css';
 
 export default function RequestsPanel() {
   const navigate = useNavigate();
+  const authUser = sessionStorage.getItem('authUser');
 
   // Filtros
   const [typeFilter, setTypeFilter] = useState('Todas');
   const [statusFilter, setStatusFilter] = useState('Todas');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [requests, setRequests] = useState([]);
 
-  // Dados de exemplo (simulados)
-  const [requests] = useState([
-    {
-      id: 1,
-      date: '3/10/2025, 14:58',
-      amount: 10000,
-      type: 'Recarga',
-      message: 'Solicitud de recarga',
-      status: 'Exitosa',
-    },
-    {
-      id: 2,
-      date: '3/10/2025, 08:56',
-      amount: 15000,
-      type: 'Recarga',
-      message: 'Recarga manual desde administrador',
-      status: 'Exitosa',
-    },
-    {
-      id: 3,
-      date: '2/10/2025, 20:36',
-      amount: 5000,
-      type: 'Recarga',
-      message: 'Rechazo automático',
-      status: 'Rechazada',
-    },
-    {
-      id: 4,
-      date: '2/10/2025, 17:52',
-      amount: 10000,
-      type: 'Recarga',
-      message: 'Comprobante incorrecto',
-      status: 'Rechazada',
-    },
-    {
-      id: 5,
-      date: '2/10/2025, 13:27',
-      amount: 5000,
-      type: 'Recarga',
-      message: 'Solicitud de recarga',
-      status: 'Exitosa',
-    },
-    {
-      id: 6,
-      date: '1/10/2025, 16:22',
-      amount: 8000,
-      type: 'Retiros',
-      message: 'Solicitud de retiro',
-      status: 'Exitosa',
-    },
-    {
-      id: 7,
-      date: '1/10/2025, 10:15',
-      amount: 12000,
-      type: 'Bonificaciones',
-      message: 'Bonificación de bienvenida',
-      status: 'Exitosa',
-    },
-  ]);
+  // Carregar histórico do usuário logado
+  useEffect(() => {
+    const loadHistory = () => {
+      try {
+        const allHistory = JSON.parse(
+          localStorage.getItem('USER_HISTORY') || '[]'
+        );
+        // Filtrar apenas transações do usuário logado
+        const userHistory = allHistory.filter((item) => item.user === authUser);
+        setRequests(userHistory);
+      } catch (error) {
+        console.error('Erro ao carregar histórico:', error);
+        setRequests([]);
+      }
+    };
+
+    loadHistory();
+
+    // Atualizar a cada 3 segundos
+    const interval = setInterval(loadHistory, 3000);
+    return () => clearInterval(interval);
+  }, [authUser]);
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleClaim = () => {
+    navigate('/support');
   };
 
   // Filtrar solicitudes
@@ -111,7 +80,7 @@ export default function RequestsPanel() {
           <button className="ba-btn-back" onClick={handleBack}>
             ← Volver
           </button>
-          <h2 className="ba-requests-title">📋 Panel de solicitudes</h2>
+          <h2 className="ba-requests-title">📊 Historial de Transacciones</h2>
         </div>
 
         {/* Filtros */}
@@ -127,11 +96,11 @@ export default function RequestsPanel() {
             </button>
             <button
               className={`ba-filter-btn secondary ${
-                typeFilter === 'Cargas' ? 'active' : ''
+                typeFilter === 'Recarga' ? 'active' : ''
               }`}
-              onClick={() => setTypeFilter('Cargas')}
+              onClick={() => setTypeFilter('Recarga')}
             >
-              Cargas
+              Recargas
             </button>
             <button
               className={`ba-filter-btn secondary ${
@@ -197,114 +166,128 @@ export default function RequestsPanel() {
 
         {/* Tabela */}
         <div className="ba-requests-table-container">
-          <table className="ba-requests-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Fecha y Hora</th>
-                <th>Monto</th>
-                <th>Tipo</th>
-                <th>Mensaje</th>
-                <th>Estado</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentItems.map((req) => (
-                <tr key={req.id}>
-                  <td>
-                    <span
-                      className={`ba-status-indicator ${
-                        req.status === 'Exitosa'
-                          ? 'success'
-                          : req.status === 'Rechazada'
-                          ? 'rejected'
-                          : 'pending'
-                      }`}
-                    ></span>
-                  </td>
-                  <td>{req.date}</td>
-                  <td>$ {req.amount.toLocaleString('es-AR')}</td>
-                  <td>{req.type}</td>
-                  <td>{req.message}</td>
-                  <td>
-                    <span
-                      className={`ba-status-badge ${
-                        req.status === 'Exitosa' ? 'success' : 'rejected'
-                      }`}
-                    >
-                      {req.status}
-                    </span>
-                  </td>
-                  <td>
-                    {req.status === 'Exitosa' && (
-                      <button className="ba-action-btn success">Exitosa</button>
-                    )}
-                    {req.status === 'Rechazada' && (
-                      <button className="ba-action-btn success">
-                        Rechazada
-                      </button>
-                    )}
-                    <button className="ba-action-btn danger">
-                      Ir a reclamar
-                    </button>
-                  </td>
+          {currentItems.length === 0 ? (
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '60px 20px',
+                color: '#888',
+                fontSize: '16px',
+              }}
+            >
+              No hay transacciones registradas
+            </div>
+          ) : (
+            <table className="ba-requests-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Fecha y Hora</th>
+                  <th>Monto</th>
+                  <th>Tipo</th>
+                  <th>Mensaje</th>
+                  <th>Estado</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentItems.map((req) => (
+                  <tr key={req.id}>
+                    <td>
+                      <span
+                        className={`ba-status-indicator ${
+                          req.status === 'Exitosa'
+                            ? 'success'
+                            : req.status === 'Rechazada'
+                            ? 'rejected'
+                            : 'pending'
+                        }`}
+                      ></span>
+                    </td>
+                    <td>{req.date}</td>
+                    <td>$ {req.amount.toLocaleString('es-AR')}</td>
+                    <td>{req.type}</td>
+                    <td>{req.message}</td>
+                    <td>
+                      <span
+                        className={`ba-status-badge ${
+                          req.status === 'Exitosa' ? 'success' : 'rejected'
+                        }`}
+                      >
+                        {req.status}
+                      </span>
+                    </td>
+                    <td>
+                      {req.canClaim ? (
+                        <button
+                          className="ba-action-btn danger"
+                          onClick={handleClaim}
+                        >
+                          Ir a reclamar
+                        </button>
+                      ) : (
+                        <span style={{ color: '#888' }}>-</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
 
           {/* Paginação */}
-          <div className="ba-pagination">
-            <div className="ba-items-per-page">
-              <select
-                className="ba-items-select"
-                value={itemsPerPage}
-                onChange={handleItemsPerPageChange}
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-              </select>
-            </div>
+          {currentItems.length > 0 && (
+            <div className="ba-pagination">
+              <div className="ba-items-per-page">
+                <select
+                  className="ba-items-select"
+                  value={itemsPerPage}
+                  onChange={handleItemsPerPageChange}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
 
-            <div className="ba-pagination-controls">
-              <button
-                className="ba-pagination-btn"
-                onClick={() => handlePageChange(1)}
-                disabled={currentPage === 1}
-              >
-                ⟨⟨
-              </button>
-              <button
-                className="ba-pagination-btn"
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                ⟨
-              </button>
-              <span className="ba-pagination-info">
-                página {currentPage} de {totalPages}
-              </span>
-              <button
-                className="ba-pagination-btn"
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                ⟩
-              </button>
-              <button
-                className="ba-pagination-btn"
-                onClick={() => handlePageChange(totalPages)}
-                disabled={currentPage === totalPages}
-              >
-                ⟩⟩
-              </button>
-            </div>
+              <div className="ba-pagination-controls">
+                <button
+                  className="ba-pagination-btn"
+                  onClick={() => handlePageChange(1)}
+                  disabled={currentPage === 1}
+                >
+                  ⟨⟨
+                </button>
+                <button
+                  className="ba-pagination-btn"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  ⟨
+                </button>
+                <span className="ba-pagination-info">
+                  página {currentPage} de {totalPages}
+                </span>
+                <button
+                  className="ba-pagination-btn"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  ⟩
+                </button>
+                <button
+                  className="ba-pagination-btn"
+                  onClick={() => handlePageChange(totalPages)}
+                  disabled={currentPage === totalPages}
+                >
+                  ⟩⟩
+                </button>
+              </div>
 
-            <div style={{ width: '100px' }}></div>
-          </div>
+              <div style={{ width: '100px' }}></div>
+            </div>
+          )}
         </div>
       </main>
 

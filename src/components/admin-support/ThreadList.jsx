@@ -12,7 +12,7 @@ export default function ThreadList({
       className="ba-admin-threads"
       style={{ width: 240, maxHeight: 600, overflow: 'auto' }}
     >
-      {threads.length === 0 && <div className="ba-muted">Nenhuma mensagem</div>}
+      {threads.length === 0 && <div className="ba-muted">Ningún mensaje</div>}
       {threads.map((t) => {
         const isExternalVisitor = t.id.startsWith('usuario');
         const avatarBg = isExternalVisitor
@@ -108,7 +108,7 @@ export default function ThreadList({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (window.confirm(`Excluir conversa com ${t.id}?`)) {
+                  if (window.confirm(`¿Eliminar conversación con ${t.id}?`)) {
                     onDeleteThread(t.id);
                   }
                 }}

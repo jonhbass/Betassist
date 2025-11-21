@@ -27,13 +27,13 @@ export default function LoadChips() {
     if (file) {
       // Validar tipo de arquivo
       if (!file.type.startsWith('image/')) {
-        alert('Por favor, selecione apenas imagens');
+        alert('Por favor, seleccione solo imágenes');
         return;
       }
 
       // Validar tamanho (máx 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('A imagem deve ter no máximo 5MB');
+        alert('La imagen debe tener un máximo de 5MB');
         return;
       }
 
@@ -48,7 +48,7 @@ export default function LoadChips() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validações
@@ -70,6 +70,32 @@ export default function LoadChips() {
     // Obter usuário logado
     const authUser = sessionStorage.getItem('authUser') || 'Anônimo';
 
+    let finalReceiptUrl = receiptPreview; // Fallback para base64
+
+    // Tentar enviar para o backend (se disponível)
+    try {
+      const response = await fetch('http://localhost:4000/upload-receipt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          base64Image: receiptPreview,
+          username: authUser,
+          amount: parseFloat(amount),
+          holder: holder,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        finalReceiptUrl = data.receiptUrl;
+        console.log('✅ Upload processado:', data.message);
+      } else {
+        console.warn('⚠️ Backend não respondeu, usando localStorage');
+      }
+    } catch (error) {
+      console.warn('⚠️ Servidor offline, usando localStorage:', error.message);
+    }
+
     // Criar objeto da solicitação
     const newRequest = {
       id: Date.now(),
@@ -84,7 +110,7 @@ export default function LoadChips() {
       amount: parseFloat(amount),
       cbu: holder, // CBU do usuário que está fazendo depósito
       holder: holder,
-      receipt: receiptPreview, // Base64 da imagem
+      receipt: finalReceiptUrl, // URL do Cloudinary ou base64
       status: 'Pendiente',
     };
 

@@ -297,7 +297,7 @@ export default function Chat({ enabled = true }) {
         <div className="ba-chat-controls">
           <div className={`ba-socket-badge ${socketState}`}>{socketState}</div>
           {!enabled && (
-            <div className="ba-socket-badge disabled">desativado</div>
+            <div className="ba-socket-badge disabled">desactivado</div>
           )}
           {isAdmin && (
             <button className="ba-btn small" onClick={clearChat} type="button">
@@ -320,7 +320,7 @@ export default function Chat({ enabled = true }) {
           }}
         >
           <p style={{ margin: 0, fontWeight: 'bold' }}>
-            ⚠️ Chat desativado pelo administrador
+            ⚠️ Chat desactivado por el administrador
           </p>
         </div>
       )}
@@ -355,7 +355,7 @@ export default function Chat({ enabled = true }) {
         <input
           value={text}
           onChange={onTyping}
-          placeholder={enabled ? `Escreva uma mensagem...` : 'Chat desativado'}
+          placeholder={enabled ? `Escriba un mensaje...` : 'Chat desactivado'}
           disabled={!enabled}
         />
         <button type="submit" disabled={!enabled}>

@@ -162,6 +162,12 @@ export default function Topbar({
     closeMenu();
     setTimeout(() => onLogout(), 250);
   };
+
+  // Obter nome do admin
+  const adminUsername = adminMode
+    ? sessionStorage.getItem('adminUsername') || 'Admin'
+    : '';
+
   return (
     <header className="ba-topbar">
       <div className="ba-top-left">
@@ -171,6 +177,15 @@ export default function Topbar({
           <span style={{ color: '#ffc107' }}>Win</span>
         </div>
       </div>
+
+      {/* Título centralizado para modo admin */}
+      {adminMode && (
+        <div className="ba-top-center">
+          <h1 className="ba-admin-title">ÁREA ADMINISTRATIVA</h1>
+        </div>
+      )}
+
+      {/* Modo usuário normal */}
       {!simpleMode && !adminMode && (
         <div className="ba-top-actions">
           <button
@@ -194,6 +209,23 @@ export default function Topbar({
             aria-label="Toggle menu"
           >
             ☰
+          </button>
+        </div>
+      )}
+
+      {/* Modo admin - Info e logout */}
+      {adminMode && (
+        <div className="ba-top-admin-actions">
+          <div className="ba-admin-user-info">
+            <span className="ba-admin-icon">👨‍💼</span>
+            <span className="ba-admin-username">{adminUsername}</span>
+          </div>
+          <button
+            className="ba-btn ba-admin-logout-btn"
+            onClick={onLogout}
+            title="Cerrar sesión"
+          >
+            Salir ↦
           </button>
         </div>
       )}

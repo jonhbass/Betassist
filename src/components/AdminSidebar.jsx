@@ -80,11 +80,11 @@ export default function AdminSidebar({
           <button
             className="ba-action"
             onClick={handleCreateUser}
-            title={!isOpen ? 'Gerenciar Usuários' : ''}
+            title={!isOpen ? 'Gestionar Usuarios' : ''}
           >
             <span className="ba-action-icon">👥</span>
             {isOpen && (
-              <span className="ba-action-text">Gerenciar Usuários</span>
+              <span className="ba-action-text">Gestionar Usuarios</span>
             )}
           </button>
         </li>
@@ -92,11 +92,11 @@ export default function AdminSidebar({
           <button
             className="ba-action highlight"
             onClick={handleDepositRequests}
-            title={!isOpen ? 'Solicitações de Depósito' : ''}
+            title={!isOpen ? 'Solicitudes de Depósito' : ''}
           >
             <span className="ba-action-icon">💰</span>
             {isOpen && (
-              <span className="ba-action-text">Solicitações de Depósito</span>
+              <span className="ba-action-text">Solicitudes de Depósito</span>
             )}
           </button>
           {/* Badge FORA do botão */}
@@ -128,11 +128,11 @@ export default function AdminSidebar({
           <button
             className="ba-action highlight"
             onClick={handleWithdrawRequests}
-            title={!isOpen ? 'Solicitações de Retirada' : ''}
+            title={!isOpen ? 'Solicitudes de Retiro' : ''}
           >
             <span className="ba-action-icon">💸</span>
             {isOpen && (
-              <span className="ba-action-text">Solicitações de Retirada</span>
+              <span className="ba-action-text">Solicitudes de Retiro</span>
             )}
           </button>
           {/* Badge FORA do botão */}
@@ -198,21 +198,21 @@ export default function AdminSidebar({
           <button
             className="ba-action highlight"
             onClick={handleAdminManagement}
-            title={!isOpen ? 'Gerenciar Admins' : ''}
+            title={!isOpen ? 'Gestionar Admins' : ''}
           >
             <span className="ba-action-icon">🔐</span>
-            {isOpen && <span className="ba-action-text">Gerenciar Admins</span>}
+            {isOpen && <span className="ba-action-text">Gestionar Admins</span>}
           </button>
         </li>
         <li>
           <button
             className="ba-action"
             onClick={handleBannerManagement}
-            title={!isOpen ? 'Gerenciar Banners' : ''}
+            title={!isOpen ? 'Gestionar Banners' : ''}
           >
             <span className="ba-action-icon">🖼️</span>
             {isOpen && (
-              <span className="ba-action-text">Gerenciar Banners</span>
+              <span className="ba-action-text">Gestionar Banners</span>
             )}
           </button>
         </li>
@@ -220,10 +220,10 @@ export default function AdminSidebar({
           <button
             className="ba-action"
             onClick={handleCbuManagement}
-            title={!isOpen ? 'Gerenciar CBU' : ''}
+            title={!isOpen ? 'Gestionar CBU' : ''}
           >
             <span className="ba-action-icon">🏦</span>
-            {isOpen && <span className="ba-action-text">Gerenciar CBU</span>}
+            {isOpen && <span className="ba-action-text">Gestionar CBU</span>}
           </button>
         </li>
       </ul>

@@ -50,7 +50,7 @@ export default function BannerManagement() {
   function handlePreview() {
     if (uploadMode === 'url') {
       if (!bannerUrl.trim()) {
-        showToast('❌ Insira uma URL válida');
+        showToast('❌ Ingrese una URL válida');
         return;
       }
       setPreviewUrl(bannerUrl.trim());
@@ -72,13 +72,13 @@ export default function BannerManagement() {
     if (file) {
       // Validar se é imagem
       if (!file.type.startsWith('image/')) {
-        showToast('❌ Selecione apenas arquivos de imagem');
+        showToast('❌ Seleccione solo archivos de imagen');
         e.target.value = '';
         return;
       }
       // Validar tamanho (máx 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        showToast('❌ Imagem muito grande. Máximo 5MB');
+        showToast('❌ Imagen muy grande. Máximo 5MB');
         e.target.value = '';
         return;
       }
@@ -93,7 +93,7 @@ export default function BannerManagement() {
 
     if (uploadMode === 'url') {
       if (!bannerUrl.trim()) {
-        showToast('❌ Insira uma URL de imagem');
+        showToast('❌ Ingrese una URL de imagen');
         return;
       }
 
@@ -188,7 +188,7 @@ export default function BannerManagement() {
       <Topbar
         onToggleSidebar={toggleSidebar}
         onLogout={handleLogout}
-        simpleMode={true}
+        adminMode={true}
       />
 
       <main className="ba-main">
@@ -203,11 +203,11 @@ export default function BannerManagement() {
 
           <div className="ba-content">
             <div className="ba-admin-container">
-              <h1 className="ba-admin-title">Gerenciar Banners</h1>
+              <h1 className="ba-admin-title">Gestionar Banners</h1>
 
               {/* Formulário para adicionar banner */}
               <div className="ba-admin-section">
-                <h2 className="ba-section-title">Adicionar Novo Banner</h2>
+                <h2 className="ba-section-title">Agregar Nuevo Banner</h2>
 
                 {/* Seletor de modo */}
                 <div className="ba-upload-mode-selector">
@@ -317,15 +317,15 @@ export default function BannerManagement() {
               {/* Lista de banners */}
               <div className="ba-admin-section">
                 <h2 className="ba-section-title">
-                  Banners Cadastrados ({banners.length})
+                  Banners Registrados ({banners.length})
                 </h2>
 
                 {banners.length === 0 ? (
                   <div className="ba-empty-state">
-                    <p>Nenhum banner cadastrado ainda.</p>
+                    <p>Ningún banner registrado aún.</p>
                     <p>
-                      Use o formulário acima para adicionar banners via URL ou
-                      arquivo local.
+                      Use el formulario de arriba para agregar banners vía URL o
+                      archivo local.
                     </p>
                   </div>
                 ) : (
@@ -342,7 +342,7 @@ export default function BannerManagement() {
                         <div className="ba-banner-info">
                           <div className="ba-banner-url">
                             <strong>
-                              {banner.type === 'file' ? 'Arquivo:' : 'URL:'}
+                              {banner.type === 'file' ? 'Archivo:' : 'URL:'}
                             </strong>
                             {banner.type === 'file' ? (
                               <span className="ba-banner-filename">
@@ -362,14 +362,14 @@ export default function BannerManagement() {
                             )}
                           </div>
                           <div className="ba-banner-date">
-                            <strong>Adicionado em:</strong>{' '}
+                            <strong>Agregado el:</strong>{' '}
                             {formatDate(banner.addedAt)}
                           </div>
                           <button
                             className="ba-btn small danger"
                             onClick={() => handleDeleteBanner(banner.id)}
                           >
-                            🗑️ Excluir
+                            🗑️ Eliminar
                           </button>
                         </div>
                       </div>
@@ -382,20 +382,17 @@ export default function BannerManagement() {
                 <h3>ℹ️ Informações Importantes</h3>
                 <ul>
                   <li>
-                    Os banners personalizados serão exibidos no carrossel do
+                    Los banners personalizados se mostrarán en el carrossel del
                     Dashboard
                   </li>
                   <li>
-                    Recomenda-se usar imagens com proporção 16:5 (ex:
+                    Se recomienda usar imágenes con proporción 16:5 (ej:
                     1920x600px)
                   </li>
+                  <li>Puede agregar banners vía URL o subir archivo local</li>
+                  <li>Formatos soportados: JPG, PNG, GIF, WEBP (máx 5MB)</li>
                   <li>
-                    Você pode adicionar banners via URL ou upload de arquivo
-                    local
-                  </li>
-                  <li>Formatos suportados: JPG, PNG, GIF, WEBP (máx 5MB)</li>
-                  <li>
-                    Os banners serão exibidos automaticamente no carrossel do
+                    Los banners se mostrarán automáticamente en el carrossel del
                     Dashboard
                   </li>
                   <li>

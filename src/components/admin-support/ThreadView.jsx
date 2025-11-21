@@ -21,7 +21,9 @@ export default function ThreadView({
       ref={listRef}
     >
       {!activeThread && (
-        <div className="ba-muted">Selecione uma conversa à esquerda</div>
+        <div className="ba-muted">
+          Seleccione una conversación a la izquierda
+        </div>
       )}
       {activeThread && (
         <>

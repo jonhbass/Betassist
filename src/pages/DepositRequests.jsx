@@ -11,6 +11,7 @@ export default function DepositRequests() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [requests, setRequests] = useState([]);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [adminMessages, setAdminMessages] = useState({});
 
   // Carregar solicitações do localStorage
   useEffect(() => {
@@ -40,7 +41,15 @@ export default function DepositRequests() {
     navigate('/admin');
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAdmin');
+    sessionStorage.removeItem('adminUsername');
+    navigate('/login');
+  };
+
   const handleApprove = (req) => {
+    const adminMessage = adminMessages[req.id] || 'Solicitud de recarga';
+
     if (
       window.confirm(
         `¿Aprobar solicitud de ${req.user} por $${req.amount.toLocaleString(
@@ -50,10 +59,30 @@ export default function DepositRequests() {
     ) {
       // Atualizar status da solicitação
       const updatedRequests = requests.map((r) =>
-        r.id === req.id ? { ...r, status: 'Aprobada' } : r
+        r.id === req.id ? { ...r, status: 'Aprobada', adminMessage } : r
       );
       setRequests(updatedRequests);
       localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
+
+      // Adicionar ao histórico do usuário
+      const history = JSON.parse(localStorage.getItem('USER_HISTORY') || '[]');
+      history.push({
+        id: Date.now(),
+        user: req.user,
+        date: new Date().toLocaleString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        amount: req.amount,
+        type: 'Recarga',
+        message: adminMessage,
+        status: 'Exitosa',
+        canClaim: false,
+      });
+      localStorage.setItem('USER_HISTORY', JSON.stringify(history));
 
       // Adicionar saldo ao usuário
       try {
@@ -65,7 +94,7 @@ export default function DepositRequests() {
               const currentBalance = user.balance || 0;
               const newBalance = currentBalance + req.amount;
               console.log(
-                `💰 Depósito aprovado: ${req.user} - Saldo anterior: $${currentBalance} → Novo saldo: $${newBalance}`
+                `💰 Depósito aprobado: ${req.user} - Saldo anterior: $${currentBalance} → Nuevo saldo: $${newBalance}`
               );
               return { ...user, balance: newBalance };
             }
@@ -106,6 +135,8 @@ export default function DepositRequests() {
   };
 
   const handleReject = (req) => {
+    const adminMessage = adminMessages[req.id] || 'Rechazo automático';
+
     if (
       window.confirm(
         `¿Rechazar solicitud de ${req.user} por $${req.amount.toLocaleString(
@@ -114,10 +145,31 @@ export default function DepositRequests() {
       )
     ) {
       const updatedRequests = requests.map((r) =>
-        r.id === req.id ? { ...r, status: 'Rechazada' } : r
+        r.id === req.id ? { ...r, status: 'Rechazada', adminMessage } : r
       );
       setRequests(updatedRequests);
       localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
+
+      // Adicionar ao histórico do usuário
+      const history = JSON.parse(localStorage.getItem('USER_HISTORY') || '[]');
+      history.push({
+        id: Date.now(),
+        user: req.user,
+        date: new Date().toLocaleString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        amount: req.amount,
+        type: 'Recarga',
+        message: adminMessage,
+        status: 'Rechazada',
+        canClaim: true,
+      });
+      localStorage.setItem('USER_HISTORY', JSON.stringify(history));
+
       alert(`❌ Solicitud de ${req.user} rechazada`);
     }
   };
@@ -151,14 +203,14 @@ export default function DepositRequests() {
 
   return (
     <div className="ba-requests-panel-page">
-      <Topbar simpleMode={true} />
+      <Topbar adminMode={true} onLogout={handleLogout} />
 
       <main className="ba-requests-panel-main">
         <div className="ba-requests-header">
           <button className="ba-btn-back" onClick={handleBack}>
             ← Volver
           </button>
-          <h2 className="ba-requests-title">💰 Solicitações de Depósito</h2>
+          <h2 className="ba-requests-title">💰 Solicitudes de Depósito</h2>
         </div>
 
         {/* Filtros */}
@@ -211,6 +263,7 @@ export default function DepositRequests() {
                 <th>CBU</th>
                 <th>Titular</th>
                 <th>Comprobante</th>
+                <th>Mensaje</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -245,6 +298,34 @@ export default function DepositRequests() {
                       </button>
                     ) : (
                       <span style={{ color: '#888' }}>-</span>
+                    )}
+                  </td>
+                  <td>
+                    {req.status === 'Pendiente' ? (
+                      <input
+                        type="text"
+                        placeholder="Mensaje (opcional)"
+                        value={adminMessages[req.id] || ''}
+                        onChange={(e) =>
+                          setAdminMessages({
+                            ...adminMessages,
+                            [req.id]: e.target.value,
+                          })
+                        }
+                        style={{
+                          width: '150px',
+                          padding: '4px 8px',
+                          fontSize: '12px',
+                          border: '1px solid #444',
+                          borderRadius: '4px',
+                          background: '#1a1a2e',
+                          color: '#fff',
+                        }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: '12px', color: '#aaa' }}>
+                        {req.adminMessage || '-'}
+                      </span>
                     )}
                   </td>
                   <td>

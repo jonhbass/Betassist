@@ -244,5 +244,21 @@
     "thread": "mila",
     "time": "2025-11-21T03:48:56.012Z",
     "handled": true
+  },
+  {
+    "id": 1763702664233,
+    "text": "aloooooooo",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-21T05:24:24.233Z",
+    "handled": true
+  },
+  {
+    "id": 1763704352697,
+    "text": "teste",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-21T05:52:32.697Z",
+    "handled": true
   }
 ]

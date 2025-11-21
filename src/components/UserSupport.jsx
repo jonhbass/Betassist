@@ -168,14 +168,14 @@ export default function UserSupport() {
       style={{ maxWidth: 1000, margin: '0 auto' }}
     >
       <div className="ba-chat-wrap" style={{ width: '100%', padding: 12 }}>
-        <h2 style={{ margin: 0, marginBottom: 12 }}>Fale com o Suporte</h2>
+        <h2 style={{ margin: 0, marginBottom: 12 }}>Hablar con Soporte</h2>
         <div className="ba-chat-list" ref={listRef} style={{ marginTop: 0 }}>
           {messages.filter(
             (m) =>
               (m.thread && m.thread === username) ||
               m.from === username ||
               (m.to && m.to === username)
-          ).length === 0 && <div className="ba-muted">Nenhuma mensagem</div>}
+          ).length === 0 && <div className="ba-muted">Ningún mensaje</div>}
           {messages
             .filter(
               (m) =>

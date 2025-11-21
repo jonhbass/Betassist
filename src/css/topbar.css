@@ -229,3 +229,134 @@
     align-items: flex-start;
   }
 }
+
+/* ============================================
+   ESTILOS MODO ADMIN
+   ============================================ */
+
+/* Título centralizado */
+.ba-top-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.ba-admin-title {
+  font-size: 18px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Ações do admin (direita) */
+.ba-top-admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ba-admin-user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 8px;
+}
+
+.ba-admin-icon {
+  font-size: 20px;
+}
+
+.ba-admin-username {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffc107;
+  letter-spacing: 0.5px;
+}
+
+.ba-admin-logout-btn {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  color: #fff;
+  border: 1px solid rgba(244, 67, 54, 0.5);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ba-admin-logout-btn:hover {
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  box-shadow: 0 0 15px rgba(244, 67, 54, 0.5);
+  transform: translateY(-2px);
+}
+
+.ba-admin-logout-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive modo admin */
+@media (max-width: 768px) {
+  .ba-admin-title {
+    font-size: 15px;
+    letter-spacing: 1px;
+  }
+
+  .ba-admin-user-info {
+    padding: 6px 12px;
+  }
+
+  .ba-admin-username {
+    font-size: 12px;
+  }
+
+  .ba-admin-logout-btn {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ba-admin-title {
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .ba-top-admin-actions {
+    gap: 8px;
+  }
+
+  .ba-admin-user-info {
+    padding: 4px 8px;
+  }
+
+  .ba-admin-icon {
+    font-size: 16px;
+  }
+
+  .ba-admin-username {
+    display: none; /* Ocultar nome em telas muito pequenas */
+  }
+
+  .ba-admin-logout-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}
