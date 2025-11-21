@@ -103,3 +103,30 @@
   background: linear-gradient(135deg, #00adb5 0%, #0b5cc0 100%);
   box-shadow: 0 0 6px rgba(0, 173, 181, 0.5);
 }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .ba-support-fab {
+    display: none; /* Esconder em mobile - usar botão Mensajes do topbar */
+  }
+
+  .ba-support-badge {
+    right: -4px;
+    top: -4px;
+    padding: 3px 6px;
+    font-size: 11px;
+    min-width: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ba-support-fab {
+    display: none; /* Esconder em mobile */
+  }
+
+  .ba-support-badge {
+    padding: 2px 5px;
+    font-size: 10px;
+    min-width: 18px;
+  }
+}

@@ -29,6 +29,11 @@ export default function AdminDashboard() {
     setTimeout(() => setToast(''), ms);
   }, []);
 
+  useEffect(() => {
+    // Colapsar sidebar no mobile por padrão
+    if (window.innerWidth && window.innerWidth < 900) setSidebarOpen(false);
+  }, []);
+
   const loadUsers = useCallback(async () => {
     if (USE_API) {
       try {
@@ -303,11 +308,21 @@ export default function AdminDashboard() {
 
       <main className="ba-main">
         <div className="ba-layout">
+          {/* Overlay escuro quando sidebar está aberto no mobile */}
+          {sidebarOpen && (
+            <div
+              className="ba-sidebar-overlay"
+              onClick={toggleSidebar}
+              aria-label="Fechar menu lateral"
+            />
+          )}
+
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
             <AdminSidebar
               isOpen={sidebarOpen}
               onNavigateToSection={handleNavigateToSection}
               onToast={showToast}
+              onToggleSidebar={toggleSidebar}
               pendingDeposits={pendingDeposits}
               pendingWithdraws={pendingWithdraws}
               unreadMessages={unreadMessages}

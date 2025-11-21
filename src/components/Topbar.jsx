@@ -10,6 +10,7 @@ export default function Topbar({
   onMessageClick,
   onNotifyClick,
   onMenuClick,
+  onTutorialStart,
   showMenu = false,
   simpleMode = false,
   adminMode = false,
@@ -23,7 +24,12 @@ export default function Topbar({
   const [username, setUsername] = useState('');
   const [balance, setBalance] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [iconGlowing, setIconGlowing] = useState(false);
   const menuRef = useRef(null);
+
+  const handleIconClick = () => {
+    setIconGlowing(!iconGlowing);
+  };
 
   useEffect(() => {
     // Obter usuário logado
@@ -155,7 +161,9 @@ export default function Topbar({
 
   const handleTutorial = () => {
     closeMenu();
-    // Lógica do tutorial
+    if (onTutorialStart) {
+      onTutorialStart();
+    }
   };
 
   const handleCerrarSesion = () => {
@@ -171,40 +179,60 @@ export default function Topbar({
   return (
     <header className="ba-topbar">
       <div className="ba-top-left">
-        <img src={Icon} alt="StarWin Logo" className="header-icon" />
+        {/* Botão hamburger do SIDEBAR - apenas mobile (usuário e admin) */}
+        {onToggleSidebar && (
+          <button
+            className="ba-sidebar-toggle-btn"
+            onClick={onToggleSidebar}
+            aria-label="Abrir menu lateral"
+            title="Abrir menu"
+          >
+            ☰
+          </button>
+        )}
+
+        <img
+          src={Icon}
+          alt="StarWin Logo"
+          className={`header-icon ${iconGlowing ? 'glowing' : ''}`}
+          onClick={handleIconClick}
+          style={{ cursor: 'pointer' }}
+        />
         <div className="ba-logo">
           <span style={{ color: '#1ca3ff' }}>Star</span>
           <span style={{ color: '#ffc107' }}>Win</span>
         </div>
       </div>
-
       {/* Título centralizado para modo admin */}
       {adminMode && (
         <div className="ba-top-center">
           <h1 className="ba-admin-title">ÁREA ADMINISTRATIVA</h1>
         </div>
-      )}
-
+      )}{' '}
       {/* Modo usuário normal */}
       {!simpleMode && !adminMode && (
         <div className="ba-top-actions">
           <button
-            className="ba-btn small"
+            className="ba-btn small ba-message-btn"
             onClick={() => onMessageClick && onMessageClick()}
+            aria-label="Mensajes"
           >
-            💬 Mensajes
+            💬 <span className="ba-btn-text">Mensajes</span>
           </button>
           <button
             className="ba-btn small ba-notify-btn"
             onClick={() => onNotifyClick && onNotifyClick()}
+            aria-label="Notificações"
           >
-            🔔 Notificações
+            🔔 <span className="ba-btn-text">Notificações</span>
             {unreadCount > 0 && (
               <span className="ba-notify-badge">{unreadCount}</span>
             )}
           </button>
           <button
-            className={`ba-btn small ${showMenu ? 'active' : ''}`}
+            className={`ba-btn small ba-menu-toggle-btn ${
+              showMenu ? 'active' : ''
+            }`}
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
@@ -212,7 +240,6 @@ export default function Topbar({
           </button>
         </div>
       )}
-
       {/* Modo admin - Info e logout */}
       {adminMode && (
         <div className="ba-top-admin-actions">
@@ -229,7 +256,6 @@ export default function Topbar({
           </button>
         </div>
       )}
-
       {/* Menu Popup */}
       {showMenu && (
         <div
@@ -242,7 +268,7 @@ export default function Topbar({
               <span className="ba-menu-icon">👤</span>
               <span className="ba-menu-username">{username}</span>
             </div>
-            <div className="ba-menu-balance">
+            <div className="ba-menu-balance ba-balance">
               <span className="ba-menu-icon">🔄</span>
               <span className="ba-menu-balance-value">
                 {balance.toLocaleString('es-AR', {

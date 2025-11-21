@@ -38,6 +38,11 @@ export default function AdminManagement() {
   const [editingPassword, setEditingPassword] = useState('');
 
   useEffect(() => {
+    // Colapsar sidebar no mobile por padrão
+    if (window.innerWidth && window.innerWidth < 900) setSidebarOpen(false);
+  }, []);
+
+  useEffect(() => {
     // Verifica se é admin
     const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
     if (!isAdmin) {
@@ -180,11 +185,21 @@ export default function AdminManagement() {
 
       <main className="ba-main">
         <div className="ba-layout">
+          {/* Overlay escuro quando sidebar está aberto no mobile */}
+          {sidebarOpen && (
+            <div
+              className="ba-sidebar-overlay"
+              onClick={toggleSidebar}
+              aria-label="Fechar menu lateral"
+            />
+          )}
+
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
             <AdminSidebar
               isOpen={sidebarOpen}
               onNavigateToSection={(section) => navigate('/admin')}
               onToast={showToast}
+              onToggleSidebar={toggleSidebar}
             />
           </aside>
 

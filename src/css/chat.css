@@ -1,7 +1,7 @@
 /* Chat styles moved from Dashboard.css */
 .ba-chat {
-  margin: 10px 100px 20px 100px;
-  width: 80%;
+  margin: 10px auto;
+  width: 90%;
   max-width: 1000px;
   min-height: 480px;
   border-radius: 10px;
@@ -185,4 +185,95 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
   margin-top: 6px;
+}
+
+/* Responsividade Chat */
+@media (max-width: 899px) {
+  .ba-chat {
+    margin: 8px auto;
+    width: 95%;
+    min-height: 400px;
+  }
+
+  .ba-chat-list {
+    height: 300px;
+    padding: 10px;
+  }
+
+  .ba-chat-msg {
+    max-width: 85%;
+    padding: 8px 10px;
+  }
+
+  .ba-chat-text {
+    font-size: 13px;
+  }
+
+  .ba-chat-form {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .ba-chat-form input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .ba-chat-form button {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ba-chat {
+    margin: 8px 4px;
+    width: calc(100% - 8px);
+    min-height: 350px;
+    border-radius: 8px;
+  }
+
+  .ba-chat-list {
+    height: 250px;
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .ba-chat-msg {
+    max-width: 90%;
+    padding: 7px 9px;
+  }
+
+  .ba-chat-text {
+    font-size: 12px;
+  }
+
+  .ba-chat-msg-user {
+    font-size: 11px;
+  }
+
+  .ba-chat-msg-time {
+    font-size: 10px;
+  }
+
+  .ba-chat-form {
+    padding: 5px;
+    gap: 5px;
+  }
+
+  .ba-chat-form input {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .ba-chat-form button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .ba-chat-avatar {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+  }
 }

@@ -13,6 +13,7 @@ import LoadModalContent from '../components/LoadModalContent';
 import WithdrawModalContent from '../components/WithdrawModalContent';
 import SupportButton from '../components/SupportButton';
 import NotificationsModal from '../components/NotificationsModal';
+import Tutorial from '../components/Tutorial';
 import { getAuthUser, removeAuthUser } from '../utils/auth';
 
 export default function Dashboard() {
@@ -33,6 +34,7 @@ export default function Dashboard() {
   const [socket, setSocket] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showHamburgerMenu, setShowHamburgerMenu] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const handleNotifyClick = () => {
     setShowNotifications(!showNotifications);
@@ -46,6 +48,11 @@ export default function Dashboard() {
     if (!showHamburgerMenu) {
       setShowNotifications(false); // Fecha notificações ao abrir menu hamburger
     }
+  };
+
+  const handleTutorialStart = () => {
+    setShowHamburgerMenu(false); // Fecha o menu hamburger
+    setShowTutorial(true);
   };
 
   function toggleSidebar() {
@@ -73,6 +80,15 @@ export default function Dashboard() {
     // Se não for admin, garantir que não há flag de admin
     if (!adminStatus) {
       sessionStorage.removeItem('isAdmin');
+    }
+
+    // Verificar se é a primeira vez do usuário (auto-iniciar tutorial)
+    const tutorialCompleted = localStorage.getItem('tutorialCompleted');
+    if (!tutorialCompleted && !adminStatus) {
+      // Aguardar 2 segundos para página carregar completamente
+      setTimeout(() => {
+        setShowTutorial(true);
+      }, 2000);
     }
   }, []);
 
@@ -158,10 +174,20 @@ export default function Dashboard() {
         onMessageClick={() => navigate('/support')}
         onNotifyClick={handleNotifyClick}
         onMenuClick={handleMenuClick}
+        onTutorialStart={handleTutorialStart}
         showMenu={showHamburgerMenu}
       />
       <main className="ba-main">
         <div className="ba-layout">
+          {/* Overlay escuro quando sidebar está aberto no mobile */}
+          {sidebarOpen && (
+            <div
+              className="ba-sidebar-overlay"
+              onClick={toggleSidebar}
+              aria-label="Fechar menu lateral"
+            />
+          )}
+
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
             <Sidebar
               isOpen={sidebarOpen}
@@ -215,6 +241,7 @@ export default function Dashboard() {
         isOpen={showNotifications}
         onClose={() => setShowNotifications(false)}
       />
+      <Tutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
     </div>
   );
 }

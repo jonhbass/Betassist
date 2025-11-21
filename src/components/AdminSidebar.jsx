@@ -6,6 +6,7 @@ export default function AdminSidebar({
   isOpen = true,
   onNavigateToSection = () => {},
   onToast = () => {},
+  onToggleSidebar = () => {},
   pendingDeposits = 0,
   pendingWithdraws = 0,
   unreadMessages = 0,
@@ -64,6 +65,21 @@ export default function AdminSidebar({
   return (
     <nav className="ba-sidebar-nav" aria-label="Admin Navigation">
       <ul className="ba-sidebar-list">
+        <li>
+          <button
+            className="ba-action ba-toggle-btn"
+            onClick={onToggleSidebar}
+            title={isOpen ? 'Contraer sidebar' : 'Expandir sidebar'}
+            aria-label="Toggle sidebar"
+          >
+            <span className="ba-action-icon">{isOpen ? '«' : '»'}</span>
+            {isOpen && (
+              <span className="ba-action-text">
+                {isOpen ? 'Contraer' : 'Expandir'}
+              </span>
+            )}
+          </button>
+        </li>
         <li>
           <button
             className="ba-action primary"

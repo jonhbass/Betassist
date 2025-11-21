@@ -929,3 +929,113 @@
   background: rgba(244, 67, 54, 0.2);
   border-color: rgba(244, 67, 54, 0.5);
 }
+
+/* ========================================
+   RESPONSIVIDADE MOBILE ADMIN
+   ======================================== */
+
+@media (max-width: 899px) {
+  /* Layout principal - ajustar para mobile */
+  .ba-admin-container {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .ba-admin-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ba-section-title {
+    font-size: 1.2rem;
+  }
+
+  /* Formulários - empilhar campos */
+  .ba-create-user-form,
+  .ba-user-create-form {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ba-form-inline {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .ba-form-input,
+  .ba-form-submit {
+    width: 100%;
+  }
+
+  /* Tabelas - scroll horizontal */
+  .ba-user-list,
+  .ba-banner-list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ba-user-item,
+  .ba-banner-item {
+    min-width: 500px; /* Garantir largura mínima para scroll */
+  }
+
+  /* Botões de ação - ajustar tamanho */
+  .ba-btn-user-action {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 36px; /* Touch target */
+  }
+
+  /* Upload de banner - ajustar layout */
+  .ba-upload-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ba-form-actions {
+    flex-direction: column;
+  }
+
+  .ba-form-actions button {
+    width: 100%;
+    min-width: auto;
+  }
+
+  /* Preview de imagens - reduzir tamanho */
+  .ba-banner-preview img,
+  .ba-preview-area img {
+    max-width: 100%;
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ba-admin-container {
+    padding: 0.75rem;
+  }
+
+  .ba-admin-title {
+    font-size: 1.25rem;
+  }
+
+  .ba-section-title {
+    font-size: 1rem;
+  }
+
+  /* Reduzir espaçamentos */
+  .ba-admin-section {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Botões menores */
+  .ba-btn-user-action {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  /* Texto de usuário menor */
+  .ba-user-item span {
+    font-size: 13px;
+  }
+}

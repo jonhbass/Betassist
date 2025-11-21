@@ -82,6 +82,36 @@
   align-items: flex-start;
   justify-content: center;
   padding: 8px 12px;
+  position: relative; /* Para posicionar o overlay */
+}
+
+/* Overlay escuro para mobile quando sidebar está aberto */
+.ba-sidebar-overlay {
+  display: none; /* Oculto por padrão (desktop) */
+}
+
+@media (max-width: 899px) {
+  .ba-sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999; /* Abaixo do sidebar (1000), acima do conteúdo */
+    animation: fadeIn 0.3s ease;
+    cursor: pointer;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .ba-content {
@@ -177,6 +207,57 @@
   }
   .ba-banner {
     height: 250px;
+  }
+}
+
+/* Responsividade Mobile */
+@media (max-width: 899px) {
+  .ba-topbar {
+    padding: 12px 16px;
+  }
+
+  .ba-main {
+    padding: 16px 8px;
+    gap: 16px;
+  }
+
+  .ba-layout {
+    padding: 4px 8px;
+    gap: 0;
+  }
+
+  .ba-content {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .ba-welcome {
+    font-size: 22px;
+    padding: 0 8px;
+  }
+
+  .ba-actions-grid {
+    width: 100%;
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ba-topbar {
+    padding: 10px 12px;
+  }
+
+  .ba-logo {
+    font-size: 16px;
+  }
+
+  .ba-welcome {
+    font-size: 18px;
+  }
+
+  .ba-main {
+    padding: 12px 4px;
   }
 }
 

@@ -1,0 +1,364 @@
+/* Tutorial Overlay */
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 9998;
+  animation: fadeIn 0.3s ease;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Highlight do elemento */
+.tutorial-highlight {
+  position: fixed;
+  border: 3px solid #1ca3ff;
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75), 0 0 30px rgba(28, 163, 255, 0.6),
+    inset 0 0 0 9999px rgba(255, 255, 255, 0.08);
+  z-index: 9999;
+  pointer-events: none;
+  animation: pulse 2s ease-in-out infinite;
+  backdrop-filter: brightness(1.4) contrast(1.1);
+  -webkit-backdrop-filter: brightness(1.4) contrast(1.1);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75),
+      0 0 30px rgba(28, 163, 255, 0.6),
+      inset 0 0 0 9999px rgba(255, 255, 255, 0.08);
+    border-color: #1ca3ff;
+  }
+  50% {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75),
+      0 0 40px rgba(28, 163, 255, 0.9),
+      inset 0 0 0 9999px rgba(255, 255, 255, 0.12);
+    border-color: #5bd0ff;
+  }
+}
+
+/* Tooltip do tutorial */
+.tutorial-tooltip {
+  position: fixed;
+  background: linear-gradient(135deg, #0a3d62 0%, #082c4a 100%);
+  border: 2px solid #1ca3ff;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 380px;
+  width: auto;
+  z-index: 10000;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.3s ease;
+  color: #fff;
+}
+
+/* Posicionamento Desktop - sem transform para evitar overflow */
+@media (min-width: 900px) {
+  .tutorial-tooltip-right {
+    transform: translateY(-50%);
+  }
+
+  .tutorial-tooltip-left {
+    transform: translateY(-50%) translateX(-100%);
+  }
+
+  .tutorial-tooltip-bottom {
+    transform: translateX(-50%);
+  }
+
+  .tutorial-tooltip-top {
+    transform: translateX(-50%) translateY(-100%);
+  }
+
+  /* Garantir que o tooltip nunca saia da tela */
+  .tutorial-tooltip {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+}
+
+/* Header do tooltip */
+.tutorial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tutorial-step {
+  font-size: 13px;
+  color: #ffc107;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tutorial-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.tutorial-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: rotate(90deg);
+}
+
+/* Conteúdo */
+.tutorial-title {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.tutorial-description {
+  margin: 0 0 24px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #dff4ff;
+}
+
+/* Footer com botões */
+.tutorial-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tutorial-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.tutorial-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px; /* iOS touch target recommendation */
+}
+
+.tutorial-btn-primary {
+  background: linear-gradient(90deg, #1ca3ff, #0b5cc0);
+  color: #fff;
+}
+
+.tutorial-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(28, 163, 255, 0.4);
+}
+
+.tutorial-btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #dff4ff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tutorial-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Indicadores de progresso (dots) */
+.tutorial-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.tutorial-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tutorial-dot:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.2);
+}
+
+.tutorial-dot.active {
+  background: #1ca3ff;
+  transform: scale(1.3);
+  box-shadow: 0 0 10px rgba(28, 163, 255, 0.6);
+}
+
+.tutorial-dot.completed {
+  background: #4caf50;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 899px) {
+  /* No mobile, tooltip sempre na parte inferior */
+  .tutorial-tooltip {
+    max-width: calc(100vw - 32px);
+    padding: 18px;
+    left: 50% !important;
+    top: auto !important;
+    bottom: 20px !important;
+    transform: translateX(-50%) !important;
+    margin: 0 16px;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  .tutorial-highlight {
+    border-width: 3px;
+    /* Aumentar destaque no mobile */
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8),
+      0 0 40px rgba(28, 163, 255, 0.8),
+      inset 0 0 0 9999px rgba(255, 255, 255, 0.1);
+  }
+
+  .tutorial-title {
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+
+  .tutorial-description {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+
+  .tutorial-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tutorial-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .tutorial-btn {
+    flex: 1;
+    padding: 14px 18px;
+    font-size: 14px;
+    min-height: 44px; /* Touch target adequado */
+    font-weight: 600;
+  }
+
+  .tutorial-btn-primary {
+    order: -1; /* Botão principal primeiro no mobile */
+  }
+
+  .tutorial-step {
+    font-size: 12px;
+  }
+
+  .tutorial-dots {
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .tutorial-dot {
+    width: 10px;
+    height: 10px;
+    min-width: 10px; /* Garantir tamanho mínimo */
+  }
+
+  .tutorial-close {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .tutorial-tooltip {
+    max-width: calc(100vw - 20px);
+    padding: 16px;
+    bottom: 16px !important;
+    margin: 0 10px;
+  }
+
+  .tutorial-title {
+    font-size: 17px;
+  }
+
+  .tutorial-description {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .tutorial-btn {
+    padding: 12px 16px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  .tutorial-step {
+    font-size: 11px;
+  }
+
+  .tutorial-dots {
+    gap: 6px;
+  }
+
+  .tutorial-dot {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+  }
+}
