@@ -11,6 +11,7 @@ import LoadChips from '../pages/LoadChips';
 import WithdrawChips from '../pages/WithdrawChips';
 import RequestsPanel from '../pages/RequestsPanel';
 import DepositRequests from '../pages/DepositRequests';
+import WithdrawRequests from '../pages/WithdrawRequests';
 
 export function Routers() {
   return (
@@ -27,6 +28,7 @@ export function Routers() {
       <Route path="/admin/manage-banners" element={<BannerManagement />} />
       <Route path="/admin/manage-cbu" element={<CbuManagement />} />
       <Route path="/admin/deposit-requests" element={<DepositRequests />} />
+      <Route path="/admin/withdraw-requests" element={<WithdrawRequests />} />
       <Route path="/support" element={<Support />} />
     </Routes>
   );

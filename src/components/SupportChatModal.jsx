@@ -231,6 +231,7 @@ export default function SupportChatModal({ onClose }) {
 
       <div
         ref={listRef}
+        className="ba-support-modal-messages"
         style={{
           flex: 1,
           overflowY: 'auto',

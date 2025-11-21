@@ -4,19 +4,18 @@ import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/RequestsPanel.css';
 
-export default function DepositRequests() {
+export default function WithdrawRequests() {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState('Todas');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [requests, setRequests] = useState([]);
-  const [selectedReceipt, setSelectedReceipt] = useState(null);
 
   // Carregar solicitações do localStorage
   useEffect(() => {
     const loadRequests = () => {
       try {
-        const stored = localStorage.getItem('DEPOSIT_REQUESTS');
+        const stored = localStorage.getItem('WITHDRAW_REQUESTS');
         if (stored) {
           const parsed = JSON.parse(stored);
           setRequests(Array.isArray(parsed) ? parsed : []);
@@ -43,7 +42,7 @@ export default function DepositRequests() {
   const handleApprove = (req) => {
     if (
       window.confirm(
-        `¿Aprobar solicitud de ${req.user} por $${req.amount.toLocaleString(
+        `¿Aprobar retiro de ${req.user} por $${req.amount.toLocaleString(
           'es-AR'
         )}?`
       )
@@ -53,9 +52,12 @@ export default function DepositRequests() {
         r.id === req.id ? { ...r, status: 'Aprobada' } : r
       );
       setRequests(updatedRequests);
-      localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
+      localStorage.setItem(
+        'WITHDRAW_REQUESTS',
+        JSON.stringify(updatedRequests)
+      );
 
-      // Adicionar saldo ao usuário
+      // Subtrair saldo do usuário
       try {
         const usersData = localStorage.getItem('USERS');
         if (usersData) {
@@ -63,9 +65,9 @@ export default function DepositRequests() {
           const updatedUsers = users.map((user) => {
             if (user.username === req.user) {
               const currentBalance = user.balance || 0;
-              const newBalance = currentBalance + req.amount;
+              const newBalance = Math.max(0, currentBalance - req.amount);
               console.log(
-                `💰 Depósito aprovado: ${req.user} - Saldo anterior: $${currentBalance} → Novo saldo: $${newBalance}`
+                `💸 Retirada aprovada: ${req.user} - Saldo anterior: $${currentBalance} → Novo saldo: $${newBalance}`
               );
               return { ...user, balance: newBalance };
             }
@@ -77,9 +79,9 @@ export default function DepositRequests() {
         console.error('Erro ao atualizar saldo do usuário:', error);
       }
 
-      // Criar notificação de depósito aprovado
+      // Criar notificação de retirada aprovada
       const notifications = JSON.parse(
-        localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
+        localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
       );
       const newNotification = {
         id: Date.now(),
@@ -93,22 +95,22 @@ export default function DepositRequests() {
           minute: '2-digit',
         }),
         read: false,
-        type: 'approved',
+        type: 'withdraw-approved',
       };
       notifications.push(newNotification);
       localStorage.setItem(
-        'DEPOSIT_NOTIFICATIONS',
+        'WITHDRAW_NOTIFICATIONS',
         JSON.stringify(notifications)
       );
 
-      alert(`✅ Solicitud de ${req.user} aprobada y saldo actualizado`);
+      alert(`✅ Retiro de ${req.user} aprobado y saldo actualizado`);
     }
   };
 
   const handleReject = (req) => {
     if (
       window.confirm(
-        `¿Rechazar solicitud de ${req.user} por $${req.amount.toLocaleString(
+        `¿Rechazar retiro de ${req.user} por $${req.amount.toLocaleString(
           'es-AR'
         )}?`
       )
@@ -117,13 +119,12 @@ export default function DepositRequests() {
         r.id === req.id ? { ...r, status: 'Rechazada' } : r
       );
       setRequests(updatedRequests);
-      localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
-      alert(`❌ Solicitud de ${req.user} rechazada`);
+      localStorage.setItem(
+        'WITHDRAW_REQUESTS',
+        JSON.stringify(updatedRequests)
+      );
+      alert(`❌ Retiro de ${req.user} rechazado`);
     }
-  };
-
-  const handleViewReceipt = (receipt) => {
-    setSelectedReceipt(receipt);
   };
 
   // Filtrar solicitudes
@@ -158,7 +159,7 @@ export default function DepositRequests() {
           <button className="ba-btn-back" onClick={handleBack}>
             ← Volver
           </button>
-          <h2 className="ba-requests-title">💰 Solicitações de Depósito</h2>
+          <h2 className="ba-requests-title">💸 Solicitações de Retirada</h2>
         </div>
 
         {/* Filtros */}
@@ -208,9 +209,8 @@ export default function DepositRequests() {
                 <th>Usuario</th>
                 <th>Fecha y Hora</th>
                 <th>Monto</th>
-                <th>CBU</th>
+                <th>CBU/CVU</th>
                 <th>Titular</th>
-                <th>Comprobante</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -234,19 +234,6 @@ export default function DepositRequests() {
                   <td>$ {req.amount.toLocaleString('es-AR')}</td>
                   <td>{req.cbu}</td>
                   <td>{req.holder}</td>
-                  <td>
-                    {req.receipt ? (
-                      <button
-                        className="ba-action-btn primary"
-                        onClick={() => handleViewReceipt(req.receipt)}
-                        style={{ fontSize: '12px', padding: '4px 8px' }}
-                      >
-                        📎 Ver
-                      </button>
-                    ) : (
-                      <span style={{ color: '#888' }}>-</span>
-                    )}
-                  </td>
                   <td>
                     <span
                       className={`ba-status-badge ${
@@ -338,65 +325,6 @@ export default function DepositRequests() {
             <div style={{ width: '100px' }}></div>
           </div>
         </div>
-
-        {/* Modal de visualização de comprovante */}
-        {selectedReceipt && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 9999,
-              padding: '20px',
-            }}
-            onClick={() => setSelectedReceipt(null)}
-          >
-            <div
-              style={{
-                position: 'relative',
-                maxWidth: '90%',
-                maxHeight: '90%',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setSelectedReceipt(null)}
-                style={{
-                  position: 'absolute',
-                  top: '-40px',
-                  right: '0',
-                  background: '#ffc107',
-                  border: 'none',
-                  color: '#000',
-                  fontSize: '24px',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                }}
-              >
-                ×
-              </button>
-              <img
-                src={selectedReceipt}
-                alt="Comprobante"
-                style={{
-                  maxWidth: '100%',
-                  maxHeight: '80vh',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
-                }}
-              />
-            </div>
-          </div>
-        )}
       </main>
 
       <Footer />

@@ -6,8 +6,28 @@ export default function AdminSidebar({
   isOpen = true,
   onNavigateToSection = () => {},
   onToast = () => {},
+  pendingDeposits = 0,
+  pendingWithdraws = 0,
+  unreadMessages = 0,
 }) {
   const navigate = useNavigate();
+
+  // Debug - verificar props
+  console.log('🔍 AdminSidebar props:', {
+    isOpen,
+    pendingDeposits,
+    pendingWithdraws,
+    unreadMessages,
+  });
+
+  // DEBUG VISUAL - sempre mostrar os valores
+  React.useEffect(() => {
+    console.log('🎨 RENDER AdminSidebar - Badges:', {
+      deposits: pendingDeposits,
+      withdraws: pendingWithdraws,
+      messages: unreadMessages,
+    });
+  }, [pendingDeposits, pendingWithdraws, unreadMessages]);
 
   function handleCreateUser() {
     onNavigateToSection('create');
@@ -15,6 +35,10 @@ export default function AdminSidebar({
 
   function handleDepositRequests() {
     navigate('/admin/deposit-requests');
+  }
+
+  function handleWithdrawRequests() {
+    navigate('/admin/withdraw-requests');
   }
 
   function handleDashboard() {
@@ -64,7 +88,7 @@ export default function AdminSidebar({
             )}
           </button>
         </li>
-        <li>
+        <li style={{ position: 'relative' }}>
           <button
             className="ba-action highlight"
             onClick={handleDepositRequests}
@@ -75,8 +99,68 @@ export default function AdminSidebar({
               <span className="ba-action-text">Solicitações de Depósito</span>
             )}
           </button>
+          {/* Badge FORA do botão */}
+          {pendingDeposits > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: '50%',
+                right: isOpen ? '16px' : '8px',
+                transform: 'translateY(-50%)',
+                background: '#dc3545',
+                color: '#fff',
+                padding: '4px 8px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                minWidth: '24px',
+                textAlign: 'center',
+                boxShadow: '0 2px 8px rgba(220, 53, 69, 0.5)',
+                zIndex: 10,
+                pointerEvents: 'none',
+              }}
+            >
+              {pendingDeposits}
+            </span>
+          )}
         </li>
-        <li>
+        <li style={{ position: 'relative' }}>
+          <button
+            className="ba-action highlight"
+            onClick={handleWithdrawRequests}
+            title={!isOpen ? 'Solicitações de Retirada' : ''}
+          >
+            <span className="ba-action-icon">💸</span>
+            {isOpen && (
+              <span className="ba-action-text">Solicitações de Retirada</span>
+            )}
+          </button>
+          {/* Badge FORA do botão */}
+          {pendingWithdraws > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: '50%',
+                right: isOpen ? '16px' : '8px',
+                transform: 'translateY(-50%)',
+                background: '#dc3545',
+                color: '#fff',
+                padding: '4px 8px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                minWidth: '24px',
+                textAlign: 'center',
+                boxShadow: '0 2px 8px rgba(220, 53, 69, 0.5)',
+                zIndex: 10,
+                pointerEvents: 'none',
+              }}
+            >
+              {pendingWithdraws}
+            </span>
+          )}
+        </li>
+        <li style={{ position: 'relative' }}>
           <button
             className="ba-action"
             onClick={handleSupport}
@@ -85,6 +169,30 @@ export default function AdminSidebar({
             <span className="ba-action-icon">💬</span>
             {isOpen && <span className="ba-action-text">Suporte</span>}
           </button>
+          {/* Badge FORA do botão */}
+          {unreadMessages > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: '50%',
+                right: isOpen ? '16px' : '8px',
+                transform: 'translateY(-50%)',
+                background: '#dc3545',
+                color: '#fff',
+                padding: '4px 8px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                minWidth: '24px',
+                textAlign: 'center',
+                boxShadow: '0 2px 8px rgba(220, 53, 69, 0.5)',
+                zIndex: 10,
+                pointerEvents: 'none',
+              }}
+            >
+              {unreadMessages}
+            </span>
+          )}
         </li>
         <li>
           <button

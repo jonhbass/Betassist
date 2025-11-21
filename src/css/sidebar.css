@@ -59,12 +59,6 @@
   min-width: 28px;
 }
 
-.ba-action-text {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .ba-sidebar.collapsed .ba-action {
   justify-content: center;
   padding: 16px 8px;
@@ -124,6 +118,66 @@
 .ba-action.ba-toggle-btn .ba-action-icon {
   font-size: 20px;
   font-weight: bold;
+}
+
+/* Badges de notificação no sidebar */
+.ba-sidebar-badge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  background: #dc3545 !important;
+  color: #fff !important;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 8px;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  animation: badgePulse 2s ease-in-out infinite;
+  z-index: 10;
+  position: relative;
+}
+
+.ba-sidebar-badge-collapsed {
+  position: absolute !important;
+  top: 8px;
+  right: 8px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #dc3545 !important;
+  color: #fff !important;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  animation: badgePulse 2s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  }
+  50% {
+    box-shadow: 0 2px 16px rgba(220, 53, 69, 0.7);
+  }
+}
+
+.ba-action {
+  position: relative;
+}
+
+.ba-action-text {
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
 
 /* Responsividade mobile */

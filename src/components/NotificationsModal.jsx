@@ -32,13 +32,27 @@ export default function NotificationsModal({ isOpen, onClose }) {
 
   const loadNotifications = () => {
     try {
-      const allNotifications = JSON.parse(
+      // Carregar notificações de depósito
+      const depositNotifications = JSON.parse(
         localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
       );
+
+      // Carregar notificações de retirada
+      const withdrawNotifications = JSON.parse(
+        localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
+      );
+
+      // Combinar todas as notificações
+      const allNotifications = [
+        ...depositNotifications,
+        ...withdrawNotifications,
+      ];
+
       // Filtrar apenas notificações do usuário atual
       const userNotifications = allNotifications.filter(
         (notif) => notif.user === currentUser
       );
+
       // Ordenar por data (mais recentes primeiro)
       userNotifications.sort((a, b) => b.id - a.id);
       setNotifications(userNotifications);
@@ -50,13 +64,30 @@ export default function NotificationsModal({ isOpen, onClose }) {
 
   const markAsRead = (notifId) => {
     try {
-      const allNotifications = JSON.parse(
+      // Atualizar notificações de depósito
+      const depositNotifications = JSON.parse(
         localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
       );
-      const updated = allNotifications.map((n) =>
+      const updatedDeposits = depositNotifications.map((n) =>
         n.id === notifId ? { ...n, read: true } : n
       );
-      localStorage.setItem('DEPOSIT_NOTIFICATIONS', JSON.stringify(updated));
+      localStorage.setItem(
+        'DEPOSIT_NOTIFICATIONS',
+        JSON.stringify(updatedDeposits)
+      );
+
+      // Atualizar notificações de retirada
+      const withdrawNotifications = JSON.parse(
+        localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
+      );
+      const updatedWithdraws = withdrawNotifications.map((n) =>
+        n.id === notifId ? { ...n, read: true } : n
+      );
+      localStorage.setItem(
+        'WITHDRAW_NOTIFICATIONS',
+        JSON.stringify(updatedWithdraws)
+      );
+
       loadNotifications();
     } catch (error) {
       console.error('Erro ao marcar como lida:', error);
@@ -65,13 +96,30 @@ export default function NotificationsModal({ isOpen, onClose }) {
 
   const markAllAsRead = () => {
     try {
-      const allNotifications = JSON.parse(
+      // Atualizar notificações de depósito
+      const depositNotifications = JSON.parse(
         localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
       );
-      const updated = allNotifications.map((n) =>
+      const updatedDeposits = depositNotifications.map((n) =>
         n.user === currentUser ? { ...n, read: true } : n
       );
-      localStorage.setItem('DEPOSIT_NOTIFICATIONS', JSON.stringify(updated));
+      localStorage.setItem(
+        'DEPOSIT_NOTIFICATIONS',
+        JSON.stringify(updatedDeposits)
+      );
+
+      // Atualizar notificações de retirada
+      const withdrawNotifications = JSON.parse(
+        localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
+      );
+      const updatedWithdraws = withdrawNotifications.map((n) =>
+        n.user === currentUser ? { ...n, read: true } : n
+      );
+      localStorage.setItem(
+        'WITHDRAW_NOTIFICATIONS',
+        JSON.stringify(updatedWithdraws)
+      );
+
       loadNotifications();
     } catch (error) {
       console.error('Erro ao marcar todas como lidas:', error);
@@ -124,10 +172,17 @@ export default function NotificationsModal({ isOpen, onClose }) {
                 )}
               </div>
               <div className="ba-notification-content">
-                <p className="ba-notification-title">
-                  ✅ Tu solicitud de recarga de $
-                  {notif.amount.toLocaleString('es-AR')} fue aprobada!
-                </p>
+                {notif.type === 'withdraw-approved' ? (
+                  <p className="ba-notification-title">
+                    💸 Tu solicitud de retiro de $
+                    {notif.amount.toLocaleString('es-AR')} fue aprobada!
+                  </p>
+                ) : (
+                  <p className="ba-notification-title">
+                    ✅ Tu solicitud de recarga de $
+                    {notif.amount.toLocaleString('es-AR')} fue aprobada!
+                  </p>
+                )}
               </div>
             </div>
           ))

@@ -21,19 +21,56 @@ export default function WithdrawChips() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!cbu || !holder || !amount) {
-      alert('Por favor, preencha todos os campos');
+    // Validações
+    if (!cbu.trim() || !holder.trim() || !amount) {
+      alert('Por favor, complete todos los campos');
       return;
     }
 
     const withdrawAmount = parseFloat(amount.replace(/[^0-9.-]+/g, ''));
-    if (withdrawAmount > availableForWithdraw) {
-      alert('Valor superior ao saldo disponível');
+
+    if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+      alert('Por favor, ingrese un monto válido');
       return;
     }
 
-    // Lógica para enviar solicitação seria implementada aqui
-    alert('Solicitud de retiro enviada (simulado)');
+    if (withdrawAmount > availableForWithdraw) {
+      alert('Valor superior al saldo disponible');
+      return;
+    }
+
+    // Obter usuário logado
+    const authUser = sessionStorage.getItem('authUser') || 'Anônimo';
+
+    // Criar objeto da solicitação de retirada
+    const newRequest = {
+      id: Date.now(),
+      user: authUser,
+      date: new Date().toLocaleString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      amount: withdrawAmount,
+      cbu: cbu.trim(),
+      holder: holder.trim(),
+      status: 'Pendiente',
+    };
+
+    // Recuperar solicitações existentes
+    const existingRequests = JSON.parse(
+      localStorage.getItem('WITHDRAW_REQUESTS') || '[]'
+    );
+
+    // Adicionar nova solicitação
+    existingRequests.push(newRequest);
+
+    // Salvar no localStorage
+    localStorage.setItem('WITHDRAW_REQUESTS', JSON.stringify(existingRequests));
+
+    alert('✅ Solicitud de retiro enviada con éxito');
     navigate('/home');
   };
 

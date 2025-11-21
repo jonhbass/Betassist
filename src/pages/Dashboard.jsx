@@ -33,6 +33,21 @@ export default function Dashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [socket, setSocket] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showHamburgerMenu, setShowHamburgerMenu] = useState(false);
+
+  const handleNotifyClick = () => {
+    setShowNotifications(!showNotifications);
+    if (!showNotifications) {
+      setShowHamburgerMenu(false); // Fecha o menu hamburger ao abrir notificações
+    }
+  };
+
+  const handleMenuClick = () => {
+    setShowHamburgerMenu(!showHamburgerMenu);
+    if (!showHamburgerMenu) {
+      setShowNotifications(false); // Fecha notificações ao abrir menu hamburger
+    }
+  };
 
   function toggleSidebar() {
     setSidebarOpen((s) => !s);
@@ -142,7 +157,9 @@ export default function Dashboard() {
         onToggleSidebar={toggleSidebar}
         onLogout={handleLogout}
         onMessageClick={() => navigate('/support')}
-        onNotifyClick={() => setShowNotifications(!showNotifications)}
+        onNotifyClick={handleNotifyClick}
+        onMenuClick={handleMenuClick}
+        showMenu={showHamburgerMenu}
       />
       <main className="ba-main">
         <div className="ba-layout">

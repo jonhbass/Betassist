@@ -9,10 +9,16 @@ export default function Topbar({
   onLogout,
   onMessageClick,
   onNotifyClick,
+  onMenuClick,
+  showMenu = false,
   simpleMode = false,
+  adminMode = false,
+  pendingDeposits = 0,
+  pendingWithdraws = 0,
+  unreadMessages = 0,
+  onWithdrawClick,
 }) {
   const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [username, setUsername] = useState('');
   const [balance, setBalance] = useState(0);
@@ -27,6 +33,17 @@ export default function Topbar({
     // Calcular saldo
     const calculateBalance = () => {
       try {
+        const usersData = localStorage.getItem('USERS');
+        if (usersData) {
+          const users = JSON.parse(usersData);
+          const currentUser = users.find((u) => u.username === user);
+          if (currentUser && currentUser.balance !== undefined) {
+            setBalance(currentUser.balance);
+            return;
+          }
+        }
+
+        // Fallback: calcular apenas com depósitos (não ideal)
         const requests = JSON.parse(
           localStorage.getItem('DEPOSIT_REQUESTS') || '[]'
         );
@@ -54,10 +71,17 @@ export default function Topbar({
     const countUnread = () => {
       try {
         const user = getAuthUser();
-        const notifications = JSON.parse(
+        const depositNotifications = JSON.parse(
           localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
         );
-        const unread = notifications.filter(
+        const withdrawNotifications = JSON.parse(
+          localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
+        );
+        const allNotifications = [
+          ...depositNotifications,
+          ...withdrawNotifications,
+        ];
+        const unread = allNotifications.filter(
           (n) => n.user === user && !n.read
         ).length;
         setUnreadCount(unread);
@@ -98,23 +122,25 @@ export default function Topbar({
   }, [showMenu]);
 
   const toggleMenu = () => {
-    if (showMenu) {
+    if (showMenu && onMenuClick) {
       setIsClosing(true);
       setTimeout(() => {
-        setShowMenu(false);
+        onMenuClick();
         setIsClosing(false);
-      }, 250); // Tempo da animação
-    } else {
-      setShowMenu(true);
+      }, 250);
+    } else if (onMenuClick) {
+      onMenuClick();
     }
   };
 
   const closeMenu = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowMenu(false);
-      setIsClosing(false);
-    }, 250);
+    if (onMenuClick && showMenu) {
+      setIsClosing(true);
+      setTimeout(() => {
+        onMenuClick();
+        setIsClosing(false);
+      }, 250);
+    }
   };
 
   const handleRetirar = () => {
@@ -145,7 +171,7 @@ export default function Topbar({
           <span style={{ color: '#ffc107' }}>Win</span>
         </div>
       </div>
-      {!simpleMode && (
+      {!simpleMode && !adminMode && (
         <div className="ba-top-actions">
           <button
             className="ba-btn small"
