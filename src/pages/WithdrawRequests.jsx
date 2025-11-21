@@ -180,9 +180,11 @@ export default function WithdrawRequests() {
   };
 
   // Filtrar solicitudes
-  const filteredRequests = requests.filter((req) => {
-    return statusFilter === 'Todas' || req.status === statusFilter;
-  });
+  const filteredRequests = requests
+    .filter((req) => {
+      return statusFilter === 'Todas' || req.status === statusFilter;
+    })
+    .sort((a, b) => b.id - a.id); // Ordenar por mais recentes primeiro
 
   // Paginação
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -200,6 +202,33 @@ export default function WithdrawRequests() {
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
     setCurrentPage(1);
+  };
+
+  const handleClearHistory = () => {
+    const processedCount = requests.filter(
+      (r) => r.status === 'Aprobada' || r.status === 'Rechazada'
+    ).length;
+
+    if (processedCount === 0) {
+      alert('No hay solicitudes procesadas para limpiar');
+      return;
+    }
+
+    if (
+      window.confirm(
+        `¿Eliminar ${processedCount} solicitud(es) procesada(s) del historial?\n\nLos saldos de los usuarios NO serán afectados.`
+      )
+    ) {
+      // Manter apenas solicitações pendentes
+      const pendingRequests = requests.filter((r) => r.status === 'Pendiente');
+      setRequests(pendingRequests);
+      localStorage.setItem(
+        'WITHDRAW_REQUESTS',
+        JSON.stringify(pendingRequests)
+      );
+      setCurrentPage(1);
+      alert(`✅ ${processedCount} solicitud(es) eliminada(s) del historial`);
+    }
   };
 
   return (
@@ -248,6 +277,18 @@ export default function WithdrawRequests() {
               onClick={() => setStatusFilter('Rechazada')}
             >
               Rechazadas
+            </button>
+            <button
+              className="ba-filter-btn"
+              onClick={handleClearHistory}
+              style={{
+                marginLeft: 'auto',
+                backgroundColor: '#dc2626',
+                color: 'white',
+              }}
+              title="Eliminar solicitudes procesadas (Aprobadas/Rechazadas)"
+            >
+              🗑️ Limpiar Historial
             </button>
           </div>
         </div>

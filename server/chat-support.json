@@ -260,5 +260,53 @@
     "thread": "mila",
     "time": "2025-11-21T05:52:32.697Z",
     "handled": true
+  },
+  {
+    "id": 1763707273109,
+    "text": "testando",
+    "from": "usuario1",
+    "thread": "usuario1",
+    "time": "2025-11-21T06:41:13.109Z",
+    "handled": true
+  },
+  {
+    "id": 1763708187570,
+    "text": "OLAAA",
+    "from": "INACIO",
+    "thread": "INACIO",
+    "time": "2025-11-21T06:56:27.570Z",
+    "handled": true
+  },
+  {
+    "id": 1763708193226,
+    "text": "ALO ALO",
+    "from": "JONH",
+    "thread": "JONH",
+    "time": "2025-11-21T06:56:33.226Z",
+    "handled": true
+  },
+  {
+    "id": 1763709122065,
+    "text": "LOAA",
+    "from": "JONH",
+    "thread": "JONH",
+    "time": "2025-11-21T07:12:02.065Z",
+    "handled": true
+  },
+  {
+    "id": 1763709126456,
+    "text": "OLAAA",
+    "from": "INACIO",
+    "thread": "INACIO",
+    "time": "2025-11-21T07:12:06.456Z",
+    "handled": true
+  },
+  {
+    "id": 1763709167569,
+    "text": "olaaa",
+    "from": "mila",
+    "thread": "mila",
+    "time": "2025-11-21T07:12:47.569Z",
+    "handled": true
   }
 ]

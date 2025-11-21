@@ -120,6 +120,21 @@ export default function useAdminSupport() {
     }
   }, [threads, activeThread]);
 
+  // Listener para evento customizado de seleção de thread
+  useEffect(() => {
+    const handleSelectThread = (event) => {
+      const { username } = event.detail;
+      if (username) {
+        openThread(username);
+      }
+    };
+
+    window.addEventListener('selectSupportThread', handleSelectThread);
+    return () => {
+      window.removeEventListener('selectSupportThread', handleSelectThread);
+    };
+  }, [openThread]);
+
   return {
     messages,
     setMessages,

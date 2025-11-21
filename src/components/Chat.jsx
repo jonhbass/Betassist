@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAuthUser } from '../utils/auth';
 // import socket.io-client synchronously to avoid dynamic-import races during dev
 import { io as ioClient } from 'socket.io-client';
 import '../css/chat.css';
 
 export default function Chat({ enabled = true }) {
+  const navigate = useNavigate();
   const getCurrentUser = () => getAuthUser() || 'Guest';
   const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
   const USE_SOCKET =
@@ -328,10 +330,37 @@ export default function Chat({ enabled = true }) {
       <div className="ba-chat-list" ref={listRef}>
         {messages.map((m) => {
           const isMe = m.from === getCurrentUser();
+          const handleAvatarClick = () => {
+            // Se é admin e não é uma mensagem própria ou do sistema
+            if (isAdmin && m.from !== 'system' && !isMe) {
+              // Navegar para admin dashboard passando dados via state
+              navigate('/admin', {
+                state: {
+                  section: 'support',
+                  selectUser: m.from,
+                },
+              });
+            }
+          };
+
           return (
             <div key={m.id} className={`ba-chat-msg ${isMe ? 'me' : 'other'}`}>
               <div className="ba-chat-msg-header">
-                <div className="ba-chat-avatar">
+                <div
+                  className="ba-chat-avatar"
+                  onClick={handleAvatarClick}
+                  style={{
+                    cursor:
+                      isAdmin && m.from !== 'system' && !isMe
+                        ? 'pointer'
+                        : 'default',
+                  }}
+                  title={
+                    isAdmin && m.from !== 'system' && !isMe
+                      ? `Abrir chat de suporte com ${m.from}`
+                      : ''
+                  }
+                >
                   {m.from === 'system'
                     ? '🔔'
                     : m.from.slice(0, 1).toUpperCase()}

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../css/Dashboard.css';
 import '../css/admin.css';
 import AdminSupport from '../components/AdminSupport';
@@ -9,6 +9,7 @@ import Footer from '../components/Footer';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -58,7 +59,22 @@ export default function AdminDashboard() {
       return;
     }
     loadUsers();
-  }, [navigate, loadUsers]);
+
+    // Verificar se veio do chat com seleção de usuário
+    if (location.state?.section === 'support' && location.state?.selectUser) {
+      setActiveSection('support');
+      // Delay para garantir que AdminSupport monte antes de disparar o evento
+      setTimeout(() => {
+        window.dispatchEvent(
+          new CustomEvent('selectSupportThread', {
+            detail: { username: location.state.selectUser },
+          })
+        );
+      }, 300);
+      // Limpar state para evitar reprocessamento
+      window.history.replaceState({}, document.title);
+    }
+  }, [navigate, loadUsers, location.state]);
 
   // Monitorar solicitações pendentes
   useEffect(() => {
@@ -247,6 +263,18 @@ export default function AdminDashboard() {
 
   function toggleSidebar() {
     setSidebarOpen((s) => !s);
+  }
+
+  function handleUserClick(username) {
+    // Navegar para a seção de suporte e selecionar o usuário
+    setActiveSection('support');
+    // Pequeno delay para garantir que o componente AdminSupport seja montado
+    setTimeout(() => {
+      // Disparar evento customizado para selecionar o thread do usuário
+      window.dispatchEvent(
+        new CustomEvent('selectSupportThread', { detail: { username } })
+      );
+    }, 100);
   }
 
   function handleNavigateToSection(section) {

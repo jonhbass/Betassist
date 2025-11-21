@@ -34,6 +34,8 @@ export default function AdminManagement() {
   const [newAdminPassword, setNewAdminPassword] = useState('');
   const [toast, setToast] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [editingAdminId, setEditingAdminId] = useState(null);
+  const [editingPassword, setEditingPassword] = useState('');
 
   useEffect(() => {
     // Verifica se é admin
@@ -106,6 +108,49 @@ export default function AdminManagement() {
     setAdmins(updatedAdmins);
     localStorage.setItem('ADMINS', JSON.stringify(updatedAdmins));
     showToast('✅ Administrador eliminado');
+  }
+
+  function handleEditPassword(adminId) {
+    setEditingAdminId(adminId);
+    setEditingPassword('');
+  }
+
+  function handleSavePassword(admin) {
+    if (!editingPassword.trim()) {
+      showToast('❌ Ingrese una nueva contraseña');
+      return;
+    }
+
+    if (editingPassword.length < 6) {
+      showToast('❌ La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    // Atualizar senha do admin padrão (apenas em memória)
+    if (admin.isDefault) {
+      showToast(
+        '⚠️ La contraseña del admin predeterminado no se puede cambiar permanentemente'
+      );
+      setEditingAdminId(null);
+      setEditingPassword('');
+      return;
+    }
+
+    // Atualizar senha do admin customizado
+    const updatedAdmins = admins.map((a) =>
+      a.id === admin.id ? { ...a, password: editingPassword } : a
+    );
+    setAdmins(updatedAdmins);
+    localStorage.setItem('ADMINS', JSON.stringify(updatedAdmins));
+
+    setEditingAdminId(null);
+    setEditingPassword('');
+    showToast('✅ Contraseña actualizada con éxito');
+  }
+
+  function handleCancelEdit() {
+    setEditingAdminId(null);
+    setEditingPassword('');
   }
 
   function formatDate(isoString) {
@@ -247,16 +292,60 @@ export default function AdminManagement() {
                         )}
                       </span>
                       <div className="ba-user-actions">
-                        <button className="ba-btn-user-action">
-                          Editar contraseña
-                        </button>
-                        {!admin.isDefault && (
-                          <button
-                            className="ba-btn-user-action ba-btn-remove"
-                            onClick={() => handleDeleteAdmin(admin.id)}
-                          >
-                            Eliminar
-                          </button>
+                        {editingAdminId === admin.id ? (
+                          <>
+                            <input
+                              type="password"
+                              placeholder="Nueva contraseña"
+                              value={editingPassword}
+                              onChange={(e) =>
+                                setEditingPassword(e.target.value)
+                              }
+                              className="ba-edit-password-input"
+                              style={{
+                                padding: '8px 12px',
+                                borderRadius: '4px',
+                                border: '1px solid #444',
+                                background: '#1a1a2e',
+                                color: '#fff',
+                                marginRight: '8px',
+                              }}
+                            />
+                            <button
+                              className="ba-btn-user-action"
+                              onClick={() => handleSavePassword(admin)}
+                              style={{
+                                background: '#28a745',
+                                marginRight: '8px',
+                              }}
+                            >
+                              Guardar
+                            </button>
+                            <button
+                              className="ba-btn-user-action"
+                              onClick={handleCancelEdit}
+                              style={{ background: '#6c757d' }}
+                            >
+                              Cancelar
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              className="ba-btn-user-action"
+                              onClick={() => handleEditPassword(admin.id)}
+                            >
+                              Editar contraseña
+                            </button>
+                            {!admin.isDefault && (
+                              <button
+                                className="ba-btn-user-action ba-btn-remove"
+                                onClick={() => handleDeleteAdmin(admin.id)}
+                              >
+                                Eliminar
+                              </button>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
