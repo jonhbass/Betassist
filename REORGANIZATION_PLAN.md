@@ -1,4 +1,4 @@
-# Plano de Reorganização do Projeto Betassist
+# Plano de Reorganização do Projeto StarWin
 
 ## Estrutura Atual vs Proposta
 

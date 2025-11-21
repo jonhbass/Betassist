@@ -1,9 +1,9 @@
-# Betassist - Estrutura de Organização
+# StarWin - Estrutura de Organização
 
 ## 📁 Estrutura Atual do Projeto
 
 ```
-Betassist/
+StarWin/
 ├── .github/                  # GitHub workflows e configs
 ├── .vscode/                  # Configurações do VSCode
 ├── public/                   # Assets públicos estáticos
