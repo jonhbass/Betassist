@@ -122,7 +122,7 @@ function writeBanners(list) {
   fs.writeFileSync(BANNERS, JSON.stringify(list, null, 2), 'utf-8');
 }
 
-function readConfig() {
+function readAdmins() {
   try {
     const raw = fs.readFileSync(ADMINS, 'utf-8');
     const parsed = JSON.parse(raw);
@@ -134,20 +134,6 @@ function readConfig() {
 
 function writeAdmins(list) {
   fs.writeFileSync(ADMINS, JSON.stringify(list, null, 2), 'utf-8');
-}
-
-function readBanners() {
-  try {
-    const raw = fs.readFileSync(BANNERS, 'utf-8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeBanners(list) {
-  fs.writeFileSync(BANNERS, JSON.stringify(list, null, 2), 'utf-8');
 }
 
 function readConfig() {
