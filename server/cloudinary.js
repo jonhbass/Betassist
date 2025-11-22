@@ -21,9 +21,10 @@ if (isConfigured) {
 /**
  * Upload de imagem para Cloudinary
  * @param {string} base64Image - Imagem em base64
+ * @param {string} folder - Pasta no Cloudinary (default: 'starwin-receipts')
  * @returns {Promise<string>} URL da imagem ou base64 original se Cloudinary não configurado
  */
-export async function uploadReceipt(base64Image) {
+export async function uploadImage(base64Image, folder = 'starwin-receipts') {
   // Se Cloudinary não configurado, retorna base64 para localStorage
   if (!isConfigured) {
     console.log('ℹ️ Cloudinary não configurado - usando localStorage');
@@ -32,7 +33,7 @@ export async function uploadReceipt(base64Image) {
 
   try {
     const result = await cloudinary.uploader.upload(base64Image, {
-      folder: 'starwin-receipts',
+      folder: folder,
       resource_type: 'image',
       transformation: [
         { width: 1000, crop: 'limit' }, // Limita largura máxima
@@ -40,7 +41,10 @@ export async function uploadReceipt(base64Image) {
       ],
     });
 
-    console.log('✅ Upload Cloudinary bem-sucedido:', result.secure_url);
+    console.log(
+      `✅ Upload Cloudinary bem-sucedido (${folder}):`,
+      result.secure_url
+    );
     return result.secure_url;
   } catch (error) {
     console.error('❌ Erro no upload Cloudinary:', error.message);
@@ -48,5 +52,8 @@ export async function uploadReceipt(base64Image) {
     return base64Image;
   }
 }
+
+// Alias para compatibilidade
+export const uploadReceipt = (img) => uploadImage(img, 'starwin-receipts');
 
 export { isConfigured };

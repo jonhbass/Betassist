@@ -8,7 +8,7 @@ import bcrypt from 'bcrypt';
 import http from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
-import { uploadReceipt } from './cloudinary.js';
+import { uploadReceipt, uploadImage } from './cloudinary.js';
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -108,7 +108,21 @@ function writeWithdrawals(list) {
   fs.writeFileSync(WITHDRAWALS, JSON.stringify(list, null, 2), 'utf-8');
 }
 
-function readAdmins() {
+function readBanners() {
+  try {
+    const raw = fs.readFileSync(BANNERS, 'utf-8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeBanners(list) {
+  fs.writeFileSync(BANNERS, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+function readConfig() {
   try {
     const raw = fs.readFileSync(ADMINS, 'utf-8');
     const parsed = JSON.parse(raw);
@@ -497,6 +511,43 @@ app.delete('/banners/:id', (req, res) => {
   list = list.filter((i) => String(i.id) !== String(id));
   writeBanners(list);
   res.json({ ok: true });
+});
+
+// --- BANNERS ---
+app.get('/banners', (req, res) => {
+  res.json(readBanners());
+});
+
+app.post('/banners', async (req, res) => {
+  try {
+    const banner = req.body || {};
+    if (!banner.url) {
+      return res.status(400).json({ error: 'URL is required' });
+    }
+
+    // Se for base64 (upload de arquivo), enviar para Cloudinary
+    if (banner.url.startsWith('data:image')) {
+      console.log('📤 Uploading banner to Cloudinary...');
+      const cloudinaryUrl = await uploadImage(banner.url, 'starwin-banners');
+      banner.url = cloudinaryUrl;
+    }
+
+    const list = readBanners();
+    const next = [...list, banner];
+    writeBanners(next);
+    res.json(next);
+  } catch (error) {
+    console.error('Error saving banner:', error);
+    res.status(500).json({ error: 'Failed to save banner' });
+  }
+});
+
+app.delete('/banners/:id', (req, res) => {
+  const { id } = req.params;
+  const list = readBanners();
+  const next = list.filter((b) => String(b.id) !== String(id));
+  writeBanners(next);
+  res.json(next);
 });
 
 // --- CONFIG (CBU) ---

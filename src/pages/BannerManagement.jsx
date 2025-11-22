@@ -139,7 +139,7 @@ export default function BannerManagement() {
       }
 
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         const newBanner = {
           id: Date.now(),
           url: reader.result, // base64
@@ -148,36 +148,63 @@ export default function BannerManagement() {
           addedAt: new Date().toISOString(),
         };
 
-        const updatedBanners = [...banners, newBanner];
-        setBanners(updatedBanners);
-        localStorage.setItem('CUSTOM_BANNERS', JSON.stringify(updatedBanners));
+        // Persist to server (which handles Cloudinary upload)
+        const serverUrl = getServerUrl();
+        try {
+          showToast('⏳ Enviando imagem...');
+          const res = await fetch(`${serverUrl}/banners`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newBanner),
+          });
+
+          if (res.ok) {
+            const updatedList = await res.json();
+            setBanners(updatedList);
+            // Atualiza cache local apenas para leitura rápida futura
+            localStorage.setItem('BANNERS', JSON.stringify(updatedList));
+            showToast('✅ Banner adicionado com sucesso');
+          } else {
+            throw new Error('Erro no servidor');
+          }
+        } catch (err) {
+          console.error('Failed to create banner on server', err);
+          showToast('❌ Erro ao enviar banner');
+        }
 
         setSelectedFile(null);
         setPreviewUrl('');
-        showToast('✅ Banner adicionado com sucesso');
-
         // Reset file input
-        document.getElementById('banner-file').value = '';
+        const fileInput = document.getElementById('banner-file');
+        if (fileInput) fileInput.value = '';
       };
       reader.readAsDataURL(selectedFile);
       return;
     }
 
     const updatedBanners = [...banners, bannerData];
+    // Otimista update
     setBanners(updatedBanners);
-    localStorage.setItem('CUSTOM_BANNERS', JSON.stringify(updatedBanners));
 
     // Persist to server
     const serverUrl = getServerUrl();
-    try {
-      fetch(`${serverUrl}/banners`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bannerData),
-      });
-    } catch (err) {
-      console.error('Failed to create banner on server', err);
-    }
+    (async () => {
+      try {
+        const res = await fetch(`${serverUrl}/banners`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bannerData),
+        });
+        if (res.ok) {
+          const serverList = await res.json();
+          setBanners(serverList);
+          localStorage.setItem('BANNERS', JSON.stringify(serverList));
+        }
+      } catch (err) {
+        console.error('Failed to create banner on server', err);
+        showToast('❌ Erro ao salvar banner no servidor');
+      }
+    })();
 
     setBannerUrl('');
     setPreviewUrl('');
@@ -190,17 +217,19 @@ export default function BannerManagement() {
     // Delete from server
     const serverUrl = getServerUrl();
     try {
-      await fetch(`${serverUrl}/banners/${bannerId}`, {
+      const res = await fetch(`${serverUrl}/banners/${bannerId}`, {
         method: 'DELETE',
       });
+      if (res.ok) {
+        const updatedList = await res.json();
+        setBanners(updatedList);
+        localStorage.setItem('BANNERS', JSON.stringify(updatedList));
+        showToast('✅ Banner excluído');
+      }
     } catch (err) {
       console.error('Failed to delete banner on server', err);
+      showToast('❌ Erro ao excluir banner');
     }
-
-    const updatedBanners = banners.filter((b) => b.id !== bannerId);
-    setBanners(updatedBanners);
-    localStorage.setItem('CUSTOM_BANNERS', JSON.stringify(updatedBanners));
-    showToast('✅ Banner excluído');
   }
 
   function handleImageError(e) {
