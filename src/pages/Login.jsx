@@ -8,7 +8,8 @@ import SupportButton from '../components/SupportButton';
 import SupportChatModal from '../components/SupportChatModal';
 import { getServerUrl } from '../utils/serverUrl';
 
-const USE_API = import.meta.env.VITE_USE_API === 'true';
+// Force API usage for consistency with AdminDashboard
+const USE_API = true;
 
 const DEFAULT_USERS = [
   { username: 'jhon', password: '1234' },

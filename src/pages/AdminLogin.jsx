@@ -26,7 +26,7 @@ export default function AdminLogin() {
 
     // Primeiro verifica admin padrão
     if (
-      username.trim() === DEFAULT_ADMIN.username &&
+      username.trim().toLowerCase() === DEFAULT_ADMIN.username.toLowerCase() &&
       password === DEFAULT_ADMIN.password
     ) {
       sessionStorage.setItem('isAdmin', 'true');
@@ -62,7 +62,9 @@ export default function AdminLogin() {
       }
 
       const admin = admins.find(
-        (a) => a.username === username.trim() && a.password === password
+        (a) =>
+          a.username.toLowerCase() === username.trim().toLowerCase() &&
+          a.password === password
       );
 
       if (admin) {

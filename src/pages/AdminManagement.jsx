@@ -94,7 +94,12 @@ export default function AdminManagement() {
     }
 
     // Verifica se o username já existe
-    if (admins.some((admin) => admin.username === newAdminUsername.trim())) {
+    if (
+      admins.some(
+        (admin) =>
+          admin.username.toLowerCase() === newAdminUsername.trim().toLowerCase()
+      )
+    ) {
       showToast('❌ Este nombre de administrador ya existe');
       return;
     }

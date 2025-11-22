@@ -327,7 +327,11 @@ app.get('/admins', (req, res) => {
 app.post('/admins', (req, res) => {
   const data = req.body || {};
   const list = readAdmins();
-  if (list.some((a) => a.username === data.username)) {
+  if (
+    list.some(
+      (a) => a.username.toLowerCase() === (data.username || '').toLowerCase()
+    )
+  ) {
     return res.status(409).json({ error: 'Username already exists' });
   }
   const newItem = { ...data, id: data.id || Date.now() };
