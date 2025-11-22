@@ -417,6 +417,10 @@ io.on('connection', (socket) => {
   // send main chat history
   socket.emit('chat:main-history', readChatMain());
 
+  // Send current chat enabled state
+  const config = readConfig();
+  socket.emit('chat:state-changed', { enabled: config.chatEnabled !== false });
+
   socket.on('chat:message', (msg) => {
     try {
       console.log('server received chat:message (support)', msg);
@@ -447,6 +451,9 @@ io.on('connection', (socket) => {
 
   socket.on('chat:toggle-global', (data) => {
     console.log('Admin alterou estado do chat globalmente:', data.enabled);
+    const current = readConfig();
+    const next = { ...current, chatEnabled: data.enabled };
+    writeConfig(next);
     io.emit('chat:state-changed', { enabled: data.enabled });
   });
 
