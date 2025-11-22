@@ -348,8 +348,8 @@ if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(process.cwd(), 'dist');
   app.use(express.static(distPath));
 
-  // Rota catch-all para SPA (React Router)
-  app.get('*', (req, res) => {
+  // Rota catch-all para SPA (React Router) - deve ser a última rota
+  app.use((req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 }
