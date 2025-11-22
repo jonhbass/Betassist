@@ -43,7 +43,7 @@ export default function SupportChatModal({ onClose }) {
   useEffect(() => {
     if (!USE_SOCKET) return;
     let mounted = true;
-    let onHistory, onMessage;
+    let onHistory, onMessage, onMessagesSeen;
     (async () => {
       try {
         const s = await ensureSocket(API_URL);
@@ -73,8 +73,29 @@ export default function SupportChatModal({ onClose }) {
             void e;
           }
         };
+        onMessagesSeen = ({ thread, username: seenByUser }) => {
+          if (!mounted) return;
+          try {
+            setMessages((prev) => {
+              const next = prev.map((m) => {
+                if (m.from === 'admin' && m.thread === thread) {
+                  const seen = Array.isArray(m.seenBy) ? m.seenBy : [];
+                  if (!seen.includes(seenByUser)) {
+                    return { ...m, seenBy: [...seen, seenByUser] };
+                  }
+                }
+                return m;
+              });
+              localStorage.setItem('ADMIN_MESSAGES', JSON.stringify(next));
+              return next;
+            });
+          } catch (e) {
+            void e;
+          }
+        };
         socketOn('chat:history', onHistory);
         socketOn('chat:message', onMessage);
+        socketOn('chat:messages-seen', onMessagesSeen);
       } catch (e) {
         void e;
       }
@@ -108,6 +129,7 @@ export default function SupportChatModal({ onClose }) {
       mounted = false;
       if (onHistory) socketOff('chat:history', onHistory);
       if (onMessage) socketOff('chat:message', onMessage);
+      if (onMessagesSeen) socketOff('chat:messages-seen', onMessagesSeen);
     };
   }, [username]);
 

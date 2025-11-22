@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAuthUser } from '../utils/auth';
 import SupportChatModal from './SupportChatModal';
+import { ensureSocket, on as socketOn, off as socketOff } from '../utils/socket';
 import '../css/supportButton.css';
 
 export default function SupportButton() {
@@ -34,9 +35,43 @@ export default function SupportButton() {
     window.addEventListener('storage', onStorage);
     // also poll occasionally for single-tab changes
     const t = setInterval(() => setUnread(computeUnread()), 2000);
+    
+    // Escutar eventos do socket para atualizar em tempo real
+    let mounted = true;
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    
+    (async () => {
+      try {
+        await ensureSocket(API_URL);
+        
+        const onMessage = () => {
+          if (mounted) setUnread(computeUnread());
+        };
+        
+        const onHistory = () => {
+          if (mounted) setUnread(computeUnread());
+        };
+        
+        const onMessagesSeen = () => {
+          if (mounted) setUnread(computeUnread());
+        };
+        
+        socketOn('chat:message', onMessage);
+        socketOn('chat:history', onHistory);
+        socketOn('chat:messages-seen', onMessagesSeen);
+        
+      } catch (e) {
+        console.error('Erro ao conectar socket no SupportButton:', e);
+      }
+    })();
+    
     return () => {
+      mounted = false;
       window.removeEventListener('storage', onStorage);
       clearInterval(t);
+      socketOff('chat:message', computeUnread);
+      socketOff('chat:history', computeUnread);
+      socketOff('chat:messages-seen', computeUnread);
     };
   }, []);
 

@@ -308,5 +308,15 @@
     "thread": "mila",
     "time": "2025-11-21T07:12:47.569Z",
     "handled": true
+  },
+  {
+    "id": 1763785250192,
+    "text": "ola",
+    "from": "admin",
+    "thread": "mila",
+    "time": "2025-11-22T04:20:50.192Z",
+    "seenBy": [
+      "mila"
+    ]
   }
 ]

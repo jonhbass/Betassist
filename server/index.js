@@ -184,7 +184,17 @@ app.post('/upload-receipt', async (req, res) => {
 
 // Create HTTP server and attach socket.io
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+  transports: ['websocket', 'polling'],
+  allowEIO3: true,
+  pingTimeout: 60000,
+  pingInterval: 25000,
+});
 
 io.on('connection', (socket) => {
   console.log('socket connected', socket.id);
@@ -302,7 +312,10 @@ app.post('/messages/seen', (req, res) => {
     });
     writeChatSupport(next);
     try {
+      // Emite o histórico completo atualizado
       io.emit('chat:history', next);
+      // Emite evento específico de mensagens vistas
+      io.emit('chat:messages-seen', { thread, username });
     } catch {
       void 0;
     }
