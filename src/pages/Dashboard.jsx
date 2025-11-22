@@ -149,6 +149,47 @@ export default function Dashboard() {
     };
   }, []);
 
+  // Listen for new notifications
+  useEffect(() => {
+    const handleNotification = (data) => {
+      if (
+        data.username &&
+        user &&
+        data.username.toLowerCase() === user.toLowerCase()
+      ) {
+        showToast(`✅ ${data.message}`);
+
+        // Save to LocalStorage for NotificationsModal
+        const notif = {
+          id: data.id,
+          user: user,
+          amount: data.amount,
+          date: data.date,
+          read: false,
+          type: 'deposit',
+          message: data.message,
+        };
+
+        try {
+          const existing = JSON.parse(
+            localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
+          );
+          localStorage.setItem(
+            'DEPOSIT_NOTIFICATIONS',
+            JSON.stringify([notif, ...existing])
+          );
+        } catch (e) {
+          console.error('Error saving notification', e);
+        }
+      }
+    };
+
+    if (socket) {
+      socket.on('notification:new', handleNotification);
+      return () => socket.off('notification:new', handleNotification);
+    }
+  }, [user, socket]);
+
   function handleLogout() {
     removeAuthUser();
     navigate('/login', { replace: true });

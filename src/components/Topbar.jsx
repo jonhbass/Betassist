@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Icon from '../assets/icon.svg';
 import { getAuthUser } from '../utils/auth';
 import { getServerUrl } from '../utils/serverUrl';
-import { socket } from '../utils/socket';
+import { ensureSocket } from '../utils/socket';
 import '../css/topbar.css';
 
 export default function Topbar({
@@ -64,8 +64,19 @@ export default function Topbar({
       }
     };
 
-    socket.on('user:update', handleUpdate);
-    return () => socket.off('user:update', handleUpdate);
+    ensureSocket().then((socket) => {
+      if (socket) {
+        socket.on('user:update', handleUpdate);
+      }
+    });
+
+    return () => {
+      ensureSocket().then((socket) => {
+        if (socket) {
+          socket.off('user:update', handleUpdate);
+        }
+      });
+    };
   }, []);
 
   // Contar notificações não lidas

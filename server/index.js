@@ -344,6 +344,15 @@ app.put('/deposits/:id', (req, res) => {
           balance: user.balance,
           history: user.history,
         });
+
+        io.emit('notification:new', {
+          id: Date.now(),
+          username: user.username,
+          type: 'deposit_approved',
+          amount: amount,
+          message: updates.adminMessage || 'Depósito aprobado',
+          date: new Date().toLocaleString('es-AR'),
+        });
       }
     }
   }
@@ -372,8 +381,58 @@ app.put('/withdrawals/:id', (req, res) => {
   const idx = list.findIndex((i) => String(i.id) === String(id));
   if (idx === -1) return res.status(404).json({ error: 'not found' });
 
+  const oldStatus = list[idx].status;
+  const newStatus = updates.status;
+
   list[idx] = { ...list[idx], ...updates };
   writeWithdrawals(list);
+
+  // Se aprovado, atualizar histórico do usuário (saldo já foi descontado na solicitação)
+  if (newStatus === 'Aprobada' && oldStatus !== 'Aprobada') {
+    const amount = Number(list[idx].amount);
+    const username = list[idx].user;
+
+    const users = readUsers();
+    const userIdx = users.findIndex(
+      (u) => u.username.toLowerCase() === username.toLowerCase()
+    );
+
+    if (userIdx !== -1) {
+      const user = users[userIdx];
+
+      if (!user.history) user.history = [];
+      user.history.push({
+        id: Date.now(),
+        type: 'Retiro',
+        amount: amount,
+        date: new Date().toLocaleString('es-AR'),
+        status: 'Exitosa',
+        message: updates.adminMessage || 'Retiro aprobado',
+        canClaim: false,
+      });
+
+      writeUsers(users);
+
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('user:update', {
+          username: user.username,
+          balance: user.balance,
+          history: user.history,
+        });
+
+        io.emit('notification:new', {
+          id: Date.now(),
+          username: user.username,
+          type: 'withdraw_approved',
+          amount: amount,
+          message: updates.adminMessage || 'Retiro aprobado',
+          date: new Date().toLocaleString('es-AR'),
+        });
+      }
+    }
+  }
+
   res.json({ ok: true, item: list[idx] });
 });
 

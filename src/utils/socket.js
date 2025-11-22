@@ -1,6 +1,6 @@
 import { getServerUrl } from './serverUrl';
 
-let socket = null;
+export let socket = null;
 let urlUsed = null;
 
 export async function ensureSocket(url) {

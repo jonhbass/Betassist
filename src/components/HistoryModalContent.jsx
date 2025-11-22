@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getServerUrl } from '../utils/serverUrl';
-import { socket } from '../utils/socket';
+import { ensureSocket } from '../utils/socket';
 
 export default function HistoryModalContent({ onOpenSupport }) {
   const [history, setHistory] = useState([]);
@@ -33,8 +33,19 @@ export default function HistoryModalContent({ onOpenSupport }) {
       }
     };
 
-    socket.on('user:update', handleUpdate);
-    return () => socket.off('user:update', handleUpdate);
+    ensureSocket().then((socket) => {
+      if (socket) {
+        socket.on('user:update', handleUpdate);
+      }
+    });
+
+    return () => {
+      ensureSocket().then((socket) => {
+        if (socket) {
+          socket.off('user:update', handleUpdate);
+        }
+      });
+    };
   }, [authUser]);
 
   const handleClaim = () => {

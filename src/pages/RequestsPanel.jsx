@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
+import { getServerUrl } from '../utils/serverUrl';
+import { ensureSocket } from '../utils/socket';
 import '../css/RequestsPanel.css';
 
 export default function RequestsPanel() {
@@ -15,27 +17,46 @@ export default function RequestsPanel() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [requests, setRequests] = useState([]);
 
-  // Carregar histórico do usuário logado
+  // Carregar histórico do servidor
   useEffect(() => {
-    const loadHistory = () => {
+    const loadHistory = async () => {
+      if (!authUser) return;
       try {
-        const allHistory = JSON.parse(
-          localStorage.getItem('USER_HISTORY') || '[]'
-        );
-        // Filtrar apenas transações do usuário logado
-        const userHistory = allHistory.filter((item) => item.user === authUser);
-        setRequests(userHistory);
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/users/${authUser}`);
+        if (res.ok) {
+          const data = await res.json();
+          setRequests(data.history || []);
+        }
       } catch (error) {
         console.error('Erro ao carregar histórico:', error);
-        setRequests([]);
       }
     };
 
     loadHistory();
 
-    // Atualizar a cada 3 segundos
-    const interval = setInterval(loadHistory, 3000);
-    return () => clearInterval(interval);
+    const handleUpdate = (data) => {
+      if (
+        data.username &&
+        data.username.toLowerCase() === authUser.toLowerCase()
+      ) {
+        if (data.history) setRequests(data.history);
+      }
+    };
+
+    ensureSocket().then((socket) => {
+      if (socket) {
+        socket.on('user:update', handleUpdate);
+      }
+    });
+
+    return () => {
+      ensureSocket().then((socket) => {
+        if (socket) {
+          socket.off('user:update', handleUpdate);
+        }
+      });
+    };
   }, [authUser]);
 
   const handleBack = () => {
