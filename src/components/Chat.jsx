@@ -146,6 +146,7 @@ export default function Chat({ enabled = true }) {
 
       socket.on('connect', () => {
         console.log('✅ Chat socket CONECTADO:', socket.id);
+        console.log('📊 Atualizando estado para: connected');
         setSocketState('connected');
       });
 
@@ -218,18 +219,8 @@ export default function Chat({ enabled = true }) {
     }
   }, [enabled]);
 
-  // proactively ensure a socket connection when the component mounts so we receive
-  // messages in real time without requiring the user to type or refresh.
-  useEffect(() => {
-    if (!USE_SOCKET) return;
-    (async () => {
-      try {
-        await ensureSocketConnected();
-      } catch (e) {
-        void e;
-      }
-    })();
-  }, [USE_SOCKET, ensureSocketConnected]);
+  // Não precisa de ensureSocketConnected separado - o useEffect principal já cria o socket
+  // Removido para evitar duplicação de conexões
 
   useEffect(() => {
     // persist messages locally as fallback
