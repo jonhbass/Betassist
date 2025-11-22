@@ -5,7 +5,6 @@ import '../css/sidebar.css';
 export default function AdminSidebar({
   isOpen = true,
   onNavigateToSection = () => {},
-  onToast = () => {},
   onToggleSidebar = () => {},
   pendingDeposits = 0,
   pendingWithdraws = 0,

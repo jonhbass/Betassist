@@ -23,7 +23,7 @@ export default function AdminDashboard() {
   const [pendingWithdraws, setPendingWithdraws] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
 
-  const USE_API = import.meta.env.VITE_USE_API === 'true';
+  const USE_API = true;
 
   const showToast = useCallback((msg, ms = 3000) => {
     setToast(msg);
@@ -85,62 +85,98 @@ export default function AdminDashboard() {
 
   // Monitorar solicitações pendentes
   useEffect(() => {
-    const updatePendingCounts = () => {
+    const updatePendingCounts = async () => {
       try {
-        // Depósitos pendentes - contar TODAS as pendentes
-        const deposits = JSON.parse(
-          localStorage.getItem('DEPOSIT_REQUESTS') || '[]'
-        );
-        const pendingDep = deposits.filter(
-          (d) => d.status === 'Pendiente'
-        ).length;
-        console.log(
-          '📊 Depósitos pendentes:',
-          pendingDep,
-          'Total:',
-          deposits.length
-        );
+        const serverUrl = getServerUrl();
+
+        // Depósitos pendentes
+        let pendingDep = 0;
+        try {
+          const res = await fetch(`${serverUrl}/deposits`);
+          if (res.ok) {
+            const deposits = await res.json();
+            pendingDep = deposits.filter(
+              (d) => d.status === 'Pendiente'
+            ).length;
+          } else {
+            const deposits = JSON.parse(
+              localStorage.getItem('DEPOSIT_REQUESTS') || '[]'
+            );
+            pendingDep = deposits.filter(
+              (d) => d.status === 'Pendiente'
+            ).length;
+          }
+        } catch (e) {
+          void e;
+          const deposits = JSON.parse(
+            localStorage.getItem('DEPOSIT_REQUESTS') || '[]'
+          );
+          pendingDep = deposits.filter((d) => d.status === 'Pendiente').length;
+        }
         setPendingDeposits(pendingDep);
 
-        // Retiradas pendentes - contar TODAS as pendentes
-        const withdraws = JSON.parse(
-          localStorage.getItem('WITHDRAW_REQUESTS') || '[]'
-        );
-        const pendingWith = withdraws.filter(
-          (w) => w.status === 'Pendiente'
-        ).length;
-        console.log(
-          '📊 Retiradas pendentes:',
-          pendingWith,
-          'Total:',
-          withdraws.length
-        );
+        // Retiradas pendentes
+        let pendingWith = 0;
+        try {
+          const res = await fetch(`${serverUrl}/withdrawals`);
+          if (res.ok) {
+            const withdraws = await res.json();
+            pendingWith = withdraws.filter(
+              (w) => w.status === 'Pendiente'
+            ).length;
+          } else {
+            const withdraws = JSON.parse(
+              localStorage.getItem('WITHDRAW_REQUESTS') || '[]'
+            );
+            pendingWith = withdraws.filter(
+              (w) => w.status === 'Pendiente'
+            ).length;
+          }
+        } catch (e) {
+          void e;
+          const withdraws = JSON.parse(
+            localStorage.getItem('WITHDRAW_REQUESTS') || '[]'
+          );
+          pendingWith = withdraws.filter(
+            (w) => w.status === 'Pendiente'
+          ).length;
+        }
         setPendingWithdraws(pendingWith);
 
         // Mensagens não lidas do suporte
-        const adminMessages = JSON.parse(
-          localStorage.getItem('ADMIN_MESSAGES') || '[]'
-        );
-        // Contar mensagens de usuários que ainda não foram handled
-        const unhandledCount = adminMessages.filter(
-          (m) => m.from !== 'admin' && !m.handled
-        ).length;
+        let unhandledCount = 0;
+        try {
+          const res = await fetch(`${serverUrl}/messages`);
+          if (res.ok) {
+            const msgs = await res.json();
+            unhandledCount = msgs.filter(
+              (m) => m.from !== 'admin' && !m.handled
+            ).length;
+          } else {
+            const adminMessages = JSON.parse(
+              localStorage.getItem('ADMIN_MESSAGES') || '[]'
+            );
+            unhandledCount = adminMessages.filter(
+              (m) => m.from !== 'admin' && !m.handled
+            ).length;
+          }
+        } catch (e) {
+          void e;
+          const adminMessages = JSON.parse(
+            localStorage.getItem('ADMIN_MESSAGES') || '[]'
+          );
+          unhandledCount = adminMessages.filter(
+            (m) => m.from !== 'admin' && !m.handled
+          ).length;
+        }
         setUnreadMessages(unhandledCount);
-        console.log(
-          '📊 Estado badges - Dep:',
-          pendingDep,
-          'Ret:',
-          pendingWith,
-          'Msg:',
-          unhandledCount
-        );
-      } catch (err) {
-        console.error('Erro ao contar pendentes:', err);
+      } catch (error) {
+        console.error('Erro ao atualizar contadores:', error);
       }
     };
 
     updatePendingCounts();
-    const interval = setInterval(updatePendingCounts, 3000);
+    const interval = setInterval(updatePendingCounts, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -276,33 +312,9 @@ export default function AdminDashboard() {
     setSidebarOpen((s) => !s);
   }
 
-  function handleUserClick(username) {
-    // Navegar para a seção de suporte e selecionar o usuário
-    setActiveSection('support');
-    // Pequeno delay para garantir que o componente AdminSupport seja montado
-    setTimeout(() => {
-      // Disparar evento customizado para selecionar o thread do usuário
-      window.dispatchEvent(
-        new CustomEvent('selectSupportThread', { detail: { username } })
-      );
-    }, 100);
-  }
-
   function handleNavigateToSection(section) {
     setActiveSection(section);
   }
-
-  const handleDepositRequests = () => {
-    navigate('/admin/deposit-requests');
-  };
-
-  const handleWithdrawRequests = () => {
-    navigate('/admin/withdraw-requests');
-  };
-
-  const handleSupport = () => {
-    setActiveSection('support');
-  };
 
   return (
     <div className="ba-dashboard">

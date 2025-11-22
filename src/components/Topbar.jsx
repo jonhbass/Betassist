@@ -14,10 +14,6 @@ export default function Topbar({
   showMenu = false,
   simpleMode = false,
   adminMode = false,
-  pendingDeposits = 0,
-  pendingWithdraws = 0,
-  unreadMessages = 0,
-  onWithdrawClick,
 }) {
   const navigate = useNavigate();
   const [isClosing, setIsClosing] = useState(false);
@@ -102,6 +98,16 @@ export default function Topbar({
     return () => clearInterval(interval);
   }, []);
 
+  const closeMenu = React.useCallback(() => {
+    if (onMenuClick && showMenu) {
+      setIsClosing(true);
+      setTimeout(() => {
+        onMenuClick();
+        setIsClosing(false);
+      }, 250);
+    }
+  }, [onMenuClick, showMenu]);
+
   // Fechar menu ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -125,7 +131,7 @@ export default function Topbar({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showMenu]);
+  }, [showMenu, closeMenu]);
 
   const toggleMenu = () => {
     if (showMenu && onMenuClick) {
@@ -136,16 +142,6 @@ export default function Topbar({
       }, 250);
     } else if (onMenuClick) {
       onMenuClick();
-    }
-  };
-
-  const closeMenu = () => {
-    if (onMenuClick && showMenu) {
-      setIsClosing(true);
-      setTimeout(() => {
-        onMenuClick();
-        setIsClosing(false);
-      }, 250);
     }
   };
 

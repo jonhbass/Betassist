@@ -5,19 +5,34 @@ import Footer from '../components/Footer';
 import AdminSidebar from '../components/AdminSidebar';
 import Toast from '../components/Toast';
 import { removeAuthUser } from '../utils/auth';
+import { getServerUrl } from '../utils/serverUrl';
 import '../css/admin.css';
 
 export default function BannerManagement() {
   const navigate = useNavigate();
 
-  const [banners, setBanners] = useState(() => {
-    try {
-      const stored = localStorage.getItem('CUSTOM_BANNERS');
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [banners, setBanners] = useState([]);
+
+  useEffect(() => {
+    const loadBanners = async () => {
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/banners`);
+        if (res.ok) {
+          const data = await res.json();
+          setBanners(Array.isArray(data) ? data : []);
+        } else {
+          const stored = localStorage.getItem('BANNERS');
+          setBanners(stored ? JSON.parse(stored) : []);
+        }
+      } catch (err) {
+        console.error('Failed to load banners', err);
+        const stored = localStorage.getItem('BANNERS');
+        setBanners(stored ? JSON.parse(stored) : []);
+      }
+    };
+    loadBanners();
+  }, []);
 
   const [bannerUrl, setBannerUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -152,13 +167,35 @@ export default function BannerManagement() {
     setBanners(updatedBanners);
     localStorage.setItem('CUSTOM_BANNERS', JSON.stringify(updatedBanners));
 
+    // Persist to server
+    const serverUrl = getServerUrl();
+    try {
+      fetch(`${serverUrl}/banners`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bannerData),
+      });
+    } catch (err) {
+      console.error('Failed to create banner on server', err);
+    }
+
     setBannerUrl('');
     setPreviewUrl('');
     showToast('✅ Banner adicionado com sucesso');
   }
 
-  function handleDeleteBanner(bannerId) {
+  async function handleDeleteBanner(bannerId) {
     if (!confirm('Tem certeza que deseja excluir este banner?')) return;
+
+    // Delete from server
+    const serverUrl = getServerUrl();
+    try {
+      await fetch(`${serverUrl}/banners/${bannerId}`, {
+        method: 'DELETE',
+      });
+    } catch (err) {
+      console.error('Failed to delete banner on server', err);
+    }
 
     const updatedBanners = banners.filter((b) => b.id !== bannerId);
     setBanners(updatedBanners);
@@ -210,7 +247,7 @@ export default function BannerManagement() {
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
             <AdminSidebar
               isOpen={sidebarOpen}
-              onNavigateToSection={(section) => navigate('/admin')}
+              onNavigateToSection={() => navigate('/admin')}
               onToast={showToast}
               onToggleSidebar={toggleSidebar}
             />

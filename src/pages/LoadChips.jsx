@@ -117,16 +117,26 @@ export default function LoadChips() {
       status: 'Pendiente',
     };
 
-    // Recuperar solicitações existentes
-    const existingRequests = JSON.parse(
-      localStorage.getItem('DEPOSIT_REQUESTS') || '[]'
-    );
-
-    // Adicionar nova solicitação
-    existingRequests.push(newRequest);
-
-    // Salvar no localStorage
-    localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(existingRequests));
+    // Enviar solicitação para o servidor
+    try {
+      const res = await fetch(`${serverUrl}/deposits`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRequest),
+      });
+      if (!res.ok) throw new Error('Falha ao salvar depósito');
+    } catch (err) {
+      console.error('Erro ao salvar depósito no servidor:', err);
+      // Fallback para localStorage
+      const existingRequests = JSON.parse(
+        localStorage.getItem('DEPOSIT_REQUESTS') || '[]'
+      );
+      existingRequests.push(newRequest);
+      localStorage.setItem(
+        'DEPOSIT_REQUESTS',
+        JSON.stringify(existingRequests)
+      );
+    }
 
     alert(
       '✅ Solicitud enviada con éxito! Será revisada por un administrador.'

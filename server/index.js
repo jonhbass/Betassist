@@ -20,6 +20,11 @@ app.use(express.json({ limit: '10mb' })); // Aumentar limite para base64
 const DATA = path.join(process.cwd(), 'server', 'users.json');
 const CHAT_MAIN = path.join(process.cwd(), 'server', 'chat-main.json');
 const CHAT_SUPPORT = path.join(process.cwd(), 'server', 'chat-support.json');
+const DEPOSITS = path.join(process.cwd(), 'server', 'deposits.json');
+const WITHDRAWALS = path.join(process.cwd(), 'server', 'withdrawals.json');
+const ADMINS = path.join(process.cwd(), 'server', 'admins.json');
+const BANNERS = path.join(process.cwd(), 'server', 'banners.json');
+const CONFIG = path.join(process.cwd(), 'server', 'config.json');
 const PORT =
   typeof process !== 'undefined' && process.env && process.env.PORT
     ? process.env.PORT
@@ -65,6 +70,75 @@ function readChatSupport() {
 
 function writeChatSupport(list) {
   fs.writeFileSync(CHAT_SUPPORT, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+function readDeposits() {
+  try {
+    const raw = fs.readFileSync(DEPOSITS, 'utf-8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeDeposits(list) {
+  fs.writeFileSync(DEPOSITS, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+function readWithdrawals() {
+  try {
+    const raw = fs.readFileSync(WITHDRAWALS, 'utf-8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeWithdrawals(list) {
+  fs.writeFileSync(WITHDRAWALS, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+function readAdmins() {
+  try {
+    const raw = fs.readFileSync(ADMINS, 'utf-8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeAdmins(list) {
+  fs.writeFileSync(ADMINS, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+function readBanners() {
+  try {
+    const raw = fs.readFileSync(BANNERS, 'utf-8');
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeBanners(list) {
+  fs.writeFileSync(BANNERS, JSON.stringify(list, null, 2), 'utf-8');
+}
+
+function readConfig() {
+  try {
+    const raw = fs.readFileSync(CONFIG, 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+function writeConfig(data) {
+  fs.writeFileSync(CONFIG, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 app.get('/health', (req, res) => res.json({ ok: true }));
@@ -180,6 +254,131 @@ app.post('/upload-receipt', async (req, res) => {
     console.error('Erro no upload:', error);
     res.status(500).json({ error: 'Erro no upload do comprovante' });
   }
+});
+
+// --- DEPOSITS ---
+app.get('/deposits', (req, res) => {
+  res.json(readDeposits());
+});
+
+app.post('/deposits', (req, res) => {
+  const data = req.body || {};
+  const list = readDeposits();
+  // Ensure ID
+  const newItem = { ...data, id: data.id || Date.now() };
+  list.push(newItem);
+  writeDeposits(list);
+  res.status(201).json({ ok: true, item: newItem });
+});
+
+app.put('/deposits/:id', (req, res) => {
+  const { id } = req.params;
+  const updates = req.body || {};
+  const list = readDeposits();
+  const idx = list.findIndex((i) => String(i.id) === String(id));
+  if (idx === -1) return res.status(404).json({ error: 'not found' });
+
+  list[idx] = { ...list[idx], ...updates };
+  writeDeposits(list);
+  res.json({ ok: true, item: list[idx] });
+});
+
+// --- WITHDRAWALS ---
+app.get('/withdrawals', (req, res) => {
+  res.json(readWithdrawals());
+});
+
+app.post('/withdrawals', (req, res) => {
+  const data = req.body || {};
+  const list = readWithdrawals();
+  const newItem = { ...data, id: data.id || Date.now() };
+  list.push(newItem);
+  writeWithdrawals(list);
+  res.status(201).json({ ok: true, item: newItem });
+});
+
+app.put('/withdrawals/:id', (req, res) => {
+  const { id } = req.params;
+  const updates = req.body || {};
+  const list = readWithdrawals();
+  const idx = list.findIndex((i) => String(i.id) === String(id));
+  if (idx === -1) return res.status(404).json({ error: 'not found' });
+
+  list[idx] = { ...list[idx], ...updates };
+  writeWithdrawals(list);
+  res.json({ ok: true, item: list[idx] });
+});
+
+// --- ADMINS ---
+app.get('/admins', (req, res) => {
+  res.json(readAdmins());
+});
+
+app.post('/admins', (req, res) => {
+  const data = req.body || {};
+  const list = readAdmins();
+  if (list.some((a) => a.username === data.username)) {
+    return res.status(409).json({ error: 'Username already exists' });
+  }
+  const newItem = { ...data, id: data.id || Date.now() };
+  list.push(newItem);
+  writeAdmins(list);
+  res.status(201).json({ ok: true, item: newItem });
+});
+
+app.put('/admins/:id', (req, res) => {
+  const { id } = req.params;
+  const updates = req.body || {};
+  const list = readAdmins();
+  const idx = list.findIndex((i) => String(i.id) === String(id));
+  if (idx === -1) return res.status(404).json({ error: 'not found' });
+
+  list[idx] = { ...list[idx], ...updates };
+  writeAdmins(list);
+  res.json({ ok: true, item: list[idx] });
+});
+
+app.delete('/admins/:id', (req, res) => {
+  const { id } = req.params;
+  let list = readAdmins();
+  list = list.filter((i) => String(i.id) !== String(id));
+  writeAdmins(list);
+  res.json({ ok: true });
+});
+
+// --- BANNERS ---
+app.get('/banners', (req, res) => {
+  res.json(readBanners());
+});
+
+app.post('/banners', (req, res) => {
+  const data = req.body || {};
+  const list = readBanners();
+  const newItem = { ...data, id: data.id || Date.now() };
+  list.push(newItem);
+  writeBanners(list);
+  res.status(201).json({ ok: true, item: newItem });
+});
+
+app.delete('/banners/:id', (req, res) => {
+  const { id } = req.params;
+  let list = readBanners();
+  list = list.filter((i) => String(i.id) !== String(id));
+  writeBanners(list);
+  res.json({ ok: true });
+});
+
+// --- CONFIG (CBU) ---
+app.get('/config', (req, res) => {
+  res.json(readConfig());
+});
+
+app.post('/config', (req, res) => {
+  const data = req.body || {};
+  const current = readConfig();
+  const next = { ...current, ...data };
+  writeConfig(next);
+  res.json({ ok: true, config: next });
 });
 
 // Create HTTP server and attach socket.io

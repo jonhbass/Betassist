@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAuthUser } from '../utils/auth';
 import '../css/NotificationsModal.css';
 
-export default function NotificationsModal({ isOpen, onClose }) {
+export default function NotificationsModal({ isOpen }) {
   const [notifications, setNotifications] = useState([]);
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
@@ -22,15 +22,9 @@ export default function NotificationsModal({ isOpen, onClose }) {
       }, 250);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, shouldRender, loadNotifications]);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadNotifications();
-    }
-  }, [isOpen]);
-
-  const loadNotifications = () => {
+  const loadNotifications = React.useCallback(() => {
     try {
       // Carregar notificações de depósito
       const depositNotifications = JSON.parse(
@@ -60,7 +54,7 @@ export default function NotificationsModal({ isOpen, onClose }) {
       console.error('Erro ao carregar notificações:', error);
       setNotifications([]);
     }
-  };
+  }, [currentUser]);
 
   const markAsRead = (notifId) => {
     try {
@@ -126,13 +120,7 @@ export default function NotificationsModal({ isOpen, onClose }) {
     }
   };
 
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsClosing(false);
-      onClose();
-    }, 250);
-  };
+  // handleClose removido pois não estava sendo usado
 
   if (!shouldRender) return null;
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/RequestsPanel.css';
+import { getServerUrl } from '../utils/serverUrl';
 
 export default function WithdrawRequests() {
   const navigate = useNavigate();
@@ -12,10 +13,28 @@ export default function WithdrawRequests() {
   const [requests, setRequests] = useState([]);
   const [adminMessages, setAdminMessages] = useState({});
 
-  // Carregar solicitações do localStorage
+  // Carregar solicitações do servidor
   useEffect(() => {
-    const loadRequests = () => {
+    const loadRequests = async () => {
       try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/withdrawals`);
+        if (res.ok) {
+          const data = await res.json();
+          setRequests(Array.isArray(data) ? data : []);
+        } else {
+          // Fallback para localStorage
+          const stored = localStorage.getItem('WITHDRAW_REQUESTS');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setRequests(Array.isArray(parsed) ? parsed : []);
+          } else {
+            setRequests([]);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao carregar solicitações:', error);
+        // Fallback para localStorage
         const stored = localStorage.getItem('WITHDRAW_REQUESTS');
         if (stored) {
           const parsed = JSON.parse(stored);
@@ -23,9 +42,6 @@ export default function WithdrawRequests() {
         } else {
           setRequests([]);
         }
-      } catch (error) {
-        console.error('Erro ao carregar solicitações:', error);
-        setRequests([]);
       }
     };
 
@@ -46,7 +62,7 @@ export default function WithdrawRequests() {
     navigate('/login');
   };
 
-  const handleApprove = (req) => {
+  const handleApprove = async (req) => {
     const adminMessage = adminMessages[req.id] || 'Solicitud de retiro';
 
     if (
@@ -57,10 +73,24 @@ export default function WithdrawRequests() {
       )
     ) {
       // Atualizar status da solicitação
+      const updatedReq = { ...req, status: 'Aprobada', adminMessage };
       const updatedRequests = requests.map((r) =>
-        r.id === req.id ? { ...r, status: 'Aprobada', adminMessage } : r
+        r.id === req.id ? updatedReq : r
       );
       setRequests(updatedRequests);
+
+      // Persistir no servidor
+      const serverUrl = getServerUrl();
+      try {
+        await fetch(`${serverUrl}/withdrawals/${req.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'Aprobada', adminMessage }),
+        });
+      } catch (e) {
+        console.error('Erro ao atualizar retirada no servidor', e);
+      }
+      // Fallback localStorage
       localStorage.setItem(
         'WITHDRAW_REQUESTS',
         JSON.stringify(updatedRequests)
@@ -136,7 +166,7 @@ export default function WithdrawRequests() {
     }
   };
 
-  const handleReject = (req) => {
+  const handleReject = async (req) => {
     const adminMessage = adminMessages[req.id] || 'Rechazo automático';
 
     if (
@@ -146,10 +176,24 @@ export default function WithdrawRequests() {
         )}?`
       )
     ) {
+      const updatedReq = { ...req, status: 'Rechazada', adminMessage };
       const updatedRequests = requests.map((r) =>
-        r.id === req.id ? { ...r, status: 'Rechazada', adminMessage } : r
+        r.id === req.id ? updatedReq : r
       );
       setRequests(updatedRequests);
+
+      // Persistir no servidor
+      const serverUrl = getServerUrl();
+      try {
+        await fetch(`${serverUrl}/withdrawals/${req.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'Rechazada', adminMessage }),
+        });
+      } catch (e) {
+        console.error('Erro ao atualizar retirada no servidor', e);
+      }
+      // Fallback localStorage
       localStorage.setItem(
         'WITHDRAW_REQUESTS',
         JSON.stringify(updatedRequests)

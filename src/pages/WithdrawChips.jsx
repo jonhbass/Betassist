@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/WithdrawChips.css';
+import { getServerUrl } from '../utils/serverUrl';
 
 export default function WithdrawChips() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function WithdrawChips() {
     navigate(-1);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validações
@@ -59,16 +60,27 @@ export default function WithdrawChips() {
       status: 'Pendiente',
     };
 
-    // Recuperar solicitações existentes
-    const existingRequests = JSON.parse(
-      localStorage.getItem('WITHDRAW_REQUESTS') || '[]'
-    );
-
-    // Adicionar nova solicitação
-    existingRequests.push(newRequest);
-
-    // Salvar no localStorage
-    localStorage.setItem('WITHDRAW_REQUESTS', JSON.stringify(existingRequests));
+    // Enviar para o servidor
+    const serverUrl = getServerUrl();
+    try {
+      const res = await fetch(`${serverUrl}/withdrawals`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRequest),
+      });
+      if (!res.ok) throw new Error('Falha ao salvar retirada');
+    } catch (err) {
+      console.error('Erro ao salvar retirada no servidor:', err);
+      // Fallback para localStorage
+      const existingRequests = JSON.parse(
+        localStorage.getItem('WITHDRAW_REQUESTS') || '[]'
+      );
+      existingRequests.push(newRequest);
+      localStorage.setItem(
+        'WITHDRAW_REQUESTS',
+        JSON.stringify(existingRequests)
+      );
+    }
 
     alert('✅ Solicitud de retiro enviada con éxito');
     navigate('/home');

@@ -242,7 +242,7 @@ export default function Tutorial({ isOpen, onClose }) {
       window.removeEventListener('resize', updatePosition);
       window.removeEventListener('scroll', updatePosition);
     };
-  }, [currentStep, isOpen]);
+  }, [currentStep, isOpen, tutorialSteps]);
 
   const handleNext = () => {
     if (currentStep < tutorialSteps.length - 1) {

@@ -27,7 +27,7 @@ export default function HistoryModalContent({ onOpenSupport }) {
     return () => clearInterval(interval);
   }, [authUser]);
 
-  const handleClaim = (item) => {
+  const handleClaim = () => {
     if (onOpenSupport) {
       onOpenSupport();
     }

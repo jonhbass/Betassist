@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import {
   postMessage,
   markThreadHandled,
@@ -10,9 +10,7 @@ import { useAutoScroll } from './hooks/useAutoScroll';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useKnownUsers } from './hooks/useKnownUsers';
 
-const USE_SOCKET =
-  import.meta.env.VITE_USE_SOCKET === 'true' ||
-  import.meta.env.VITE_USE_API === 'true';
+const USE_SOCKET = true;
 
 export default function useAdminSupport() {
   const [messages, setMessages] = useLocalStorage('ADMIN_MESSAGES', []);
@@ -52,26 +50,29 @@ export default function useAdminSupport() {
     setReplyText('');
   }
 
-  async function openThread(threadId) {
-    try {
-      setActiveThread(threadId);
-      activeThreadRef.current = threadId;
+  const openThread = useCallback(
+    async (threadId) => {
+      try {
+        setActiveThread(threadId);
+        activeThreadRef.current = threadId;
 
-      // Optimistic local update
-      setMessages((m) => markMessagesAsHandled(m, threadId));
+        // Optimistic local update
+        setMessages((m) => markMessagesAsHandled(m, threadId));
 
-      // Persist on server
-      await markThreadHandled(threadId);
+        // Persist on server
+        await markThreadHandled(threadId);
 
-      // Re-fetch messages to ensure sync
-      if (import.meta.env.VITE_USE_API === 'true') {
-        const list = await fetchMessages();
-        if (list.length > 0) setMessages(list);
+        // Re-fetch messages to ensure sync
+        if (import.meta.env.VITE_USE_API === 'true') {
+          const list = await fetchMessages();
+          if (list.length > 0) setMessages(list);
+        }
+      } catch (e) {
+        void e;
       }
-    } catch (e) {
-      void e;
-    }
-  }
+    },
+    [setMessages]
+  );
 
   async function markAllHandled() {
     setMessages((m) => markMessagesAsHandled(m, activeThread));

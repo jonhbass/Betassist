@@ -9,9 +9,7 @@ import {
 import { getServerUrl } from '../utils/serverUrl';
 
 const API_URL = getServerUrl();
-const USE_SOCKET =
-  import.meta.env.VITE_USE_SOCKET === 'true' ||
-  import.meta.env.VITE_USE_API === 'true';
+const USE_SOCKET = true;
 
 export default function SupportChatModal({ onClose }) {
   const [messages, setMessages] = useState(() => {

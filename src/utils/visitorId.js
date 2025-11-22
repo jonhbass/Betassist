@@ -38,7 +38,7 @@ function getNextCounter() {
     const next = current + 1;
     localStorage.setItem(VISITOR_COUNTER_KEY, next.toString());
     return next;
-  } catch (e) {
+  } catch {
     // Fallback para timestamp se houver erro
     return Date.now() % 10000;
   }

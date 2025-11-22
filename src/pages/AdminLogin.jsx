@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/Login.css';
+import { getServerUrl } from '../utils/serverUrl';
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('');
@@ -14,7 +15,7 @@ export default function AdminLogin() {
     password: 'admin123',
   };
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     // Validar campos obrigatórios
@@ -34,21 +35,41 @@ export default function AdminLogin() {
       return;
     }
 
-    // Verifica na lista de admins cadastrados
+    // Verifica na lista de admins cadastrados (Server + Local)
     try {
-      const storedAdmins = localStorage.getItem('ADMINS');
-      if (storedAdmins) {
-        const admins = JSON.parse(storedAdmins);
-        const admin = admins.find(
-          (a) => a.username === username.trim() && a.password === password
-        );
-
-        if (admin) {
-          sessionStorage.setItem('isAdmin', 'true');
-          sessionStorage.setItem('adminUsername', admin.username);
-          navigate('/admin');
-          return;
+      const serverUrl = getServerUrl();
+      let admins = [];
+      try {
+        const res = await fetch(`${serverUrl}/admins`);
+        if (res.ok) {
+          admins = await res.json();
         }
+      } catch (err) {
+        console.error('Failed to fetch admins', err);
+        // Fallback to local
+        const storedAdmins = localStorage.getItem('ADMINS');
+        if (storedAdmins) {
+          admins = JSON.parse(storedAdmins);
+        }
+      }
+
+      // Also check local if server returned empty or failed but we didn't catch it
+      if (!admins.length) {
+        const storedAdmins = localStorage.getItem('ADMINS');
+        if (storedAdmins) {
+          admins = JSON.parse(storedAdmins);
+        }
+      }
+
+      const admin = admins.find(
+        (a) => a.username === username.trim() && a.password === password
+      );
+
+      if (admin) {
+        sessionStorage.setItem('isAdmin', 'true');
+        sessionStorage.setItem('adminUsername', admin.username);
+        navigate('/admin');
+        return;
       }
     } catch (err) {
       console.error('Erro ao verificar admins:', err);

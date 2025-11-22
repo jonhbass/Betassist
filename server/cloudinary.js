@@ -1,4 +1,6 @@
 /* eslint-env node */
+/* global process */
+// ...existing code...
 import { v2 as cloudinary } from 'cloudinary';
 
 // Configuração do Cloudinary (opcional - usa localStorage se não configurado)

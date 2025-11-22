@@ -7,7 +7,6 @@ export default function Sidebar({
   isOpen = true,
   user = '',
   onToast = () => {},
-  onOpenModal = () => {},
   isAdmin = false,
   onToggleChat = () => {},
   chatEnabled = true,

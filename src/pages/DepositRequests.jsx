@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/RequestsPanel.css';
+import { getServerUrl } from '../utils/serverUrl';
 
 export default function DepositRequests() {
   const navigate = useNavigate();
@@ -13,10 +14,28 @@ export default function DepositRequests() {
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [adminMessages, setAdminMessages] = useState({});
 
-  // Carregar solicitações do localStorage
+  // Carregar solicitações do servidor
   useEffect(() => {
-    const loadRequests = () => {
+    const loadRequests = async () => {
       try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/deposits`);
+        if (res.ok) {
+          const data = await res.json();
+          setRequests(Array.isArray(data) ? data : []);
+        } else {
+          // Fallback para localStorage
+          const stored = localStorage.getItem('DEPOSIT_REQUESTS');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setRequests(Array.isArray(parsed) ? parsed : []);
+          } else {
+            setRequests([]);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao carregar solicitações:', error);
+        // Fallback para localStorage
         const stored = localStorage.getItem('DEPOSIT_REQUESTS');
         if (stored) {
           const parsed = JSON.parse(stored);
@@ -24,9 +43,6 @@ export default function DepositRequests() {
         } else {
           setRequests([]);
         }
-      } catch (error) {
-        console.error('Erro ao carregar solicitações:', error);
-        setRequests([]);
       }
     };
 
@@ -47,7 +63,7 @@ export default function DepositRequests() {
     navigate('/login');
   };
 
-  const handleApprove = (req) => {
+  const handleApprove = async (req) => {
     const adminMessage = adminMessages[req.id] || 'Solicitud de recarga';
 
     if (
@@ -58,10 +74,24 @@ export default function DepositRequests() {
       )
     ) {
       // Atualizar status da solicitação
+      const updatedReq = { ...req, status: 'Aprobada', adminMessage };
       const updatedRequests = requests.map((r) =>
-        r.id === req.id ? { ...r, status: 'Aprobada', adminMessage } : r
+        r.id === req.id ? updatedReq : r
       );
       setRequests(updatedRequests);
+
+      // Persistir no servidor
+      const serverUrl = getServerUrl();
+      try {
+        await fetch(`${serverUrl}/deposits/${req.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'Aprobada', adminMessage }),
+        });
+      } catch (e) {
+        console.error('Erro ao atualizar depósito no servidor', e);
+      }
+      // Fallback localStorage
       localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
 
       // Adicionar ao histórico do usuário
@@ -134,7 +164,7 @@ export default function DepositRequests() {
     }
   };
 
-  const handleReject = (req) => {
+  const handleReject = async (req) => {
     const adminMessage = adminMessages[req.id] || 'Rechazo automático';
 
     if (
@@ -144,10 +174,24 @@ export default function DepositRequests() {
         )}?`
       )
     ) {
+      const updatedReq = { ...req, status: 'Rechazada', adminMessage };
       const updatedRequests = requests.map((r) =>
-        r.id === req.id ? { ...r, status: 'Rechazada', adminMessage } : r
+        r.id === req.id ? updatedReq : r
       );
       setRequests(updatedRequests);
+
+      // Persistir no servidor
+      const serverUrl = getServerUrl();
+      try {
+        await fetch(`${serverUrl}/deposits/${req.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'Rechazada', adminMessage }),
+        });
+      } catch (e) {
+        console.error('Erro ao atualizar depósito no servidor', e);
+      }
+      // Fallback localStorage
       localStorage.setItem('DEPOSIT_REQUESTS', JSON.stringify(updatedRequests));
 
       // Adicionar ao histórico do usuário

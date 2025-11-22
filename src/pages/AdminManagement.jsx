@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import AdminSidebar from '../components/AdminSidebar';
 import Toast from '../components/Toast';
 import { removeAuthUser } from '../utils/auth';
+import { getServerUrl } from '../utils/serverUrl';
 import '../css/admin.css';
 
 export default function AdminManagement() {
@@ -19,14 +20,29 @@ export default function AdminManagement() {
     createdAt: new Date().toISOString(),
   };
 
-  const [admins, setAdmins] = useState(() => {
-    try {
-      const stored = localStorage.getItem('ADMINS');
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [admins, setAdmins] = useState([]);
+
+  useEffect(() => {
+    const loadAdmins = async () => {
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/admins`);
+        if (res.ok) {
+          const data = await res.json();
+          setAdmins(Array.isArray(data) ? data : []);
+        } else {
+          // Fallback
+          const stored = localStorage.getItem('ADMINS');
+          setAdmins(stored ? JSON.parse(stored) : []);
+        }
+      } catch (err) {
+        console.error('Failed to load admins', err);
+        const stored = localStorage.getItem('ADMINS');
+        setAdmins(stored ? JSON.parse(stored) : []);
+      }
+    };
+    loadAdmins();
+  }, []);
 
   // Adiciona admin padrão à lista para exibição
   const allAdmins = [DEFAULT_ADMIN, ...admins];
@@ -64,7 +80,7 @@ export default function AdminManagement() {
     navigate('/admin-login', { replace: true });
   }
 
-  function handleCreateAdmin(e) {
+  async function handleCreateAdmin(e) {
     e.preventDefault();
 
     if (!newAdminUsername.trim() || !newAdminPassword.trim()) {
@@ -90,6 +106,19 @@ export default function AdminManagement() {
       createdAt: new Date().toISOString(),
     };
 
+    // Persist to server
+    const serverUrl = getServerUrl();
+    try {
+      const res = await fetch(`${serverUrl}/admins`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newAdmin),
+      });
+      if (!res.ok) throw new Error('Failed to create admin');
+    } catch (err) {
+      console.error('Failed to create admin on server', err);
+    }
+
     const updatedAdmins = [...admins, newAdmin];
     setAdmins(updatedAdmins);
     localStorage.setItem('ADMINS', JSON.stringify(updatedAdmins));
@@ -99,7 +128,7 @@ export default function AdminManagement() {
     showToast('✅ Administrador creado con éxito');
   }
 
-  function handleDeleteAdmin(adminId) {
+  async function handleDeleteAdmin(adminId) {
     // Prevenir exclusão do admin padrão
     if (adminId === 'default-admin') {
       showToast('❌ El administrador predeterminado no puede ser eliminado');
@@ -108,6 +137,16 @@ export default function AdminManagement() {
 
     if (!confirm('¿Está seguro de que desea eliminar este administrador?'))
       return;
+
+    // Delete from server
+    const serverUrl = getServerUrl();
+    try {
+      await fetch(`${serverUrl}/admins/${adminId}`, {
+        method: 'DELETE',
+      });
+    } catch (err) {
+      console.error('Failed to delete admin on server', err);
+    }
 
     const updatedAdmins = admins.filter((admin) => admin.id !== adminId);
     setAdmins(updatedAdmins);
@@ -120,7 +159,7 @@ export default function AdminManagement() {
     setEditingPassword('');
   }
 
-  function handleSavePassword(admin) {
+  async function handleSavePassword(admin) {
     if (!editingPassword.trim()) {
       showToast('❌ Ingrese una nueva contraseña');
       return;
@@ -141,6 +180,18 @@ export default function AdminManagement() {
       return;
     }
 
+    // Update on server
+    const serverUrl = getServerUrl();
+    try {
+      await fetch(`${serverUrl}/admins/${admin.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: editingPassword }),
+      });
+    } catch (err) {
+      console.error('Failed to update admin password on server', err);
+    }
+
     // Atualizar senha do admin customizado
     const updatedAdmins = admins.map((a) =>
       a.id === admin.id ? { ...a, password: editingPassword } : a
@@ -156,21 +207,6 @@ export default function AdminManagement() {
   function handleCancelEdit() {
     setEditingAdminId(null);
     setEditingPassword('');
-  }
-
-  function formatDate(isoString) {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return 'Data inválida';
-    }
   }
 
   return (
@@ -197,7 +233,7 @@ export default function AdminManagement() {
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
             <AdminSidebar
               isOpen={sidebarOpen}
-              onNavigateToSection={(section) => navigate('/admin')}
+              onNavigateToSection={() => navigate('/admin')}
               onToast={showToast}
               onToggleSidebar={toggleSidebar}
             />

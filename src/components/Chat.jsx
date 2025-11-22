@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuthUser } from '../utils/auth';
 // import socket.io-client synchronously to avoid dynamic-import races during dev
@@ -10,10 +10,7 @@ export default function Chat({ enabled = true }) {
   const navigate = useNavigate();
   const getCurrentUser = () => getAuthUser() || 'Guest';
   const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
-  const USE_SOCKET =
-    (import.meta.env.VITE_USE_SOCKET === 'true' ||
-      import.meta.env.VITE_USE_API === 'true') &&
-    enabled;
+  const USE_SOCKET = true;
 
   const [messages, setMessages] = useState(() => {
     try {
@@ -57,25 +54,16 @@ export default function Chat({ enabled = true }) {
   const [socketState, setSocketState] = useState('disconnected'); // disconnected | connecting | connected
   const listRef = useRef(null);
   const socketRef = useRef(null);
-  const connectingRef = useRef(false);
   const typingTimeout = useRef(null);
-  // ensure socket is connected (used when user sends before dynamic import finished)
-  const ensureSocketConnected = useCallback(async () => {
-    if (!USE_SOCKET) return null;
-    if (socketRef.current) return socketRef.current;
-    if (connectingRef.current) {
-      // wait until socketRef.current is set by the ongoing connection attempt
-      return new Promise((resolve) => {
-        const t = setInterval(() => {
-          if (socketRef.current) {
-            clearInterval(t);
-            resolve(socketRef.current);
-          }
-        }, 50);
-      });
-    }
-    connectingRef.current = true;
+
+  // Socket.IO connection
+  useEffect(() => {
+    if (!USE_SOCKET) return;
+
+    let mounted = true;
     const url = getServerUrl();
+    console.log('🌐 Conectando ao servidor:', url);
+
     const socket = ioClient(url, {
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -85,124 +73,54 @@ export default function Chat({ enabled = true }) {
       autoConnect: true,
     });
     socketRef.current = socket;
-    connectingRef.current = false;
-    // re-attach minimal listeners if they were not attached
+
     socket.on('connect', () => {
-      console.log('chat socket connected (ensured)', socket.id);
-      setSocketState('connected');
+      console.log('✅ Chat socket CONECTADO:', socket.id);
+      if (mounted) setSocketState('connected');
     });
+
+    socket.on('chat:main-history', (list) => {
+      if (!mounted) return;
+      setMessages(list);
+    });
+
     socket.on('chat:main-message', (msg) => {
-      console.log('socket received chat:main-message (ensured)', msg);
+      if (!mounted) return;
       setMessages((m) => [...m, msg]);
     });
-    socket.on('chat:main-history', (list) => setMessages(list));
+
     socket.on('chat:typing', (p) => {
+      if (!mounted) return;
       setTyping(p.name);
       if (typingTimeout.current) clearTimeout(typingTimeout.current);
-      typingTimeout.current = setTimeout(() => setTyping(''), 2000);
+      typingTimeout.current = setTimeout(() => {
+        if (mounted) setTyping('');
+      }, 2000);
     });
+
+    socket.on('chat:cleared', () => {
+      if (!mounted) return;
+      setMessages([]);
+      try {
+        localStorage.removeItem('CHAT_MESSAGES');
+      } catch (e) {
+        void e;
+      }
+    });
+
     socket.on('connect_error', (err) => {
       console.warn('socket connect_error', err && err.message);
-      setSocketState('disconnected');
+      if (mounted) setSocketState('disconnected');
     });
+
     socket.on('disconnect', (reason) => {
       console.log('socket disconnected', reason);
-      setSocketState('disconnected');
+      if (mounted) setSocketState('disconnected');
     });
-    return socket;
-  }, [USE_SOCKET]);
-
-  // Socket.IO connection (initial attach for clients that prefer the dynamic import path)
-  useEffect(() => {
-    if (!USE_SOCKET) return;
-    // dynamic import to keep bundle small when not used
-    let mounted = true;
-    (async () => {
-      const mod = await import('socket.io-client');
-      const ioFn = mod.io || mod.default || mod;
-      const url = getServerUrl();
-      console.log('🌐 Conectando ao servidor:', url);
-      const socket = ioFn(url, {
-        transports: ['websocket', 'polling'],
-        reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-        timeout: 20000,
-        autoConnect: true,
-      });
-      socketRef.current = socket;
-
-      socket.on('connect', () => {
-        console.log('✅ Chat socket CONECTADO:', socket.id);
-        console.log('📊 Atualizando estado para: connected');
-        setSocketState('connected');
-      });
-
-      socket.on('chat:main-history', (list) => {
-        if (!mounted) return;
-        console.log('📥 Histórico recebido:', list.length, 'mensagens');
-        setMessages(list);
-      });
-
-      socket.on('chat:main-message', (msg) => {
-        if (!mounted) return;
-        console.log('📨 Nova mensagem recebida via socket:', msg);
-        setMessages((m) => [...m, msg]);
-      });
-
-      socket.on('chat:typing', (p) => {
-        if (!mounted) return;
-        setTyping(p.name);
-        if (typingTimeout.current) clearTimeout(typingTimeout.current);
-        typingTimeout.current = setTimeout(() => setTyping(''), 2000);
-      });
-
-      socket.on('chat:cleared', () => {
-        if (!mounted) return;
-        console.log('🗑️ Chat limpo globalmente pelo admin');
-        setMessages([]);
-        try {
-          localStorage.removeItem('CHAT_MESSAGES');
-        } catch (e) {
-          void e;
-        }
-      });
-
-      socket.on('connect_error', (error) => {
-        console.error('❌ Erro de conexão do socket:', error);
-        setSocketState('disconnected');
-      });
-
-      socket.on('disconnect', (reason) => {
-        console.log('🔌 Socket desconectado:', reason);
-        setSocketState('disconnected');
-      });
-
-      socket.on('reconnect', (attemptNumber) => {
-        console.log('🔄 Socket reconectado após', attemptNumber, 'tentativas');
-        setSocketState('connected');
-      });
-
-      // Verificar estado inicial do socket
-      if (socket.connected) {
-        console.log('✅ Socket já estava conectado');
-        setSocketState('connected');
-      } else {
-        console.log('⏳ Aguardando conexão do socket...');
-        setSocketState('connecting');
-        // Verificar novamente após 1 segundo
-        setTimeout(() => {
-          if (mounted && socket.connected) {
-            console.log('✅ Socket conectado (verificação atrasada)');
-            setSocketState('connected');
-          }
-        }, 1000);
-      }
-    })();
 
     return () => {
       mounted = false;
-      if (socketRef.current) socketRef.current.disconnect();
+      if (socket) socket.disconnect();
     };
   }, [USE_SOCKET]);
 
@@ -246,26 +164,23 @@ export default function Chat({ enabled = true }) {
     };
     console.log('chat send', msg);
 
-    if (USE_SOCKET) {
-      // ensure socket exists and emit — if not ready we'll connect and then emit
-      (async () => {
-        try {
-          const s = await ensureSocketConnected();
-          if (s) {
-            s.emit('chat:main-message', msg);
-            return;
-          }
-        } catch (err) {
-          console.warn(
-            'socket emit failed, falling back to local',
-            err && err.message
-          );
-        }
-        // fallback if socket not available
-        setMessages((m) => [...m, msg]);
-      })();
+    if (USE_SOCKET && socketRef.current && socketRef.current.connected) {
+      socketRef.current.emit('chat:main-message', msg);
     } else {
-      setMessages((m) => [...m, msg]);
+      // Fallback: send via REST
+      const serverUrl = getServerUrl();
+      fetch(`${serverUrl}/messages/main`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(msg),
+      })
+        .then(() => {
+          setMessages((m) => [...m, msg]);
+        })
+        .catch((err) => {
+          console.error('Failed to send message via REST', err);
+          setMessages((m) => [...m, msg]);
+        });
     }
 
     setText('');
@@ -273,15 +188,9 @@ export default function Chat({ enabled = true }) {
 
   function onTyping(e) {
     setText(e.target.value);
-    if (!USE_SOCKET) return;
-    (async () => {
-      try {
-        const s = await ensureSocketConnected();
-        if (s) s.emit('chat:typing', { name: getCurrentUser() });
-      } catch (err) {
-        void err;
-      }
-    })();
+    if (USE_SOCKET && socketRef.current && socketRef.current.connected) {
+      socketRef.current.emit('chat:typing', { name: getCurrentUser() });
+    }
   }
 
   function formatTime(iso) {

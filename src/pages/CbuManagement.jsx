@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import AdminSidebar from '../components/AdminSidebar';
 import Toast from '../components/Toast';
 import { removeAuthUser } from '../utils/auth';
+import { getServerUrl } from '../utils/serverUrl';
 import '../css/admin.css';
 
 export default function CbuManagement() {
@@ -26,9 +27,28 @@ export default function CbuManagement() {
       return;
     }
 
-    // Carregar CBU do localStorage
-    const storedCbu = localStorage.getItem('DEPOSIT_CBU');
-    setCbu(storedCbu || '');
+    // Carregar CBU do servidor
+    const loadCbu = async () => {
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/config`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.cbu) {
+            setCbu(data.cbu);
+            return;
+          }
+        }
+        // Fallback
+        const storedCbu = localStorage.getItem('DEPOSIT_CBU');
+        setCbu(storedCbu || '');
+      } catch (err) {
+        console.error('Failed to load CBU', err);
+        const storedCbu = localStorage.getItem('DEPOSIT_CBU');
+        setCbu(storedCbu || '');
+      }
+    };
+    loadCbu();
   }, [navigate]);
 
   const toggleSidebar = () => {
@@ -44,7 +64,7 @@ export default function CbuManagement() {
     setToast(message);
   };
 
-  const handleSaveCbu = (e) => {
+  const handleSaveCbu = async (e) => {
     e.preventDefault();
 
     // Validações
@@ -58,6 +78,18 @@ export default function CbuManagement() {
     if (!/^\d+$/.test(cleanCbu)) {
       showToast('❌ O CBU deve conter apenas números');
       return;
+    }
+
+    // Salvar no servidor
+    const serverUrl = getServerUrl();
+    try {
+      await fetch(`${serverUrl}/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cbu: cleanCbu }),
+      });
+    } catch (err) {
+      console.error('Failed to save CBU on server', err);
     }
 
     // Salvar no localStorage
@@ -95,7 +127,7 @@ export default function CbuManagement() {
           <aside className={`ba-sidebar ${sidebarOpen ? 'open' : 'collapsed'}`}>
             <AdminSidebar
               isOpen={sidebarOpen}
-              onNavigateToSection={(section) => navigate('/admin')}
+              onNavigateToSection={() => navigate('/admin')}
               onToast={showToast}
               onToggleSidebar={toggleSidebar}
             />
