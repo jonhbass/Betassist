@@ -6,20 +6,7 @@ import AdminSupport from '../components/AdminSupport';
 import AdminSidebar from '../components/AdminSidebar';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
-
-// Determinar URL do servidor - em produção usa a mesma origem
-const getServerUrl = () => {
-  if (
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1')
-  ) {
-    return import.meta.env.VITE_API_URL || 'http://localhost:4000';
-  }
-  return typeof window !== 'undefined'
-    ? window.location.origin
-    : 'http://localhost:4000';
-};
+import { getServerUrl } from '../utils/serverUrl';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();

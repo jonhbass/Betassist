@@ -15,6 +15,7 @@ import SupportButton from '../components/SupportButton';
 import NotificationsModal from '../components/NotificationsModal';
 import Tutorial from '../components/Tutorial';
 import { getAuthUser, removeAuthUser } from '../utils/auth';
+import { getServerUrl } from '../utils/serverUrl';
 
 export default function Dashboard() {
   const [user, setUser] = useState('tute4279');
@@ -120,7 +121,7 @@ export default function Dashboard() {
     let socketInstance;
     import('socket.io-client').then((mod) => {
       const ioFn = mod.io || mod.default || mod;
-      const url = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+      const url = getServerUrl();
       socketInstance = ioFn(url);
       setSocket(socketInstance);
 

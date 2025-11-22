@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+import { getServerUrl } from '../../../utils/serverUrl';
+
+const API_URL = getServerUrl();
 
 export async function fetchUsers() {
   try {

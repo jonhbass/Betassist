@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/LoadChips.css';
+import { getServerUrl } from '../utils/serverUrl';
 
 export default function LoadChips() {
   const navigate = useNavigate();
@@ -73,8 +74,10 @@ export default function LoadChips() {
     let finalReceiptUrl = receiptPreview; // Fallback para base64
 
     // Tentar enviar para o backend (se disponível)
+    const serverUrl = getServerUrl();
+
     try {
-      const response = await fetch('http://localhost:4000/upload-receipt', {
+      const response = await fetch(`${serverUrl}/upload-receipt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

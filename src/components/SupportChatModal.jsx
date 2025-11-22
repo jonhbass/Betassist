@@ -6,20 +6,7 @@ import {
   on as socketOn,
   off as socketOff,
 } from '../utils/socket';
-
-// Determinar URL do servidor - em produção usa a mesma origem
-const getServerUrl = () => {
-  if (
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1')
-  ) {
-    return import.meta.env.VITE_API_URL || 'http://localhost:4000';
-  }
-  return typeof window !== 'undefined'
-    ? window.location.origin
-    : 'http://localhost:4000';
-};
+import { getServerUrl } from '../utils/serverUrl';
 
 const API_URL = getServerUrl();
 const USE_SOCKET =

@@ -1,21 +1,7 @@
+import { getServerUrl } from './serverUrl';
+
 let socket = null;
 let urlUsed = null;
-
-// Determinar URL do servidor - em produção usa a mesma origem
-function getServerUrl() {
-  // Se estiver em desenvolvimento (localhost)
-  if (
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1')
-  ) {
-    return import.meta.env.VITE_API_URL || 'http://localhost:4000';
-  }
-  // Em produção, usa a mesma origem (Render serve frontend e backend juntos)
-  return typeof window !== 'undefined'
-    ? window.location.origin
-    : 'http://localhost:4000';
-}
 
 export async function ensureSocket(url) {
   // Se não fornecer URL, usa a detecção automática

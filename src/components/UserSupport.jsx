@@ -7,8 +7,9 @@ import {
   on as socketOn,
   off as socketOff,
 } from '../utils/socket';
+import { getServerUrl } from '../utils/serverUrl';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_URL = getServerUrl();
 const USE_SOCKET =
   import.meta.env.VITE_USE_SOCKET === 'true' ||
   import.meta.env.VITE_USE_API === 'true';

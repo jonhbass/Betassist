@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuthUser } from '../utils/auth';
 // import socket.io-client synchronously to avoid dynamic-import races during dev
 import { io as ioClient } from 'socket.io-client';
+import { getServerUrl } from '../utils/serverUrl';
 import '../css/chat.css';
 
 export default function Chat({ enabled = true }) {
@@ -13,19 +14,6 @@ export default function Chat({ enabled = true }) {
     (import.meta.env.VITE_USE_SOCKET === 'true' ||
       import.meta.env.VITE_USE_API === 'true') &&
     enabled;
-
-  // Determinar URL do servidor - em produção usa a mesma origem
-  const getServerUrl = () => {
-    // Se estiver em desenvolvimento (localhost)
-    if (
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1'
-    ) {
-      return import.meta.env.VITE_API_URL || 'http://localhost:4000';
-    }
-    // Em produção, usa a mesma origem (Render serve frontend e backend juntos)
-    return window.location.origin;
-  };
 
   const [messages, setMessages] = useState(() => {
     try {
