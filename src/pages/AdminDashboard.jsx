@@ -7,6 +7,20 @@ import AdminSidebar from '../components/AdminSidebar';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 
+// Determinar URL do servidor - em produção usa a mesma origem
+const getServerUrl = () => {
+  if (
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1')
+  ) {
+    return import.meta.env.VITE_API_URL || 'http://localhost:4000';
+  }
+  return typeof window !== 'undefined'
+    ? window.location.origin
+    : 'http://localhost:4000';
+};
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,7 +51,8 @@ export default function AdminDashboard() {
   const loadUsers = useCallback(async () => {
     if (USE_API) {
       try {
-        const res = await fetch('http://localhost:4000/users');
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/users`);
         const data = await res.json();
         setUsers(data || []);
         return;
@@ -145,7 +160,8 @@ export default function AdminDashboard() {
   async function saveUsers(list) {
     if (USE_API) {
       try {
-        await fetch('http://localhost:4000/users/sync', {
+        const serverUrl = getServerUrl();
+        await fetch(`${serverUrl}/users/sync`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(list),
@@ -175,7 +191,8 @@ export default function AdminDashboard() {
 
     if (USE_API) {
       try {
-        const res = await fetch('http://localhost:4000/users', {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/users`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),
@@ -204,8 +221,9 @@ export default function AdminDashboard() {
 
     if (USE_API) {
       try {
+        const serverUrl = getServerUrl();
         const res = await fetch(
-          `http://localhost:4000/users/${encodeURIComponent(u.username)}`,
+          `${serverUrl}/users/${encodeURIComponent(u.username)}`,
           { method: 'DELETE' }
         );
         if (!res.ok) throw new Error('failed');
@@ -231,8 +249,9 @@ export default function AdminDashboard() {
 
     if (USE_API) {
       try {
+        const serverUrl = getServerUrl();
         const res = await fetch(
-          `http://localhost:4000/users/${encodeURIComponent(u.username)}`,
+          `${serverUrl}/users/${encodeURIComponent(u.username)}`,
           {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },

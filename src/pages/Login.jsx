@@ -6,7 +6,22 @@ import { setAuthUser } from '../utils/auth';
 import { getOrCreateVisitorId, clearVisitorId } from '../utils/visitorId';
 import SupportButton from '../components/SupportButton';
 import SupportChatModal from '../components/SupportChatModal';
+
 const USE_API = import.meta.env.VITE_USE_API === 'true';
+
+// Determinar URL do servidor - em produção usa a mesma origem
+const getServerUrl = () => {
+  if (
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1')
+  ) {
+    return import.meta.env.VITE_API_URL || 'http://localhost:4000';
+  }
+  return typeof window !== 'undefined'
+    ? window.location.origin
+    : 'http://localhost:4000';
+};
 
 const DEFAULT_USERS = [
   { username: 'jhon', password: '1234' },
@@ -42,20 +57,18 @@ export default function Login() {
       // call server login
       (async () => {
         try {
-          const resp = await fetch(
-            (import.meta.env.VITE_API_URL || 'http://localhost:4000') +
-              '/login',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                username,
-                password,
-              }),
-            }
-          );
+          const serverUrl = getServerUrl();
+          console.log('🔐 Fazendo login na API:', serverUrl);
+          const resp = await fetch(`${serverUrl}/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              username,
+              password,
+            }),
+          });
           if (!resp.ok) throw new Error('invalid');
           sessionStorage.removeItem('isAdmin'); // Garante que usuário normal não tenha flag de admin
           sessionStorage.removeItem('adminUsername');
