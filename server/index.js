@@ -349,7 +349,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(distPath));
 
   // Rota catch-all para SPA (React Router)
-  app.get('*', (req, res) => {
+  app.get('/*', (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
 }
