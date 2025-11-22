@@ -78,6 +78,30 @@
   box-shadow: 0 0 12px rgb(118, 230, 255); /* Efeito de brilho ao passar o mouse */
 }
 
+.login-user-btn {
+  background: rgba(255, 255, 255, 0.1) !important; /* Fundo semi-transparente */
+  border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Borda sutil */
+  color: #dff4ff !important; /* Cor do texto mais suave */
+}
+
+.login-user-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important; /* Destaque ao hover */
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2) !important;
+}
+
+.login-admin-btn {
+  background: rgba(255, 255, 255, 0.1) !important; /* Fundo semi-transparente */
+  border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Borda sutil */
+  color: #dff4ff !important; /* Cor do texto mais suave */
+}
+
+.login-admin-btn:hover {
+  background: rgba(255, 255, 255, 0.15) !important; /* Destaque ao hover */
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2) !important;
+}
+
 .login-error {
   background: #3b0f0f; /* Cor de fundo da mensagem de erro */
   color: #ffb3b3; /* Cor do texto da mensagem de erro */
