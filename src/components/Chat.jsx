@@ -14,6 +14,19 @@ export default function Chat({ enabled = true }) {
       import.meta.env.VITE_USE_API === 'true') &&
     enabled;
 
+  // Determinar URL do servidor - em produção usa a mesma origem
+  const getServerUrl = () => {
+    // Se estiver em desenvolvimento (localhost)
+    if (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1'
+    ) {
+      return import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    }
+    // Em produção, usa a mesma origem (Render serve frontend e backend juntos)
+    return window.location.origin;
+  };
+
   const [messages, setMessages] = useState(() => {
     try {
       const raw = localStorage.getItem('CHAT_MESSAGES');
@@ -74,7 +87,7 @@ export default function Chat({ enabled = true }) {
       });
     }
     connectingRef.current = true;
-    const url = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const url = getServerUrl();
     const socket = ioClient(url, {
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -119,7 +132,8 @@ export default function Chat({ enabled = true }) {
     (async () => {
       const mod = await import('socket.io-client');
       const ioFn = mod.io || mod.default || mod;
-      const url = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+      const url = getServerUrl();
+      console.log('🌐 Conectando ao servidor:', url);
       const socket = ioFn(url, {
         transports: ['websocket', 'polling'],
         reconnection: true,

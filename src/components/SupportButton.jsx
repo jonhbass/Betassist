@@ -42,11 +42,10 @@ export default function SupportButton() {
 
     // Escutar eventos do socket para atualizar em tempo real
     let mounted = true;
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
     (async () => {
       try {
-        await ensureSocket(API_URL);
+        await ensureSocket(); // Usa detecção automática de URL
 
         const onMessage = () => {
           if (mounted) setUnread(computeUnread());
