@@ -75,7 +75,14 @@ export default function Chat({ enabled = true }) {
     }
     connectingRef.current = true;
     const url = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-    const socket = ioClient(url);
+    const socket = ioClient(url, {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 20000,
+      autoConnect: true,
+    });
     socketRef.current = socket;
     connectingRef.current = false;
     // re-attach minimal listeners if they were not attached
@@ -113,21 +120,30 @@ export default function Chat({ enabled = true }) {
       const mod = await import('socket.io-client');
       const ioFn = mod.io || mod.default || mod;
       const url = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-      const socket = ioFn(url);
+      const socket = ioFn(url, {
+        transports: ['websocket', 'polling'],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+        timeout: 20000,
+        autoConnect: true
+      });
       socketRef.current = socket;
 
       socket.on('connect', () => {
-        console.log('chat socket connected', socket.id);
+        console.log('✅ Chat socket CONECTADO:', socket.id);
+        setSocketState('connected');
       });
 
       socket.on('chat:main-history', (list) => {
         if (!mounted) return;
+        console.log('📥 Histórico recebido:', list.length, 'mensagens');
         setMessages(list);
       });
 
       socket.on('chat:main-message', (msg) => {
         if (!mounted) return;
-        console.log('socket received chat:main-message', msg);
+        console.log('📨 Nova mensagem recebida via socket:', msg);
         setMessages((m) => [...m, msg]);
       });
 
@@ -140,13 +156,28 @@ export default function Chat({ enabled = true }) {
 
       socket.on('chat:cleared', () => {
         if (!mounted) return;
-        console.log('Chat limpo globalmente pelo admin');
+        console.log('🗑️ Chat limpo globalmente pelo admin');
         setMessages([]);
         try {
           localStorage.removeItem('CHAT_MESSAGES');
         } catch (e) {
           void e;
         }
+      });
+
+      socket.on('connect_error', (error) => {
+        console.error('❌ Erro de conexão do socket:', error);
+        setSocketState('disconnected');
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.log('🔌 Socket desconectado:', reason);
+        setSocketState('disconnected');
+      });
+
+      socket.on('reconnect', (attemptNumber) => {
+        console.log('🔄 Socket reconectado após', attemptNumber, 'tentativas');
+        setSocketState('connected');
       });
 
       // reflect connection state
