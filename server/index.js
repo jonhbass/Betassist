@@ -17,14 +17,22 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' })); // Aumentar limite para base64
 
-const DATA = path.join(process.cwd(), 'server', 'users.json');
-const CHAT_MAIN = path.join(process.cwd(), 'server', 'chat-main.json');
-const CHAT_SUPPORT = path.join(process.cwd(), 'server', 'chat-support.json');
-const DEPOSITS = path.join(process.cwd(), 'server', 'deposits.json');
-const WITHDRAWALS = path.join(process.cwd(), 'server', 'withdrawals.json');
-const ADMINS = path.join(process.cwd(), 'server', 'admins.json');
-const BANNERS = path.join(process.cwd(), 'server', 'banners.json');
-const CONFIG = path.join(process.cwd(), 'server', 'config.json');
+// Configuração de diretório de dados (suporte a volumes persistentes)
+const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'server');
+
+// Garantir que o diretório de dados existe
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+const DATA = path.join(DATA_DIR, 'users.json');
+const CHAT_MAIN = path.join(DATA_DIR, 'chat-main.json');
+const CHAT_SUPPORT = path.join(DATA_DIR, 'chat-support.json');
+const DEPOSITS = path.join(DATA_DIR, 'deposits.json');
+const WITHDRAWALS = path.join(DATA_DIR, 'withdrawals.json');
+const ADMINS = path.join(DATA_DIR, 'admins.json');
+const BANNERS = path.join(DATA_DIR, 'banners.json');
+const CONFIG = path.join(DATA_DIR, 'config.json');
 const PORT =
   typeof process !== 'undefined' && process.env && process.env.PORT
     ? process.env.PORT

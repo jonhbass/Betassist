@@ -8,22 +8,6 @@ export default function NotificationsModal({ isOpen }) {
   const [shouldRender, setShouldRender] = useState(false);
   const currentUser = getAuthUser();
 
-  useEffect(() => {
-    if (isOpen) {
-      setShouldRender(true);
-      setIsClosing(false);
-      loadNotifications();
-    } else if (shouldRender) {
-      // Iniciar animação de saída
-      setIsClosing(true);
-      const timer = setTimeout(() => {
-        setShouldRender(false);
-        setIsClosing(false);
-      }, 250);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, shouldRender, loadNotifications]);
-
   const loadNotifications = React.useCallback(() => {
     try {
       // Carregar notificações de depósito
@@ -55,6 +39,22 @@ export default function NotificationsModal({ isOpen }) {
       setNotifications([]);
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      setIsClosing(false);
+      loadNotifications();
+    } else if (shouldRender) {
+      // Iniciar animação de saída
+      setIsClosing(true);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+        setIsClosing(false);
+      }, 250);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, shouldRender, loadNotifications]);
 
   const markAsRead = (notifId) => {
     try {
