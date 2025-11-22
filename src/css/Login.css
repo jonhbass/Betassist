@@ -154,3 +154,10 @@
     0 0 0.8em #61dafbaa
   ); /* Efeito de brilho ao passar o mouse */
 }
+
+/* Forçar exibição do botão de suporte no mobile na tela de login */
+@media (max-width: 768px) {
+  .login-wrap .ba-support-fab {
+    display: flex !important;
+  }
+}

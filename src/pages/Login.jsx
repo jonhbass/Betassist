@@ -32,7 +32,6 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [supportOpen, setSupportOpen] = useState(false);
   const navigate = useNavigate();
 
   function handleSubmit(e) {
@@ -87,13 +86,7 @@ export default function Login() {
 
   return (
     <div className="login-wrap">
-      <SupportButton onClick={() => setSupportOpen(true)} />
-      {supportOpen && (
-        <SupportChatModal
-          user={visitorId}
-          onClose={() => setSupportOpen(false)}
-        />
-      )}
+      <SupportButton />
       <form className="login-card" onSubmit={handleSubmit}>
         {error && <p className="login-error">{error}</p>}
         <div className="login-header">
