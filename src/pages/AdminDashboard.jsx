@@ -207,7 +207,9 @@ export default function AdminDashboard() {
       showToast('Complete usuario y contraseña');
       return;
     }
-    if (users.some((u) => u.username === username)) {
+    if (
+      users.some((u) => u.username.toLowerCase() === username.toLowerCase())
+    ) {
       showToast('Usuario ya existe');
       return;
     }

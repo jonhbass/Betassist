@@ -1,42 +1,79 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../css/carrossel.css';
+import { getServerUrl } from '../utils/serverUrl';
 
 export default function Carrossel({ slides = [] }) {
-  // Verificar se há banners personalizados no localStorage
-  const getCustomBanners = () => {
-    try {
-      const stored = localStorage.getItem('CUSTOM_BANNERS');
-      if (stored) {
-        const banners = JSON.parse(stored);
-        return Array.isArray(banners) && banners.length > 0
-          ? banners.map((b) => b.url)
-          : null;
-      }
-    } catch (e) {
-      console.error('Erro ao carregar banners personalizados:', e);
-    }
-    return null;
-  };
+  const [bannerUrls, setBannerUrls] = useState([]);
 
-  const customBanners = getCustomBanners();
-  const usedSlides =
-    customBanners || (Array.isArray(slides) && slides.length ? slides : []);
+  useEffect(() => {
+    const loadBanners = async () => {
+      let banners = [];
+      // 1. Tentar carregar do servidor
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/banners`);
+        if (res.ok) {
+          banners = await res.json();
+        }
+      } catch (e) {
+        console.error('Erro ao carregar banners do servidor:', e);
+      }
+
+      // 2. Fallback para LocalStorage (chave BANNERS)
+      if (!banners.length) {
+        try {
+          const stored = localStorage.getItem('BANNERS');
+          if (stored) {
+            banners = JSON.parse(stored);
+          }
+        } catch (e) {
+          console.error('Erro ao carregar banners locais:', e);
+        }
+      }
+
+      // 3. Fallback para chave antiga (CUSTOM_BANNERS) se necessário
+      if (!banners.length) {
+        try {
+          const stored = localStorage.getItem('CUSTOM_BANNERS');
+          if (stored) {
+            banners = JSON.parse(stored);
+          }
+        } catch {
+          // ignore
+        }
+      }
+
+      // Extrair URLs
+      if (banners.length > 0) {
+        const urls = banners.map((b) => b.url).filter(Boolean);
+        setBannerUrls(urls);
+      } else {
+        setBannerUrls(slides);
+      }
+    };
+
+    loadBanners();
+  }, [slides]);
+
+  const usedSlides = bannerUrls.length > 0 ? bannerUrls : [];
 
   const [index, setIndex] = useState(0);
   const intervalRef = useRef(null);
   const isHovered = useRef(false);
 
   useEffect(() => {
-    startAutoplay();
+    if (usedSlides.length > 0) {
+      startAutoplay();
+    }
     return stopAutoplay;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [usedSlides.length]);
 
   function startAutoplay() {
     stopAutoplay();
     intervalRef.current = setInterval(() => {
-      if (!isHovered.current) {
-        setIndex((prev) => (prev + 1) % (usedSlides.length || 1));
+      if (!isHovered.current && usedSlides.length > 0) {
+        setIndex((prev) => (prev + 1) % usedSlides.length);
       }
     }, 3000);
   }

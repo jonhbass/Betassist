@@ -166,7 +166,7 @@ app.post('/users', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: 'missing' });
   const users = readUsers();
-  if (users.some((u) => u.username === username))
+  if (users.some((u) => u.username.toLowerCase() === username.toLowerCase()))
     return res.status(409).json({ error: 'exists' });
   const hash = await bcrypt.hash(password, 10);
   users.push({ username, passwordHash: hash });
@@ -179,7 +179,9 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: 'missing' });
   const users = readUsers();
-  const u = users.find((x) => x.username === username);
+  const u = users.find(
+    (x) => x.username.toLowerCase() === username.toLowerCase()
+  );
   if (!u) return res.status(401).json({ error: 'invalid' });
   try {
     const ok = await bcrypt.compare(
