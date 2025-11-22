@@ -126,7 +126,7 @@ export default function Chat({ enabled = true }) {
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
         timeout: 20000,
-        autoConnect: true
+        autoConnect: true,
       });
       socketRef.current = socket;
 
