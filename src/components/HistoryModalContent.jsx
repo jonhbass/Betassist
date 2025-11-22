@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { getServerUrl } from '../utils/serverUrl';
+import { socket } from '../utils/socket';
 
 export default function HistoryModalContent({ onOpenSupport }) {
   const [history, setHistory] = useState([]);
@@ -6,25 +8,33 @@ export default function HistoryModalContent({ onOpenSupport }) {
   const authUser = sessionStorage.getItem('authUser');
 
   useEffect(() => {
-    const loadHistory = () => {
+    const loadHistory = async () => {
+      if (!authUser) return;
       try {
-        const allHistory = JSON.parse(
-          localStorage.getItem('USER_HISTORY') || '[]'
-        );
-        // Filtrar apenas transações do usuário logado
-        const userHistory = allHistory.filter((item) => item.user === authUser);
-        setHistory(userHistory);
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/users/${authUser}`);
+        if (res.ok) {
+          const data = await res.json();
+          setHistory(data.history || []);
+        }
       } catch (error) {
         console.error('Erro ao carregar histórico:', error);
-        setHistory([]);
       }
     };
 
     loadHistory();
 
-    // Atualizar a cada 3 segundos
-    const interval = setInterval(loadHistory, 3000);
-    return () => clearInterval(interval);
+    const handleUpdate = (data) => {
+      if (
+        data.username &&
+        data.username.toLowerCase() === authUser.toLowerCase()
+      ) {
+        if (data.history) setHistory(data.history);
+      }
+    };
+
+    socket.on('user:update', handleUpdate);
+    return () => socket.off('user:update', handleUpdate);
   }, [authUser]);
 
   const handleClaim = () => {
@@ -111,7 +121,13 @@ export default function HistoryModalContent({ onOpenSupport }) {
         </p>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table
+            style={{
+              width: '100%',
+              minWidth: '600px',
+              borderCollapse: 'collapse',
+            }}
+          >
             <thead>
               <tr style={{ borderBottom: '2px solid #444' }}>
                 <th

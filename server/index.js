@@ -157,6 +157,22 @@ app.get('/users', (req, res) => {
   res.json(users.map((u) => ({ username: u.username })));
 });
 
+// Return specific user details (balance, history)
+app.get('/users/:username', (req, res) => {
+  const { username } = req.params;
+  const users = readUsers();
+  const user = users.find(
+    (u) => u.username.toLowerCase() === username.toLowerCase()
+  );
+  if (!user) return res.status(404).json({ error: 'not found' });
+
+  res.json({
+    username: user.username,
+    balance: user.balance || 0,
+    history: user.history || [],
+  });
+});
+
 // Chat history - retorna mensagens de suporte (admin/user)
 app.get('/messages', (req, res) => {
   const msgs = readChatSupport();
@@ -288,8 +304,50 @@ app.put('/deposits/:id', (req, res) => {
   const idx = list.findIndex((i) => String(i.id) === String(id));
   if (idx === -1) return res.status(404).json({ error: 'not found' });
 
+  const oldStatus = list[idx].status;
+  const newStatus = updates.status;
+
   list[idx] = { ...list[idx], ...updates };
   writeDeposits(list);
+
+  // Se aprovado, atualizar saldo e histórico do usuário
+  if (newStatus === 'Aprobada' && oldStatus !== 'Aprobada') {
+    const amount = Number(list[idx].amount);
+    const username = list[idx].user;
+
+    const users = readUsers();
+    const userIdx = users.findIndex(
+      (u) => u.username.toLowerCase() === username.toLowerCase()
+    );
+
+    if (userIdx !== -1) {
+      const user = users[userIdx];
+      user.balance = (user.balance || 0) + amount;
+
+      if (!user.history) user.history = [];
+      user.history.push({
+        id: Date.now(),
+        type: 'Recarga',
+        amount: amount,
+        date: new Date().toLocaleString('es-AR'),
+        status: 'Exitosa',
+        message: updates.adminMessage || 'Depósito aprobado',
+        canClaim: false,
+      });
+
+      writeUsers(users);
+
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('user:update', {
+          username: user.username,
+          balance: user.balance,
+          history: user.history,
+        });
+      }
+    }
+  }
+
   res.json({ ok: true, item: list[idx] });
 });
 
@@ -408,6 +466,8 @@ const io = new Server(server, {
   pingTimeout: 60000,
   pingInterval: 25000,
 });
+
+app.set('io', io);
 
 io.on('connection', (socket) => {
   console.log('socket connected', socket.id);

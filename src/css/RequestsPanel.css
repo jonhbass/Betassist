@@ -107,7 +107,7 @@
   background-color: rgba(13, 28, 66, 0.8);
   border: 1px solid #1e3a8a;
   border-radius: 8px;
-  overflow: hidden;
+  overflow-x: auto; /* Permitir rolagem horizontal */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -265,8 +265,26 @@
 }
 
 @media (max-width: 768px) {
+  .ba-requests-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .ba-btn-back {
+    position: static;
+    margin-bottom: 0.5rem;
+  }
+
+  .ba-requests-title {
+    align-self: center;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
   .ba-requests-table {
     font-size: 0.8rem;
+    min-width: 800px; /* Forçar largura mínima para habilitar scroll */
   }
 
   .ba-requests-table th,

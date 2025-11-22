@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../assets/icon.svg';
 import { getAuthUser } from '../utils/auth';
+import { getServerUrl } from '../utils/serverUrl';
+import { socket } from '../utils/socket';
 import '../css/topbar.css';
 
 export default function Topbar({
@@ -32,40 +34,38 @@ export default function Topbar({
     const user = getAuthUser();
     setUsername(user || 'Usuário');
 
-    // Calcular saldo
-    const calculateBalance = () => {
+    // Buscar saldo do servidor
+    const fetchBalance = async () => {
+      if (!user) return;
       try {
-        const usersData = localStorage.getItem('USERS');
-        if (usersData) {
-          const users = JSON.parse(usersData);
-          const currentUser = users.find((u) => u.username === user);
-          if (currentUser && currentUser.balance !== undefined) {
-            setBalance(currentUser.balance);
-            return;
-          }
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/users/${user}`);
+        if (res.ok) {
+          const data = await res.json();
+          setBalance(data.balance || 0);
         }
-
-        // Fallback: calcular apenas com depósitos (não ideal)
-        const requests = JSON.parse(
-          localStorage.getItem('DEPOSIT_REQUESTS') || '[]'
-        );
-        const userRequests = requests.filter(
-          (req) => req.user === user && req.status === 'Aprobada'
-        );
-        const total = userRequests.reduce(
-          (sum, req) => sum + (req.amount || 0),
-          0
-        );
-        setBalance(total);
       } catch (error) {
-        console.error('Erro ao calcular saldo:', error);
-        setBalance(0);
+        console.error('Erro ao buscar saldo:', error);
       }
     };
 
-    calculateBalance();
-    const interval = setInterval(calculateBalance, 3000);
-    return () => clearInterval(interval);
+    fetchBalance();
+
+    // Ouvir atualizações em tempo real
+    const handleUpdate = (data) => {
+      if (
+        data.username &&
+        user &&
+        data.username.toLowerCase() === user.toLowerCase()
+      ) {
+        if (data.balance !== undefined) {
+          setBalance(data.balance);
+        }
+      }
+    };
+
+    socket.on('user:update', handleUpdate);
+    return () => socket.off('user:update', handleUpdate);
   }, []);
 
   // Contar notificações não lidas
