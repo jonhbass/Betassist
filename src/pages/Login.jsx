@@ -82,8 +82,6 @@ export default function Login() {
     }
   }
 
-  const visitorId = getOrCreateVisitorId();
-
   return (
     <div className="login-wrap">
       <SupportButton />
