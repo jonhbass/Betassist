@@ -195,11 +195,20 @@ export default function Chat({ enabled = true }) {
         setSocketState('connected');
       });
 
-      // reflect connection state
-      try {
-        setSocketState(socket && socket.connected ? 'connected' : 'connecting');
-      } catch (e) {
-        void e;
+      // Verificar estado inicial do socket
+      if (socket.connected) {
+        console.log('✅ Socket já estava conectado');
+        setSocketState('connected');
+      } else {
+        console.log('⏳ Aguardando conexão do socket...');
+        setSocketState('connecting');
+        // Verificar novamente após 1 segundo
+        setTimeout(() => {
+          if (mounted && socket.connected) {
+            console.log('✅ Socket conectado (verificação atrasada)');
+            setSocketState('connected');
+          }
+        }, 1000);
       }
     })();
 
