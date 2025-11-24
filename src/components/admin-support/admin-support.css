@@ -129,7 +129,7 @@
 }
 
 .ba-admin-support .ba-admin-thread-view {
-  height: 340px;
+  height: 400px;
   display: flex;
   flex-direction: column;
 }
@@ -173,7 +173,7 @@
 }
 
 .ba-admin-support-list {
-  max-height: 360px;
+  max-height: 400px;
   overflow: auto;
   padding: 8px;
   background: rgba(0, 0, 0, 0.08);
@@ -263,7 +263,7 @@
 .ba-admin-support-grid {
   display: flex;
   gap: 12px;
-  height: 600px; /* Altura fixa para garantir layout */
+  height: 400px; /* Altura fixa para garantir layout */
 }
 
 /* Responsividade para mobile */
