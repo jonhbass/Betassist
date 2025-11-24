@@ -387,7 +387,7 @@ app.put('/withdrawals/:id', (req, res) => {
   list[idx] = { ...list[idx], ...updates };
   writeWithdrawals(list);
 
-  // Se aprovado, atualizar histórico do usuário (saldo já foi descontado na solicitação)
+  // Se aprovado, atualizar saldo e histórico do usuário
   if (newStatus === 'Aprobada' && oldStatus !== 'Aprobada') {
     const amount = Number(list[idx].amount);
     const username = list[idx].user;
@@ -399,6 +399,15 @@ app.put('/withdrawals/:id', (req, res) => {
 
     if (userIdx !== -1) {
       const user = users[userIdx];
+
+      // SUBTRAIR O VALOR DO SALDO
+      const currentBalance = user.balance || 0;
+      const newBalance = Math.max(0, currentBalance - amount);
+      user.balance = newBalance;
+
+      console.log(
+        `💸 Retiro aprobado: ${username} - Saldo anterior: $${currentBalance} → Nuevo saldo: $${newBalance}`
+      );
 
       if (!user.history) user.history = [];
       user.history.push({
@@ -415,18 +424,22 @@ app.put('/withdrawals/:id', (req, res) => {
 
       const io = req.app.get('io');
       if (io) {
+        // Emitir atualização de saldo e histórico
         io.emit('user:update', {
           username: user.username,
           balance: user.balance,
           history: user.history,
         });
 
+        // Emitir notificação de retirada aprovada
         io.emit('notification:new', {
           id: Date.now(),
           username: user.username,
           type: 'withdraw_approved',
           amount: amount,
-          message: updates.adminMessage || 'Retiro aprobado',
+          message: `Tu solicitud de retiro de $${amount.toLocaleString(
+            'es-AR'
+          )} fue aprobada!`,
           date: new Date().toLocaleString('es-AR'),
         });
       }
