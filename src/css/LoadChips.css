@@ -49,6 +49,8 @@
 .ba-load-title {
   font-size: 1.5rem;
   font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -161,4 +163,24 @@
 
 .ba-btn-submit:hover {
   background-color: #e6b800;
+}
+
+@media (max-width: 768px) {
+  .ba-load-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .ba-btn-back {
+    position: static;
+    margin-bottom: 0.5rem;
+  }
+
+  .ba-load-title {
+    width: 100%;
+    justify-content: center;
+    font-size: 1.3rem;
+    text-align: center;
+  }
 }

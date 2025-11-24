@@ -49,6 +49,8 @@
 .ba-withdraw-title {
   font-size: 1.5rem;
   font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -159,4 +161,24 @@
 .ba-btn-submit:disabled {
   background-color: #666;
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .ba-withdraw-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .ba-btn-back {
+    position: static;
+    margin-bottom: 0.5rem;
+  }
+
+  .ba-withdraw-title {
+    width: 100%;
+    justify-content: center;
+    font-size: 1.3rem;
+    text-align: center;
+  }
 }
