@@ -147,7 +147,10 @@ export default function Topbar({
   }, [showMenu, closeMenu]);
 
   const toggleMenu = (e) => {
-    if (e) e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (isClosing) return; // Evita duplo clique durante animação
 
     if (showMenu && onMenuClick) {
@@ -247,8 +250,10 @@ export default function Topbar({
               showMenu ? 'active' : ''
             }`}
             onClick={toggleMenu}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
             aria-label="Toggle menu"
           >
             ☰
