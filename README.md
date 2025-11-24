@@ -20,22 +20,24 @@ If you are developing a production application, we recommend using TypeScript wi
 Este projeto inclui um painel de administração simples para criar/remover usuários locais (apenas para desenvolvimento).
 
 - Ao executar em desenvolvimento, defina a senha do admin com a variável de ambiente Vite: `VITE_ADMIN_PASSWORD`.
-	- Crie um arquivo `.env` na raiz com, por exemplo:
 
-		```env
-		VITE_ADMIN_PASSWORD=suasenhaadmin
-		```
+  - Crie um arquivo `.env` na raiz com, por exemplo:
 
-	- Em seguida rode:
+    ```env
+    VITE_ADMIN_PASSWORD=suasenhaadmin
+    ```
 
-		```bash
-		npm install
-		npm run dev
-		```
+  - Em seguida rode:
+
+    ```bash
+    npm install
+    npm run dev
+    ```
 
 - A página de login principal (`/login`) agora aceita usuários que o admin criar. Para entrar no painel de administração navegue para `/admin-login` e use a senha definida.
 
 Notas de segurança:
+
 - A implementação atual é apenas para demonstração/local: os usuários e senhas são armazenados em `localStorage` em texto claro. Não use isso em produção.
 - Para produção, mova o gerenciamento de usuários para um backend seguro com hashing de senhas e autenticação adequada.
 
@@ -67,5 +69,7 @@ VITE_ADMIN_PASSWORD=suasenhaadmin
 4. Reinicie o dev server (`npm run dev`) e abra o app. O painel admin usará o servidor em `http://localhost:4000`.
 
 Notas:
+
 - O servidor grava em `server/users.json`. Em um ambiente real prefira um banco de dados.
 - Ainda é um exemplo de desenvolvimento; para produção providencie autenticação segura e proteção do endpoint.
+  teste para railway
