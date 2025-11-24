@@ -478,26 +478,7 @@ app.delete('/admins/:id', (req, res) => {
 });
 
 // --- BANNERS ---
-app.get('/banners', (req, res) => {
-  res.json(readBanners());
-});
-
-app.post('/banners', (req, res) => {
-  const data = req.body || {};
-  const list = readBanners();
-  const newItem = { ...data, id: data.id || Date.now() };
-  list.push(newItem);
-  writeBanners(list);
-  res.status(201).json({ ok: true, item: newItem });
-});
-
-app.delete('/banners/:id', (req, res) => {
-  const { id } = req.params;
-  let list = readBanners();
-  list = list.filter((i) => String(i.id) !== String(id));
-  writeBanners(list);
-  res.json({ ok: true });
-});
+// (Routes merged below with Cloudinary support)
 
 // --- BANNERS ---
 app.get('/banners', (req, res) => {
