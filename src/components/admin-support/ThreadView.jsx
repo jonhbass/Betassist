@@ -48,7 +48,21 @@ export default function ThreadView({
             }}
           >
             <h4 style={{ margin: 0 }}>{activeThread}</h4>
-            {/* Botão "Marcar todos atendidos" removido conforme solicitado */}
+            <button
+              onClick={markAllHandled}
+              className="ba-btn-mark-handled"
+              style={{
+                background: 'rgba(255,255,255,0.1)',
+                border: 'none',
+                color: '#fff',
+                padding: '4px 12px',
+                borderRadius: 4,
+                fontSize: 12,
+                cursor: 'pointer',
+              }}
+            >
+              Marcar todos atendidos
+            </button>
           </div>
 
           <div
