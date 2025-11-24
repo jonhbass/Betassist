@@ -127,9 +127,7 @@ export default function Dashboard() {
 
   // Listener para sincronizar estado do chat globalmente via socket
   useEffect(() => {
-    const USE_SOCKET =
-      import.meta.env.VITE_USE_SOCKET === 'true' ||
-      import.meta.env.VITE_USE_API === 'true';
+    const USE_SOCKET = true; // Sempre ativar socket/API para garantir sincronização
 
     if (!USE_SOCKET) return;
 
@@ -156,32 +154,33 @@ export default function Dashboard() {
     fetchChatState();
 
     let socketInstance;
-    import('socket.io-client').then((mod) => {
-      const ioFn = mod.io || mod.default || mod;
-      const url = getServerUrl();
-      socketInstance = ioFn(url);
-      setSocket(socketInstance);
 
-      socketInstance.on('connect', () => {
-        console.log('Dashboard socket conectado:', socketInstance.id);
-      });
+    // Usar ensureSocket para garantir conexão consistente
+    import('../utils/socket').then(({ ensureSocket }) => {
+      ensureSocket().then((sock) => {
+        socketInstance = sock;
+        setSocket(sock);
 
-      socketInstance.on('chat:state-changed', (data) => {
-        console.log('📡 Chat estado alterado globalmente:', data.enabled);
-        localStorage.setItem('chatEnabled', String(data.enabled));
-        setChatEnabled(data.enabled);
-        showToast(
-          data.enabled
-            ? 'Chat ativado pelo admin'
-            : 'Chat desativado pelo admin'
-        );
+        // Remover listeners antigos para evitar duplicação se o socket for reutilizado
+        sock.off('chat:state-changed');
+
+        sock.on('chat:state-changed', (data) => {
+          console.log('📡 Chat estado alterado globalmente:', data.enabled);
+          localStorage.setItem('chatEnabled', String(data.enabled));
+          setChatEnabled(data.enabled);
+          showToast(
+            data.enabled
+              ? 'Chat ativado pelo admin'
+              : 'Chat desativado pelo admin'
+          );
+        });
       });
     });
 
     return () => {
       if (socketInstance) {
-        socketInstance.disconnect();
-        setSocket(null);
+        socketInstance.off('chat:state-changed');
+        // Não desconectamos aqui pois o socket pode ser compartilhado
       }
     };
   }, []);
