@@ -14,9 +14,30 @@ export default function LoadChips() {
   const [receiptPreview, setReceiptPreview] = useState('');
 
   useEffect(() => {
-    // Carregar CBU do localStorage
-    const storedCbu = localStorage.getItem('DEPOSIT_CBU');
-    setCbu(storedCbu || '');
+    // Carregar CBU do servidor ou localStorage
+    const loadCbu = async () => {
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/config`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.cbu) {
+            setCbu(data.cbu);
+            // Atualizar cache local
+            localStorage.setItem('DEPOSIT_CBU', data.cbu);
+            return;
+          }
+        }
+        // Fallback para localStorage se falhar ou não tiver no server
+        const storedCbu = localStorage.getItem('DEPOSIT_CBU');
+        setCbu(storedCbu || '');
+      } catch (err) {
+        console.error('Failed to load CBU', err);
+        const storedCbu = localStorage.getItem('DEPOSIT_CBU');
+        setCbu(storedCbu || '');
+      }
+    };
+    loadCbu();
   }, []);
 
   const handleBack = () => {
