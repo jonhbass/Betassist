@@ -18,7 +18,6 @@ export default function Topbar({
   adminMode = false,
 }) {
   const navigate = useNavigate();
-  const [isClosing, setIsClosing] = useState(false);
   const [username, setUsername] = useState('');
   const [balance, setBalance] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -110,16 +109,30 @@ export default function Topbar({
     return () => clearInterval(interval);
   }, []);
 
-  const closeMenu = React.useCallback(() => {
-    if (isClosing) return;
-    if (onMenuClick && showMenu) {
-      setIsClosing(true);
-      setTimeout(() => {
-        onMenuClick();
-        setIsClosing(false);
-      }, 250);
+  // const [shouldRenderMenu, setShouldRenderMenu] = useState(false);
+  // const [isMenuClosing, setIsMenuClosing] = useState(false);
+
+  // useEffect(() => {
+  //   if (showMenu) {
+  //     setShouldRenderMenu(true);
+  //     setIsMenuClosing(false);
+  //   } else if (shouldRenderMenu) {
+  //     setIsMenuClosing(true);
+  //     const timer = setTimeout(() => {
+  //       setShouldRenderMenu(false);
+  //       setIsMenuClosing(false);
+  //     }, 250);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [showMenu, shouldRenderMenu]);
+
+  const toggleMenu = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
-  }, [onMenuClick, showMenu, isClosing]);
+    if (onMenuClick) onMenuClick();
+  };
 
   // Fechar menu ao clicar fora
   useEffect(() => {
@@ -131,59 +144,38 @@ export default function Topbar({
         menuButtonRef.current &&
         !menuButtonRef.current.contains(event.target)
       ) {
-        closeMenu();
+        if (onMenuClick) onMenuClick();
       }
     };
 
     if (showMenu) {
       document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside); // Adicionar suporte a touch
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, [showMenu, closeMenu]);
-
-  const toggleMenu = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (isClosing) return; // Evita duplo clique durante animação
-
-    if (showMenu && onMenuClick) {
-      setIsClosing(true);
-      setTimeout(() => {
-        onMenuClick();
-        setIsClosing(false);
-      }, 250);
-    } else if (onMenuClick) {
-      onMenuClick();
-    }
-  };
+  }, [showMenu, onMenuClick]);
 
   const handleRetirar = () => {
-    closeMenu();
+    if (onMenuClick) onMenuClick();
     setTimeout(() => navigate('/withdraw-chips'), 250);
   };
 
   const handleRecargar = () => {
-    closeMenu();
+    if (onMenuClick) onMenuClick();
     setTimeout(() => navigate('/load-chips'), 250);
   };
 
   const handleTutorial = () => {
-    closeMenu();
+    if (onMenuClick) onMenuClick();
     if (onTutorialStart) {
       onTutorialStart();
     }
   };
 
   const handleCerrarSesion = () => {
-    closeMenu();
-    setTimeout(() => onLogout(), 250);
+    onLogout();
   };
 
   // Obter nome do admin
@@ -274,10 +266,7 @@ export default function Topbar({
       )}
       {/* Menu Popup */}
       {showMenu && (
-        <div
-          className={`ba-menu-popup ${isClosing ? 'closing' : ''}`}
-          ref={menuRef}
-        >
+        <div className="ba-menu-popup" ref={menuRef}>
           {/* Info do usuário e saldo */}
           <div className="ba-menu-header">
             <div className="ba-menu-user">
