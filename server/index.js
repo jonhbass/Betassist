@@ -14,6 +14,29 @@ import { uploadReceipt, uploadImage } from './cloudinary.js';
 dotenv.config();
 
 const app = express();
+
+// Em produção, confiar no proxy do Railway para identificar protocolo
+app.enable('trust proxy');
+
+// Middleware para forçar HTTPS e redirecionar para www em produção
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === 'production') {
+    const host = req.headers.host || '';
+    const proto = req.headers['x-forwarded-proto'] || 'http';
+
+    // Se acessar pelo domínio raiz (sem www), redirecionar para www
+    if (host === 'starwin.site') {
+      return res.redirect(301, `https://www.starwin.site${req.url}`);
+    }
+
+    // Se não for HTTPS, redirecionar para HTTPS
+    if (proto !== 'https') {
+      return res.redirect(`https://${host}${req.url}`);
+    }
+  }
+  next();
+});
+
 app.use(cors());
 app.use(express.json({ limit: '10mb' })); // Aumentar limite para base64
 
@@ -331,7 +354,7 @@ app.put('/deposits/:id', (req, res) => {
         amount: amount,
         date: new Date().toLocaleString('es-AR'),
         status: 'Exitosa',
-        message: updates.adminMessage || 'Depósito aprobado',
+        message: updates.adminMessage || 'Depósito aprovado',
         canClaim: false,
       });
 
@@ -350,7 +373,7 @@ app.put('/deposits/:id', (req, res) => {
           username: user.username,
           type: 'deposit_approved',
           amount: amount,
-          message: updates.adminMessage || 'Depósito aprobado',
+          message: updates.adminMessage || 'Depósito aprovado',
           date: new Date().toLocaleString('es-AR'),
         });
       }
@@ -406,7 +429,7 @@ app.put('/withdrawals/:id', (req, res) => {
       user.balance = newBalance;
 
       console.log(
-        `💸 Retiro aprobado: ${username} - Saldo anterior: $${currentBalance} → Nuevo saldo: $${newBalance}`
+        `💸 Retiro aprovado: ${username} - Saldo anterior: $${currentBalance} → Nuevo saldo: $${newBalance}`
       );
 
       if (!user.history) user.history = [];
@@ -416,7 +439,7 @@ app.put('/withdrawals/:id', (req, res) => {
         amount: amount,
         date: new Date().toLocaleString('es-AR'),
         status: 'Exitosa',
-        message: updates.adminMessage || 'Retiro aprobado',
+        message: updates.adminMessage || 'Retiro aprovado',
         canClaim: false,
       });
 
