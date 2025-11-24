@@ -249,7 +249,7 @@ export default function Topbar({
             className={`ba-btn small ba-menu-toggle-btn ${
               showMenu ? 'active' : ''
             }`}
-            onClick={() => onMenuClick && onMenuClick()}
+            onClick={toggleMenu}
             aria-label="Toggle menu"
           >
             ☰

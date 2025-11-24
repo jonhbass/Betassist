@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../css/Login.css';
 import Icon from '../assets/icon.svg';
 import { setAuthUser } from '../utils/auth';
-import { getOrCreateVisitorId, clearVisitorId } from '../utils/visitorId';
+import { clearVisitorId } from '../utils/visitorId';
 import SupportButton from '../components/SupportButton';
 import SupportChatModal from '../components/SupportChatModal';
 import { getServerUrl } from '../utils/serverUrl';
