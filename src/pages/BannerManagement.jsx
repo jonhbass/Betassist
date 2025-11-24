@@ -41,6 +41,8 @@ export default function BannerManagement() {
   const [toast, setToast] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  const [isUploading, setIsUploading] = useState(false);
+
   useEffect(() => {
     // Colapsar sidebar no mobile por padrão
     if (window.innerWidth && window.innerWidth < 900) setSidebarOpen(false);
@@ -150,6 +152,7 @@ export default function BannerManagement() {
 
         // Persist to server (which handles Cloudinary upload)
         const serverUrl = getServerUrl();
+        setIsUploading(true);
         try {
           showToast('⏳ Enviando imagem...');
           const res = await fetch(`${serverUrl}/banners`, {
@@ -160,16 +163,23 @@ export default function BannerManagement() {
 
           if (res.ok) {
             const updatedList = await res.json();
-            setBanners(updatedList);
-            // Atualiza cache local apenas para leitura rápida futura
-            localStorage.setItem('BANNERS', JSON.stringify(updatedList));
-            showToast('✅ Banner adicionado com sucesso');
+            if (Array.isArray(updatedList)) {
+              setBanners(updatedList);
+              // Atualiza cache local apenas para leitura rápida futura
+              localStorage.setItem('BANNERS', JSON.stringify(updatedList));
+              showToast('✅ Banner adicionado com sucesso');
+            } else {
+              console.error('Resposta inválida do servidor:', updatedList);
+              showToast('❌ Erro: Resposta inválida do servidor');
+            }
           } else {
             throw new Error('Erro no servidor');
           }
         } catch (err) {
           console.error('Failed to create banner on server', err);
           showToast('❌ Erro ao enviar banner');
+        } finally {
+          setIsUploading(false);
         }
 
         setSelectedFile(null);
@@ -188,6 +198,7 @@ export default function BannerManagement() {
 
     // Persist to server
     const serverUrl = getServerUrl();
+    setIsUploading(true);
     (async () => {
       try {
         const res = await fetch(`${serverUrl}/banners`, {
@@ -197,12 +208,16 @@ export default function BannerManagement() {
         });
         if (res.ok) {
           const serverList = await res.json();
-          setBanners(serverList);
-          localStorage.setItem('BANNERS', JSON.stringify(serverList));
+          if (Array.isArray(serverList)) {
+            setBanners(serverList);
+            localStorage.setItem('BANNERS', JSON.stringify(serverList));
+          }
         }
       } catch (err) {
         console.error('Failed to create banner on server', err);
         showToast('❌ Erro ao salvar banner no servidor');
+      } finally {
+        setIsUploading(false);
       }
     })();
 
@@ -365,13 +380,18 @@ export default function BannerManagement() {
                   )}
 
                   <div className="ba-form-actions">
-                    <button type="submit" className="ba-btn primary">
-                      ➕ Adicionar Banner
+                    <button
+                      type="submit"
+                      className="ba-btn primary"
+                      disabled={isUploading}
+                    >
+                      {isUploading ? '⏳ Enviando...' : '➕ Adicionar Banner'}
                     </button>
                     <button
                       type="button"
                       className="ba-btn secondary"
                       onClick={handlePreview}
+                      disabled={isUploading}
                     >
                       👁️ Visualizar
                     </button>
@@ -398,10 +418,10 @@ export default function BannerManagement() {
               {/* Lista de banners */}
               <div className="ba-admin-section">
                 <h2 className="ba-section-title">
-                  Banners Registrados ({banners.length})
+                  Banners Registrados ({banners?.length || 0})
                 </h2>
 
-                {banners.length === 0 ? (
+                {!banners || !Array.isArray(banners) || banners.length === 0 ? (
                   <div className="ba-empty-state">
                     <p>Ningún banner registrado aún.</p>
                     <p>
