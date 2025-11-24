@@ -5,6 +5,18 @@ import { ensureSocket } from '../utils/socket';
 import { getServerUrl } from '../utils/serverUrl';
 import '../css/chat.css';
 
+// Função auxiliar para gerar cor consistente baseada no nome
+const getUserColor = (username) => {
+  if (!username || username === 'system') return null;
+  let hash = 0;
+  for (let i = 0; i < username.length; i++) {
+    hash = username.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  // HSL: Hue variável, Saturação alta, Luminosidade média para bom contraste no tema escuro
+  const h = Math.abs(hash) % 360;
+  return `hsl(${h}, 70%, 50%)`;
+};
+
 export default function Chat({ enabled = true }) {
   const navigate = useNavigate();
   const getCurrentUser = () => getAuthUser() || 'Guest';
@@ -291,6 +303,9 @@ export default function Chat({ enabled = true }) {
       <div className="ba-chat-list" ref={listRef}>
         {messages.map((m) => {
           const isMe = m.from === getCurrentUser();
+          const userColor =
+            !isMe && m.from !== 'system' ? getUserColor(m.from) : undefined;
+
           const handleAvatarClick = () => {
             // Se é admin e não é uma mensagem própria ou do sistema
             if (isAdmin && m.from !== 'system' && !isMe) {
@@ -315,6 +330,11 @@ export default function Chat({ enabled = true }) {
                       isAdmin && m.from !== 'system' && !isMe
                         ? 'pointer'
                         : 'default',
+                    backgroundColor: userColor,
+                    color: userColor ? '#fff' : undefined,
+                    border: userColor
+                      ? '1px solid rgba(255,255,255,0.2)'
+                      : undefined,
                   }}
                   title={
                     isAdmin && m.from !== 'system' && !isMe
