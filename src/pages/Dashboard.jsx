@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/Dashboard.css';
 import '../css/NotificationsModal.css';
@@ -37,24 +37,30 @@ export default function Dashboard() {
   const [showHamburgerMenu, setShowHamburgerMenu] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
 
-  const handleNotifyClick = () => {
-    setShowNotifications(!showNotifications);
-    if (!showNotifications) {
-      setShowHamburgerMenu(false); // Fecha o menu hamburger ao abrir notificações
-    }
-  };
+  const handleNotifyClick = React.useCallback(() => {
+    setShowNotifications((prev) => {
+      const next = !prev;
+      if (next) {
+        setShowHamburgerMenu(false); // Fecha o menu hamburger ao abrir notificações
+      }
+      return next;
+    });
+  }, []);
 
-  const handleMenuClick = () => {
-    setShowHamburgerMenu(!showHamburgerMenu);
-    if (!showHamburgerMenu) {
-      setShowNotifications(false); // Fecha notificações ao abrir menu hamburger
-    }
-  };
+  const handleMenuClick = React.useCallback(() => {
+    setShowHamburgerMenu((prev) => {
+      const next = !prev;
+      if (next) {
+        setShowNotifications(false); // Fecha notificações ao abrir menu hamburger
+      }
+      return next;
+    });
+  }, []);
 
-  const handleTutorialStart = () => {
+  const handleTutorialStart = React.useCallback(() => {
     setShowHamburgerMenu(false); // Fecha o menu hamburger
     setShowTutorial(true);
-  };
+  }, []);
 
   function toggleSidebar() {
     setSidebarOpen((s) => !s);

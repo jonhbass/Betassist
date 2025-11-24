@@ -11,16 +11,16 @@
   padding: 12px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
   z-index: 1000;
-  animation: slideDown 0.25s ease-out;
+  animation: notifSlideDown 0.25s ease-out;
   display: flex;
   flex-direction: column;
 }
 
 .ba-notifications-popup.closing {
-  animation: slideUp 0.25s ease-out;
+  animation: notifSlideUp 0.25s ease-out;
 }
 
-@keyframes slideDown {
+@keyframes notifSlideDown {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -31,7 +31,7 @@
   }
 }
 
-@keyframes slideUp {
+@keyframes notifSlideUp {
   from {
     opacity: 1;
     transform: translateY(0);

@@ -24,6 +24,7 @@ export default function Topbar({
   const [unreadCount, setUnreadCount] = useState(0);
   const [iconGlowing, setIconGlowing] = useState(false);
   const menuRef = useRef(null);
+  const menuButtonRef = useRef(null);
 
   const handleIconClick = () => {
     setIconGlowing(!iconGlowing);
@@ -110,6 +111,7 @@ export default function Topbar({
   }, []);
 
   const closeMenu = React.useCallback(() => {
+    if (isClosing) return;
     if (onMenuClick && showMenu) {
       setIsClosing(true);
       setTimeout(() => {
@@ -117,19 +119,17 @@ export default function Topbar({
         setIsClosing(false);
       }, 250);
     }
-  }, [onMenuClick, showMenu]);
+  }, [onMenuClick, showMenu, isClosing]);
 
   // Fechar menu ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event) => {
       // Verificar se clicou fora do menu E se não é o botão hamburguer
-      const isMenuButton = event.target.closest(
-        '.ba-btn.small[aria-label="Toggle menu"]'
-      );
       if (
         menuRef.current &&
         !menuRef.current.contains(event.target) &&
-        !isMenuButton
+        menuButtonRef.current &&
+        !menuButtonRef.current.contains(event.target)
       ) {
         closeMenu();
       }
@@ -137,14 +137,19 @@ export default function Topbar({
 
     if (showMenu) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside); // Adicionar suporte a touch
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
   }, [showMenu, closeMenu]);
 
-  const toggleMenu = () => {
+  const toggleMenu = (e) => {
+    if (e) e.stopPropagation();
+    if (isClosing) return; // Evita duplo clique durante animação
+
     if (showMenu && onMenuClick) {
       setIsClosing(true);
       setTimeout(() => {
@@ -237,10 +242,13 @@ export default function Topbar({
             )}
           </button>
           <button
+            ref={menuButtonRef}
             className={`ba-btn small ba-menu-toggle-btn ${
               showMenu ? 'active' : ''
             }`}
             onClick={toggleMenu}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
             aria-label="Toggle menu"
           >
             ☰
