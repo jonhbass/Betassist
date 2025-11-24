@@ -18,7 +18,7 @@ import { getAuthUser, removeAuthUser } from '../utils/auth';
 import { getServerUrl } from '../utils/serverUrl';
 
 export default function Dashboard() {
-  const [user, setUser] = useState('tute4279');
+  const [user, setUser] = useState('');
 
   const navigate = useNavigate();
 
@@ -72,7 +72,16 @@ export default function Dashboard() {
 
   useEffect(() => {
     const u = getAuthUser();
-    if (u) setUser(u);
+    const adminUser = sessionStorage.getItem('adminUsername');
+
+    if (u) {
+      setUser(u);
+    } else if (adminUser) {
+      setUser(adminUser);
+    } else {
+      // Se não tiver usuário nem admin, define um padrão ou redireciona se necessário
+      setUser('Visitante');
+    }
 
     // SEMPRE re-verificar status de admin para evitar que usuário normal veja opções de admin
     const adminStatus = sessionStorage.getItem('isAdmin') === 'true';
