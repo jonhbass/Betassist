@@ -1,5 +1,16 @@
 import React from 'react';
 
+// Função auxiliar para gerar cor consistente baseada no nome (mesma do Chat.jsx)
+const getUserColor = (username) => {
+  if (!username || username === 'system' || username === 'admin') return null;
+  let hash = 0;
+  for (let i = 0; i < username.length; i++) {
+    hash = username.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const h = Math.abs(hash) % 360;
+  return `hsl(${h}, 70%, 50%)`;
+};
+
 export default function ThreadList({
   threads,
   activeThread,
@@ -10,14 +21,17 @@ export default function ThreadList({
   return (
     <div
       className="ba-admin-threads"
-      style={{ width: 240, maxHeight: 600, overflow: 'auto' }}
+      // Remover estilos inline fixos para permitir responsividade via CSS
     >
       {threads.length === 0 && <div className="ba-muted">Ningún mensaje</div>}
       {threads.map((t) => {
         const isExternalVisitor = t.id.startsWith('usuario');
+        const userColor = !isExternalVisitor ? getUserColor(t.id) : null;
+
         const avatarBg = isExternalVisitor
           ? 'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(249, 115, 22, 0.25))'
-          : 'rgba(255,255,255,0.06)';
+          : userColor || 'rgba(255,255,255,0.06)';
+
         const avatarColor = isExternalVisitor ? '#fb923c' : '#fff';
         const avatarIcon = isExternalVisitor
           ? '👤'
@@ -65,6 +79,8 @@ export default function ThreadList({
                   color: avatarColor,
                   border: isExternalVisitor
                     ? '2px solid rgba(251, 146, 60, 0.3)'
+                    : userColor
+                    ? '1px solid rgba(255,255,255,0.2)'
                     : 'none',
                 }}
               >

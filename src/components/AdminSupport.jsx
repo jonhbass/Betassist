@@ -26,7 +26,7 @@ export default function AdminSupport() {
     <div className="ba-admin-support">
       <div
         className="ba-admin-support-grid"
-        style={{ display: 'flex', gap: 12 }}
+        // Remover estilos inline para permitir controle via CSS
       >
         <ThreadList
           threads={threads}

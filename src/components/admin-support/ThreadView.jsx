@@ -1,5 +1,16 @@
 import React from 'react';
 
+// Função auxiliar para gerar cor consistente baseada no nome (mesma do Chat.jsx)
+const getUserColor = (username) => {
+  if (!username || username === 'system' || username === 'admin') return null;
+  let hash = 0;
+  for (let i = 0; i < username.length; i++) {
+    hash = username.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const h = Math.abs(hash) % 360;
+  return `hsl(${h}, 70%, 50%)`;
+};
+
 export default function ThreadView({
   activeThread,
   activeObj,
@@ -37,11 +48,7 @@ export default function ThreadView({
             }}
           >
             <h4 style={{ margin: 0 }}>{activeThread}</h4>
-            <div>
-              <button className="ba-btn small" onClick={markAllHandled}>
-                Marcar todos atendidos
-              </button>
-            </div>
+            {/* Botão "Marcar todos atendidos" removido conforme solicitado */}
           </div>
 
           <div
@@ -50,6 +57,8 @@ export default function ThreadView({
           >
             {activeObj?.messages.map((m) => {
               const isMe = m.from === 'admin';
+              const userColor = !isMe ? getUserColor(m.from) : undefined;
+
               return (
                 <div
                   key={m.id}
@@ -63,9 +72,19 @@ export default function ThreadView({
                       marginBottom: 4,
                     }}
                   >
+                    {/* Avatar restaurado e com cor dinâmica */}
                     <div
                       className="ba-chat-avatar"
-                      style={{ width: 28, height: 28, fontSize: 13 }}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        fontSize: 13,
+                        backgroundColor: userColor,
+                        color: userColor ? '#fff' : undefined,
+                        border: userColor
+                          ? '1px solid rgba(255,255,255,0.2)'
+                          : undefined,
+                      }}
                     >
                       {m.from === 'admin'
                         ? 'A'

@@ -259,3 +259,40 @@
   background: transparent;
   color: #fff;
 }
+
+.ba-admin-support-grid {
+  display: flex;
+  gap: 12px;
+  height: 600px; /* Altura fixa para garantir layout */
+}
+
+/* Responsividade para mobile */
+@media (max-width: 768px) {
+  .ba-admin-support-grid {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .ba-admin-threads {
+    width: 100% !important;
+    max-height: 200px !important;
+    margin-bottom: 12px;
+  }
+
+  .ba-admin-thread-view {
+    height: 400px;
+  }
+
+  /* Ajuste do botão de enviar no mobile */
+  .ba-chat-form button {
+    padding: 0 20px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #4fd1ff;
+    color: #042533;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+}
