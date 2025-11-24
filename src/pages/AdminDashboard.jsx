@@ -330,14 +330,24 @@ export default function AdminDashboard() {
 
   function toggleChat() {
     const newState = !chatEnabled;
+    console.log(
+      '🔄 Admin alterando estado do chat:',
+      chatEnabled,
+      '→',
+      newState
+    );
     setChatEnabled(newState);
     localStorage.setItem('chatEnabled', String(newState));
     showToast(newState ? 'Chat ativado' : 'Chat desativado');
 
     // Admin notifica todos os usuários sobre mudança de estado do chat
     if (socket) {
-      console.log('Emitindo chat:toggle-global com enabled:', newState);
+      console.log('📤 Emitindo chat:toggle-global com enabled:', newState);
       socket.emit('chat:toggle-global', { enabled: newState });
+    } else {
+      console.warn(
+        '⚠️ Socket não está conectado - não foi possível emitir evento'
+      );
     }
   }
 

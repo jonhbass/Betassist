@@ -600,10 +600,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chat:toggle-global', (data) => {
-    console.log('Admin alterou estado do chat globalmente:', data.enabled);
+    console.log('⚙️ Admin alterou estado do chat globalmente:', data.enabled);
     const current = readConfig();
     const next = { ...current, chatEnabled: data.enabled };
     writeConfig(next);
+    console.log('💾 Config salvo:', next);
+    console.log('📡 Emitindo chat:state-changed para todos os clientes');
     io.emit('chat:state-changed', { enabled: data.enabled });
   });
 

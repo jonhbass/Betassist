@@ -133,6 +133,28 @@ export default function Dashboard() {
 
     if (!USE_SOCKET) return;
 
+    // Buscar estado atual do chat do servidor ao carregar
+    const fetchChatState = async () => {
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/config`);
+        if (res.ok) {
+          const config = await res.json();
+          const serverChatEnabled = config.chatEnabled !== false;
+          console.log(
+            '🔄 Estado do chat recebido do servidor:',
+            serverChatEnabled
+          );
+          localStorage.setItem('chatEnabled', String(serverChatEnabled));
+          setChatEnabled(serverChatEnabled);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar estado do chat:', error);
+      }
+    };
+
+    fetchChatState();
+
     let socketInstance;
     import('socket.io-client').then((mod) => {
       const ioFn = mod.io || mod.default || mod;
@@ -145,7 +167,7 @@ export default function Dashboard() {
       });
 
       socketInstance.on('chat:state-changed', (data) => {
-        console.log('Chat estado alterado globalmente:', data.enabled);
+        console.log('📡 Chat estado alterado globalmente:', data.enabled);
         localStorage.setItem('chatEnabled', String(data.enabled));
         setChatEnabled(data.enabled);
         showToast(
