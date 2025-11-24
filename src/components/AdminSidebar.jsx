@@ -6,6 +6,8 @@ export default function AdminSidebar({
   isOpen = true,
   onNavigateToSection = () => {},
   onToggleSidebar = () => {},
+  onToggleChat = () => {},
+  chatEnabled = true,
   pendingDeposits = 0,
   pendingWithdraws = 0,
   unreadMessages = 0,
@@ -241,6 +243,30 @@ export default function AdminSidebar({
             {isOpen && <span className="ba-action-text">Gestionar CBU</span>}
           </button>
         </li>
+        {onToggleChat && (
+          <li>
+            <button
+              className={`ba-action ${chatEnabled ? 'success' : 'danger'}`}
+              onClick={onToggleChat}
+              title={
+                !isOpen
+                  ? chatEnabled
+                    ? 'Desactivar Chat'
+                    : 'Activar Chat'
+                  : ''
+              }
+            >
+              <span className="ba-action-icon">
+                {chatEnabled ? '💬' : '🚫'}
+              </span>
+              {isOpen && (
+                <span className="ba-action-text">
+                  {chatEnabled ? 'Desactivar Chat' : 'Activar Chat'}
+                </span>
+              )}
+            </button>
+          </li>
+        )}
       </ul>
     </nav>
   );

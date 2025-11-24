@@ -7,6 +7,7 @@ import AdminSidebar from '../components/AdminSidebar';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import { getServerUrl } from '../utils/serverUrl';
+import { ensureSocket } from '../utils/socket';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -22,6 +23,11 @@ export default function AdminDashboard() {
   const [pendingDeposits, setPendingDeposits] = useState(0);
   const [pendingWithdraws, setPendingWithdraws] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [socket, setSocket] = useState(null);
+  const [chatEnabled, setChatEnabled] = useState(() => {
+    const stored = localStorage.getItem('chatEnabled');
+    return stored === null ? true : stored === 'true';
+  });
 
   const USE_API = true;
 
@@ -180,6 +186,24 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   }, []);
 
+  // Conectar Socket.IO para admin
+  useEffect(() => {
+    ensureSocket().then((socketInstance) => {
+      if (socketInstance) {
+        setSocket(socketInstance);
+        console.log('Admin socket conectado');
+      }
+    });
+
+    return () => {
+      ensureSocket().then((socketInstance) => {
+        if (socketInstance) {
+          socketInstance.disconnect();
+        }
+      });
+    };
+  }, []);
+
   async function saveUsers(list) {
     if (USE_API) {
       try {
@@ -304,6 +328,19 @@ export default function AdminDashboard() {
     showToast('Contraseña actualizada');
   }
 
+  function toggleChat() {
+    const newState = !chatEnabled;
+    setChatEnabled(newState);
+    localStorage.setItem('chatEnabled', String(newState));
+    showToast(newState ? 'Chat ativado' : 'Chat desativado');
+
+    // Admin notifica todos os usuários sobre mudança de estado do chat
+    if (socket) {
+      console.log('Emitindo chat:toggle-global com enabled:', newState);
+      socket.emit('chat:toggle-global', { enabled: newState });
+    }
+  }
+
   function handleLogout() {
     sessionStorage.removeItem('isAdmin');
     sessionStorage.removeItem('adminUsername');
@@ -343,6 +380,8 @@ export default function AdminDashboard() {
               onNavigateToSection={handleNavigateToSection}
               onToast={showToast}
               onToggleSidebar={toggleSidebar}
+              onToggleChat={toggleChat}
+              chatEnabled={chatEnabled}
               pendingDeposits={pendingDeposits}
               pendingWithdraws={pendingWithdraws}
               unreadMessages={unreadMessages}
