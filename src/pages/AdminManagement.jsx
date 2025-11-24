@@ -255,77 +255,26 @@ export default function AdminManagement() {
                   className="ba-create-user-form"
                   onSubmit={handleCreateAdmin}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    <label
-                      style={{
-                        color: '#fff',
-                        fontWeight: 500,
-                        fontSize: '14px',
-                      }}
-                    >
-                      Usuário
-                    </label>
+                  <div className="ba-form-inline">
+                    <label className="ba-form-label">Usuário</label>
                     <input
                       id="admin-username"
                       type="text"
                       value={newAdminUsername}
                       onChange={(e) => setNewAdminUsername(e.target.value)}
                       autoComplete="off"
-                      style={{
-                        width: '200px',
-                        padding: '8px 12px',
-                        background: '#fff',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '6px',
-                        color: '#000',
-                        fontSize: '14px',
-                      }}
+                      className="ba-form-input"
                     />
-                    <label
-                      style={{
-                        color: '#fff',
-                        fontWeight: 500,
-                        fontSize: '14px',
-                      }}
-                    >
-                      Senha
-                    </label>
+                    <label className="ba-form-label">Senha</label>
                     <input
                       id="admin-password"
                       type="password"
                       value={newAdminPassword}
                       onChange={(e) => setNewAdminPassword(e.target.value)}
                       autoComplete="new-password"
-                      style={{
-                        width: '200px',
-                        padding: '8px 12px',
-                        background: '#fff',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '6px',
-                        color: '#000',
-                        fontSize: '14px',
-                      }}
+                      className="ba-form-input"
                     />
-                    <button
-                      type="submit"
-                      style={{
-                        padding: '8px 24px',
-                        background: '#fff',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '6px',
-                        color: '#000',
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                      }}
-                    >
+                    <button type="submit" className="ba-form-submit">
                       Criar
                     </button>
                   </div>
