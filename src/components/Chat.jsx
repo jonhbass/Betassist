@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuthUser } from '../utils/auth';
-// import socket.io-client synchronously to avoid dynamic-import races during dev
-import { io as ioClient } from 'socket.io-client';
+import { ensureSocket } from '../utils/socket';
 import { getServerUrl } from '../utils/serverUrl';
 import '../css/chat.css';
 
@@ -62,65 +61,85 @@ export default function Chat({ enabled = true }) {
 
     let mounted = true;
     const url = getServerUrl();
-    console.log('🌐 Conectando ao servidor:', url);
+    console.log('🌐 Chat conectando ao servidor via ensureSocket:', url);
 
-    const socket = ioClient(url, {
-      transports: ['websocket', 'polling'],
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      timeout: 20000,
-      autoConnect: true,
-    });
-    socketRef.current = socket;
-
-    socket.on('connect', () => {
-      console.log('✅ Chat socket CONECTADO:', socket.id);
-      if (mounted) setSocketState('connected');
-    });
-
-    socket.on('chat:main-history', (list) => {
+    ensureSocket(url).then((socket) => {
       if (!mounted) return;
-      setMessages(list);
-    });
+      socketRef.current = socket;
 
-    socket.on('chat:main-message', (msg) => {
-      if (!mounted) return;
-      setMessages((m) => [...m, msg]);
-    });
-
-    socket.on('chat:typing', (p) => {
-      if (!mounted) return;
-      setTyping(p.name);
-      if (typingTimeout.current) clearTimeout(typingTimeout.current);
-      typingTimeout.current = setTimeout(() => {
-        if (mounted) setTyping('');
-      }, 2000);
-    });
-
-    socket.on('chat:cleared', () => {
-      if (!mounted) return;
-      setMessages([]);
-      try {
-        localStorage.removeItem('CHAT_MESSAGES');
-      } catch (e) {
-        void e;
+      // Se já estiver conectado
+      if (socket.connected) {
+        console.log('✅ Chat socket já estava CONECTADO:', socket.id);
+        setSocketState('connected');
       }
-    });
 
-    socket.on('connect_error', (err) => {
-      console.warn('socket connect_error', err && err.message);
-      if (mounted) setSocketState('disconnected');
-    });
+      const onConnect = () => {
+        console.log('✅ Chat socket CONECTADO:', socket.id);
+        if (mounted) setSocketState('connected');
+      };
 
-    socket.on('disconnect', (reason) => {
-      console.log('socket disconnected', reason);
-      if (mounted) setSocketState('disconnected');
+      const onHistory = (list) => {
+        if (!mounted) return;
+        setMessages(list);
+      };
+
+      const onMessage = (msg) => {
+        if (!mounted) return;
+        setMessages((m) => [...m, msg]);
+      };
+
+      const onTyping = (p) => {
+        if (!mounted) return;
+        setTyping(p.name);
+        if (typingTimeout.current) clearTimeout(typingTimeout.current);
+        typingTimeout.current = setTimeout(() => {
+          if (mounted) setTyping('');
+        }, 2000);
+      };
+
+      const onCleared = () => {
+        if (!mounted) return;
+        setMessages([]);
+        try {
+          localStorage.removeItem('CHAT_MESSAGES');
+        } catch (e) {
+          void e;
+        }
+      };
+
+      const onConnectError = (err) => {
+        console.warn('socket connect_error', err && err.message);
+        if (mounted) setSocketState('disconnected');
+      };
+
+      const onDisconnect = (reason) => {
+        console.log('socket disconnected', reason);
+        if (mounted) setSocketState('disconnected');
+      };
+
+      socket.on('connect', onConnect);
+      socket.on('chat:main-history', onHistory);
+      socket.on('chat:main-message', onMessage);
+      socket.on('chat:typing', onTyping);
+      socket.on('chat:cleared', onCleared);
+      socket.on('connect_error', onConnectError);
+      socket.on('disconnect', onDisconnect);
+
+      // Cleanup listeners on unmount
+      return () => {
+        socket.off('connect', onConnect);
+        socket.off('chat:main-history', onHistory);
+        socket.off('chat:main-message', onMessage);
+        socket.off('chat:typing', onTyping);
+        socket.off('chat:cleared', onCleared);
+        socket.off('connect_error', onConnectError);
+        socket.off('disconnect', onDisconnect);
+      };
     });
 
     return () => {
       mounted = false;
-      if (socket) socket.disconnect();
+      // Não desconectamos o socket pois é compartilhado (ensureSocket)
     };
   }, [USE_SOCKET]);
 

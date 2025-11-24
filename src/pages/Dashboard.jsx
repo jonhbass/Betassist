@@ -238,9 +238,25 @@ export default function Dashboard() {
     showToast(newState ? 'Chat ativado' : 'Chat desativado');
 
     // Admin notifica todos os usuários sobre mudança de estado do chat
-    if (isAdmin && socket) {
-      console.log('Emitindo chat:toggle-global com enabled:', newState);
-      socket.emit('chat:toggle-global', { enabled: newState });
+    if (isAdmin) {
+      if (socket && socket.connected) {
+        console.log('📤 Emitindo chat:toggle-global com enabled:', newState);
+        socket.emit('chat:toggle-global', { enabled: newState });
+      } else {
+        console.warn('⚠️ Socket não conectado. Tentando reconectar...');
+        showToast('Erro de conexão. Tentando reconectar...', 2000);
+        // Tentar reconectar se possível ou alertar usuário
+        import('../utils/socket').then(({ ensureSocket }) => {
+          ensureSocket().then((s) => {
+            if (s && s.connected) {
+              s.emit('chat:toggle-global', { enabled: newState });
+              showToast('Comando enviado após reconexão');
+            } else {
+              showToast('Falha ao conectar ao servidor de chat');
+            }
+          });
+        });
+      }
     }
   }
 
