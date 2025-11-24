@@ -36,7 +36,7 @@ const CONFIG = path.join(DATA_DIR, 'config.json');
 const PORT =
   typeof process !== 'undefined' && process.env && process.env.PORT
     ? process.env.PORT
-    : 4000;
+    : 8080;
 
 function readUsers() {
   try {
