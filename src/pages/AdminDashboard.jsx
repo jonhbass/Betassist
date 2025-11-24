@@ -505,10 +505,9 @@ export default function AdminDashboard() {
                 style={{
                   width: '100%',
                   maxWidth: '1200px',
-                  borderLeft: '4px solid #3b82f6',
-                  paddingLeft: '1.5rem',
                 }}
               >
+                <h3>Área de apoyo</h3>
                 <AdminSupport />
               </section>
             )}
