@@ -2,6 +2,55 @@ import React, { useState, useEffect } from 'react';
 import { getServerUrl } from '../utils/serverUrl';
 import { ensureSocket } from '../utils/socket';
 
+const STATUS_MAP = {
+  Rechazadas: ['rechazada', 'rechazado'],
+  Aceptadas: ['exitosa', 'aprobada', 'aprobado', 'aceptada', 'aceptado'],
+  Pendientes: ['pendiente', 'pending'],
+  Solicitadas: ['solicitada', 'solicitado', 'solicitud'],
+};
+
+const normalizeText = (value) =>
+  typeof value === 'string' ? value.trim().toLowerCase() : '';
+
+const matchesStatusFilter = (status, selectedFilter) => {
+  if (selectedFilter === 'Todas') return true;
+  const normalizedStatus = normalizeText(status);
+  const allowedValues = STATUS_MAP[selectedFilter] || [];
+  return allowedValues.some((token) => normalizedStatus === token);
+};
+
+const getSortableTimestamp = (entry) => {
+  const numericId = Number(entry?.id);
+  if (!Number.isNaN(numericId) && numericId > 0) {
+    return numericId;
+  }
+
+  const dateText = entry?.date || '';
+  if (!dateText) return 0;
+
+  try {
+    const [datePart = '', timePart = ''] = dateText.split(',');
+    const [day = '01', month = '01', year = '1970'] = datePart
+      .trim()
+      .split('/');
+    const [hour = '00', minute = '00', second = '00'] = timePart
+      .trim()
+      .split(':');
+
+    const isoString = `${year.padStart(4, '0')}-${month.padStart(
+      2,
+      '0'
+    )}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(
+      2,
+      '0'
+    )}:${second.padStart(2, '0')}`;
+    return new Date(isoString).getTime() || 0;
+  } catch (error) {
+    void error;
+    return 0;
+  }
+};
+
 export default function HistoryModalContent({ onOpenSupport }) {
   const [history, setHistory] = useState([]);
   const [filter, setFilter] = useState('Todas');
@@ -57,38 +106,14 @@ export default function HistoryModalContent({ onOpenSupport }) {
 
   const filteredHistory = history.filter((item) => {
     const typeMatch = filter === 'Todas' || item.type === filter;
-    const statusMatch =
-      statusFilter === 'Todas' ||
-      (statusFilter === 'Rechazadas' && item.status === 'Rechazada') ||
-      (statusFilter === 'Aceptadas' && item.status === 'Exitosa') ||
-      (statusFilter === 'Pendientes' && item.status === 'Pendiente') ||
-      (statusFilter === 'Solicitadas' && item.status === 'Solicitada');
-
+    const statusMatch = matchesStatusFilter(item.status, statusFilter);
     return typeMatch && statusMatch;
   });
 
   // Ordenar por data (mais recente primeiro)
-  const sortedHistory = [...filteredHistory].sort((a, b) => {
-    const idA = Number(a.id);
-    const idB = Number(b.id);
-    if (!isNaN(idA) && !isNaN(idB)) {
-      return idB - idA;
-    }
-    // Fallback: tentar ordenar por data string se ID falhar
-    try {
-      const parseDate = (str) => {
-        if (!str) return 0;
-        const [datePart, timePart] = str.split(', ');
-        const [day, month, year] = datePart.split('/');
-        const [hour, minute, second] = (timePart || '00:00:00').split(':');
-        return new Date(year, month - 1, day, hour, minute, second).getTime();
-      };
-      return parseDate(b.date) - parseDate(a.date);
-    } catch (error) {
-      void error;
-      return 0;
-    }
-  });
+  const sortedHistory = [...filteredHistory].sort(
+    (a, b) => getSortableTimestamp(b) - getSortableTimestamp(a)
+  );
 
   return (
     <div style={{ padding: '20px' }}>
