@@ -968,15 +968,35 @@
   }
 
   /* Tabelas - scroll horizontal */
-  .ba-user-list,
   .ba-banner-list {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  .ba-user-item,
   .ba-banner-item {
     min-width: 500px; /* Garantir largura mínima para scroll */
+  }
+
+  /* User item - stack vertical no mobile */
+  .ba-user-item {
+    min-width: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .ba-user-actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .ba-user-actions button,
+  .ba-user-actions input {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    min-width: 0; /* Prevent overflow */
   }
 
   /* Botões de ação - ajustar tamanho */
