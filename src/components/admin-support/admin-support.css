@@ -15,10 +15,14 @@
 }
 
 .ba-admin-support .ba-admin-threads {
-  height: 340px;
+  height: 100%;
+  width: 280px;
+  flex-shrink: 0;
   overflow: auto;
   border-radius: 8px;
   padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Scrollbar customizada - Lista de threads */

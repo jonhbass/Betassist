@@ -76,7 +76,8 @@ export default function HistoryModalContent({ onOpenSupport }) {
         return new Date(year, month - 1, day, hour, minute, second).getTime();
       };
       return parseDate(b.date) - parseDate(a.date);
-    } catch (e) {
+    } catch (error) {
+      void error;
       return 0;
     }
   });
