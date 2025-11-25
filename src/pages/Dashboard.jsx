@@ -195,6 +195,24 @@ export default function Dashboard() {
       ) {
         showToast(`✅ ${data.message}`);
 
+        // Determine notification type and storage key
+        let storageKey = 'DEPOSIT_NOTIFICATIONS';
+        let notifType = 'approved';
+
+        if (data.type === 'withdraw_approved') {
+          storageKey = 'WITHDRAW_NOTIFICATIONS';
+          notifType = 'withdraw-approved';
+        } else if (data.type === 'withdraw_rejected') {
+          storageKey = 'WITHDRAW_NOTIFICATIONS';
+          notifType = 'withdraw-rejected';
+        } else if (data.type === 'deposit_rejected') {
+          storageKey = 'DEPOSIT_NOTIFICATIONS';
+          notifType = 'deposit-rejected';
+        } else if (data.type === 'deposit_approved') {
+          storageKey = 'DEPOSIT_NOTIFICATIONS';
+          notifType = 'approved';
+        }
+
         // Save to LocalStorage for NotificationsModal
         const notif = {
           id: data.id,
@@ -202,16 +220,14 @@ export default function Dashboard() {
           amount: data.amount,
           date: data.date,
           read: false,
-          type: 'deposit',
+          type: notifType,
           message: data.message,
         };
 
         try {
-          const existing = JSON.parse(
-            localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
-          );
+          const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
           localStorage.setItem(
-            'DEPOSIT_NOTIFICATIONS',
+            storageKey,
             JSON.stringify([notif, ...existing])
           );
         } catch (e) {

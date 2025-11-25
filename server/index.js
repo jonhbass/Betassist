@@ -378,6 +378,50 @@ app.put('/deposits/:id', (req, res) => {
         });
       }
     }
+  } else if (newStatus === 'Rechazada' && oldStatus !== 'Rechazada') {
+    // Se rejeitado, apenas atualizar histórico e notificar
+    const amount = Number(list[idx].amount);
+    const username = list[idx].user;
+
+    const users = readUsers();
+    const userIdx = users.findIndex(
+      (u) => u.username.toLowerCase() === username.toLowerCase()
+    );
+
+    if (userIdx !== -1) {
+      const user = users[userIdx];
+
+      if (!user.history) user.history = [];
+      user.history.push({
+        id: Date.now(),
+        type: 'Recarga',
+        amount: amount,
+        date: new Date().toLocaleString('es-AR'),
+        status: 'Rechazada',
+        message: updates.adminMessage || 'Depósito rechazado',
+        canClaim: true,
+      });
+
+      writeUsers(users);
+
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('user:update', {
+          username: user.username,
+          balance: user.balance,
+          history: user.history,
+        });
+
+        io.emit('notification:new', {
+          id: Date.now(),
+          username: user.username,
+          type: 'deposit_rejected',
+          amount: amount,
+          message: updates.adminMessage || 'Depósito rechazado',
+          date: new Date().toLocaleString('es-AR'),
+        });
+      }
+    }
   }
 
   res.json({ ok: true, item: list[idx] });
@@ -463,6 +507,50 @@ app.put('/withdrawals/:id', (req, res) => {
           message: `Tu solicitud de retiro de $${amount.toLocaleString(
             'es-AR'
           )} fue aprobada!`,
+          date: new Date().toLocaleString('es-AR'),
+        });
+      }
+    }
+  } else if (newStatus === 'Rechazada' && oldStatus !== 'Rechazada') {
+    // Se rejeitado, apenas atualizar histórico e notificar
+    const amount = Number(list[idx].amount);
+    const username = list[idx].user;
+
+    const users = readUsers();
+    const userIdx = users.findIndex(
+      (u) => u.username.toLowerCase() === username.toLowerCase()
+    );
+
+    if (userIdx !== -1) {
+      const user = users[userIdx];
+
+      if (!user.history) user.history = [];
+      user.history.push({
+        id: Date.now(),
+        type: 'Retiro',
+        amount: amount,
+        date: new Date().toLocaleString('es-AR'),
+        status: 'Rechazada',
+        message: updates.adminMessage || 'Retiro rechazado',
+        canClaim: true,
+      });
+
+      writeUsers(users);
+
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('user:update', {
+          username: user.username,
+          balance: user.balance,
+          history: user.history,
+        });
+
+        io.emit('notification:new', {
+          id: Date.now(),
+          username: user.username,
+          type: 'withdraw_rejected',
+          amount: amount,
+          message: updates.adminMessage || 'Retiro rechazado',
           date: new Date().toLocaleString('es-AR'),
         });
       }
