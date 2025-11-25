@@ -4,7 +4,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import cors from 'cors';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import http from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
