@@ -5,6 +5,7 @@ import { ensureSocket } from '../utils/socket';
 export default function HistoryModalContent({ onOpenSupport }) {
   const [history, setHistory] = useState([]);
   const [filter, setFilter] = useState('Todas');
+  const [statusFilter, setStatusFilter] = useState('Todas');
   const authUser = sessionStorage.getItem('authUser');
 
   useEffect(() => {
@@ -55,8 +56,15 @@ export default function HistoryModalContent({ onOpenSupport }) {
   };
 
   const filteredHistory = history.filter((item) => {
-    if (filter === 'Todas') return true;
-    return item.type === filter;
+    const typeMatch = filter === 'Todas' || item.type === filter;
+    const statusMatch =
+      statusFilter === 'Todas' ||
+      (statusFilter === 'Rechazadas' && item.status === 'Rechazada') ||
+      (statusFilter === 'Aceptadas' && item.status === 'Exitosa') ||
+      (statusFilter === 'Pendientes' && item.status === 'Pendiente') ||
+      (statusFilter === 'Solicitadas' && item.status === 'Solicitada');
+
+    return typeMatch && statusMatch;
   });
 
   // Ordenar por data (mais recente primeiro)
@@ -89,60 +97,144 @@ export default function HistoryModalContent({ onOpenSupport }) {
       </h3>
 
       {/* Filtros */}
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-        <button
-          onClick={() => setFilter('Todas')}
-          style={{
-            padding: '8px 16px',
-            background: filter === 'Todas' ? '#ffc107' : '#2a2a3e',
-            color: filter === 'Todas' ? '#000' : '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-          }}
-        >
-          Todas
-        </button>
-        <button
-          onClick={() => setFilter('Recarga')}
-          style={{
-            padding: '8px 16px',
-            background: filter === 'Recarga' ? '#ffc107' : '#2a2a3e',
-            color: filter === 'Recarga' ? '#000' : '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Recargas
-        </button>
-        <button
-          onClick={() => setFilter('Retiros')}
-          style={{
-            padding: '8px 16px',
-            background: filter === 'Retiros' ? '#ffc107' : '#2a2a3e',
-            color: filter === 'Retiros' ? '#000' : '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Retiros
-        </button>
-        <button
-          onClick={() => setFilter('Bonificaciones')}
-          style={{
-            padding: '8px 16px',
-            background: filter === 'Bonificaciones' ? '#ffc107' : '#2a2a3e',
-            color: filter === 'Bonificaciones' ? '#000' : '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Bonificaciones
-        </button>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          marginBottom: '20px',
+        }}
+      >
+        {/* Filtro por Tipo */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setFilter('Todas')}
+            style={{
+              padding: '8px 16px',
+              background: filter === 'Todas' ? '#ffc107' : '#2a2a3e',
+              color: filter === 'Todas' ? '#000' : '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            Todas
+          </button>
+          <button
+            onClick={() => setFilter('Recarga')}
+            style={{
+              padding: '8px 16px',
+              background: filter === 'Recarga' ? '#ffc107' : '#2a2a3e',
+              color: filter === 'Recarga' ? '#000' : '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Recargas
+          </button>
+          <button
+            onClick={() => setFilter('Retiros')}
+            style={{
+              padding: '8px 16px',
+              background: filter === 'Retiros' ? '#ffc107' : '#2a2a3e',
+              color: filter === 'Retiros' ? '#000' : '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Retiros
+          </button>
+          <button
+            onClick={() => setFilter('Bonificaciones')}
+            style={{
+              padding: '8px 16px',
+              background: filter === 'Bonificaciones' ? '#ffc107' : '#2a2a3e',
+              color: filter === 'Bonificaciones' ? '#000' : '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Bonificaciones
+          </button>
+        </div>
+
+        {/* Filtro por Status */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setStatusFilter('Todas')}
+            style={{
+              padding: '8px 16px',
+              background: statusFilter === 'Todas' ? '#ffc107' : '#2a2a3e',
+              color: statusFilter === 'Todas' ? '#000' : '#fff',
+              border: '1px solid #ffc107',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            Todas
+          </button>
+          <button
+            onClick={() => setStatusFilter('Rechazadas')}
+            style={{
+              padding: '8px 16px',
+              background:
+                statusFilter === 'Rechazadas' ? '#ffc107' : 'transparent',
+              color: statusFilter === 'Rechazadas' ? '#000' : '#fff',
+              border: '1px solid #ffc107',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Rechazadas
+          </button>
+          <button
+            onClick={() => setStatusFilter('Aceptadas')}
+            style={{
+              padding: '8px 16px',
+              background:
+                statusFilter === 'Aceptadas' ? '#ffc107' : 'transparent',
+              color: statusFilter === 'Aceptadas' ? '#000' : '#fff',
+              border: '1px solid #ffc107',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Aceptadas
+          </button>
+          <button
+            onClick={() => setStatusFilter('Pendientes')}
+            style={{
+              padding: '8px 16px',
+              background:
+                statusFilter === 'Pendientes' ? '#ffc107' : 'transparent',
+              color: statusFilter === 'Pendientes' ? '#000' : '#fff',
+              border: '1px solid #ffc107',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Pendientes
+          </button>
+          <button
+            onClick={() => setStatusFilter('Solicitadas')}
+            style={{
+              padding: '8px 16px',
+              background:
+                statusFilter === 'Solicitadas' ? '#ffc107' : 'transparent',
+              color: statusFilter === 'Solicitadas' ? '#000' : '#fff',
+              border: '1px solid #ffc107',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Solicitadas
+          </button>
+        </div>
       </div>
 
       {/* Tabela */}
