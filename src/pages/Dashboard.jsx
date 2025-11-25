@@ -85,8 +85,8 @@ export default function Dashboard() {
     } else if (adminUser) {
       setUser(adminUser);
     } else {
-      // Se não tiver usuário nem admin, define um padrão ou redireciona se necessário
-      setUser('Visitante');
+      navigate('/login', { replace: true });
+      return;
     }
 
     // SEMPRE re-verificar status de admin para evitar que usuário normal veja opções de admin
@@ -106,7 +106,7 @@ export default function Dashboard() {
         setShowTutorial(true);
       }, 2000);
     }
-  }, []);
+  }, [navigate]);
 
   // Re-verificar isAdmin sempre que o componente ganhar foco (usuário voltar para a aba)
   useEffect(() => {

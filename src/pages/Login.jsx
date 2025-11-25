@@ -59,6 +59,7 @@ export default function Login() {
             }),
           });
           if (!resp.ok) throw new Error('invalid');
+          clearVisitorId();
           sessionStorage.removeItem('isAdmin'); // Garante que usuário normal não tenha flag de admin
           sessionStorage.removeItem('adminUsername');
           setAuthUser(username);

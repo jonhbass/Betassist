@@ -12,24 +12,119 @@ import WithdrawChips from '../pages/WithdrawChips';
 import RequestsPanel from '../pages/RequestsPanel';
 import DepositRequests from '../pages/DepositRequests';
 import WithdrawRequests from '../pages/WithdrawRequests';
+import { getAuthUser } from '../utils/auth';
+
+function ProtectedRoute({ children }) {
+  const hasUser = Boolean(getAuthUser());
+  const adminOverride = sessionStorage.getItem('adminUsername');
+  if (!hasUser && !adminOverride) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
+function AdminRoute({ children }) {
+  const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+  if (!isAdmin) {
+    return <Navigate to="/admin-login" replace />;
+  }
+  return children;
+}
 
 export function Routers() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/home" element={<Dashboard />} />
-      <Route path="/load-chips" element={<LoadChips />} />
-      <Route path="/withdraw-chips" element={<WithdrawChips />} />
-      <Route path="/requests" element={<RequestsPanel />} />
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/load-chips"
+        element={
+          <ProtectedRoute>
+            <LoadChips />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/withdraw-chips"
+        element={
+          <ProtectedRoute>
+            <WithdrawChips />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/requests"
+        element={
+          <ProtectedRoute>
+            <RequestsPanel />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/admin-login" element={<AdminLogin />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/admin/manage-admins" element={<AdminManagement />} />
-      <Route path="/admin/manage-banners" element={<BannerManagement />} />
-      <Route path="/admin/manage-cbu" element={<CbuManagement />} />
-      <Route path="/admin/deposit-requests" element={<DepositRequests />} />
-      <Route path="/admin/withdraw-requests" element={<WithdrawRequests />} />
-      <Route path="/support" element={<Support />} />
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/manage-admins"
+        element={
+          <AdminRoute>
+            <AdminManagement />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/manage-banners"
+        element={
+          <AdminRoute>
+            <BannerManagement />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/manage-cbu"
+        element={
+          <AdminRoute>
+            <CbuManagement />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/deposit-requests"
+        element={
+          <AdminRoute>
+            <DepositRequests />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/withdraw-requests"
+        element={
+          <AdminRoute>
+            <WithdrawRequests />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/support"
+        element={
+          <ProtectedRoute>
+            <Support />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

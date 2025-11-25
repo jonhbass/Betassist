@@ -6,6 +6,55 @@ import { getServerUrl } from '../utils/serverUrl';
 import { ensureSocket } from '../utils/socket';
 import '../css/RequestsPanel.css';
 
+const STATUS_MAP = {
+  Rechazadas: ['rechazada', 'rechazado'],
+  Aceptadas: ['exitosa', 'aprobada', 'aprobado', 'aceptada', 'aceptado'],
+  Pendientes: ['pendiente', 'pending'],
+  Solicitadas: ['solicitada', 'solicitado', 'solicitud'],
+};
+
+const normalizeText = (value) =>
+  typeof value === 'string' ? value.trim().toLowerCase() : '';
+
+const matchesStatusFilter = (status, selectedFilter) => {
+  if (selectedFilter === 'Todas') return true;
+  const normalizedStatus = normalizeText(status);
+  const allowedValues = STATUS_MAP[selectedFilter] || [];
+  return allowedValues.some((token) => normalizedStatus === token);
+};
+
+const getSortableTimestamp = (entry) => {
+  const numericId = Number(entry?.id);
+  if (!Number.isNaN(numericId) && numericId > 0) {
+    return numericId;
+  }
+
+  const dateText = entry?.date || '';
+  if (!dateText) return 0;
+
+  try {
+    const [datePart = '', timePart = ''] = dateText.split(',');
+    const [day = '01', month = '01', year = '1970'] = datePart
+      .trim()
+      .split('/');
+    const [hour = '00', minute = '00', second = '00'] = timePart
+      .trim()
+      .split(':');
+
+    const isoString = `${year.padStart(4, '0')}-${month.padStart(
+      2,
+      '0'
+    )}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(
+      2,
+      '0'
+    )}:${second.padStart(2, '0')}`;
+    return new Date(isoString).getTime() || 0;
+  } catch (error) {
+    void error;
+    return 0;
+  }
+};
+
 export default function RequestsPanel() {
   const navigate = useNavigate();
   const authUser = sessionStorage.getItem('authUser');
@@ -67,21 +116,22 @@ export default function RequestsPanel() {
     navigate('/support');
   };
 
-  // Filtrar solicitudes
+  // Filtrar e ordenar solicitações (mais recentes primeiro)
   const filteredRequests = requests.filter((req) => {
     const typeMatch = typeFilter === 'Todas' || req.type === typeFilter;
-    const statusMatch = statusFilter === 'Todas' || req.status === statusFilter;
+    const statusMatch = matchesStatusFilter(req.status, statusFilter);
     return typeMatch && statusMatch;
   });
+
+  const sortedRequests = [...filteredRequests].sort(
+    (a, b) => getSortableTimestamp(b) - getSortableTimestamp(a)
+  );
 
   // Paginação
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredRequests.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+  const currentItems = sortedRequests.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedRequests.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
