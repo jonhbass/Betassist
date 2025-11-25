@@ -32,7 +32,14 @@ export default function NotificationsModal({ isOpen }) {
       );
 
       // Ordenar por data (mais recentes primeiro)
-      userNotifications.sort((a, b) => b.id - a.id);
+      userNotifications.sort((a, b) => {
+        const idA = Number(a.id);
+        const idB = Number(b.id);
+        if (!isNaN(idA) && !isNaN(idB)) {
+          return idB - idA;
+        }
+        return 0;
+      });
       setNotifications(userNotifications);
     } catch (error) {
       console.error('Erro ao carregar notificações:', error);

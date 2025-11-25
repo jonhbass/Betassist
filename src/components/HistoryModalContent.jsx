@@ -60,7 +60,26 @@ export default function HistoryModalContent({ onOpenSupport }) {
   });
 
   // Ordenar por data (mais recente primeiro)
-  const sortedHistory = [...filteredHistory].sort((a, b) => b.id - a.id);
+  const sortedHistory = [...filteredHistory].sort((a, b) => {
+    const idA = Number(a.id);
+    const idB = Number(b.id);
+    if (!isNaN(idA) && !isNaN(idB)) {
+      return idB - idA;
+    }
+    // Fallback: tentar ordenar por data string se ID falhar
+    try {
+      const parseDate = (str) => {
+        if (!str) return 0;
+        const [datePart, timePart] = str.split(', ');
+        const [day, month, year] = datePart.split('/');
+        const [hour, minute, second] = (timePart || '00:00:00').split(':');
+        return new Date(year, month - 1, day, hour, minute, second).getTime();
+      };
+      return parseDate(b.date) - parseDate(a.date);
+    } catch (e) {
+      return 0;
+    }
+  });
 
   return (
     <div style={{ padding: '20px' }}>
