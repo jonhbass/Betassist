@@ -85,6 +85,9 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  word-break: break-all;
+  text-align: center;
 }
 
 .ba-load-instructions {
@@ -121,6 +124,7 @@
   padding: 0.8rem;
   color: #fff;
   font-size: 1rem;
+  text-align: center;
 }
 
 .ba-form-input::placeholder {
@@ -137,6 +141,9 @@
   font-weight: bold;
   margin-top: 1rem;
   transition: background 0.2s;
+  display: block;
+  text-align: center;
+  width: 100%;
 }
 
 .ba-btn-attach:hover {
@@ -182,5 +189,16 @@
     justify-content: center;
     font-size: 1.3rem;
     text-align: center;
+  }
+
+  .ba-form-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ba-form-group label {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.5rem;
   }
 }
