@@ -160,15 +160,32 @@ export default function NotificationsModal({ isOpen }) {
                 )}
               </div>
               <div className="ba-notification-content">
-                {notif.type === 'withdraw-approved' ? (
+                {notif.type === 'withdraw-approved' && (
                   <p className="ba-notification-title">
                     💸 Tu solicitud de retiro de $
                     {notif.amount.toLocaleString('es-AR')} fue aprobada!
                   </p>
-                ) : (
+                )}
+                {notif.type === 'approved' && (
                   <p className="ba-notification-title">
                     ✅ Tu solicitud de recarga de $
                     {notif.amount.toLocaleString('es-AR')} fue aprobada!
+                  </p>
+                )}
+                {notif.type === 'withdraw-rejected' && (
+                  <p className="ba-notification-title">
+                    ❌ Tu solicitud de retiro de $
+                    {notif.amount.toLocaleString('es-AR')} fue rechazada.
+                    <br />
+                    <small>Motivo: {notif.message || 'Sin motivo'}</small>
+                  </p>
+                )}
+                {notif.type === 'deposit-rejected' && (
+                  <p className="ba-notification-title">
+                    ❌ Tu solicitud de recarga de $
+                    {notif.amount.toLocaleString('es-AR')} fue rechazada.
+                    <br />
+                    <small>Motivo: {notif.message || 'Sin motivo'}</small>
                   </p>
                 )}
               </div>

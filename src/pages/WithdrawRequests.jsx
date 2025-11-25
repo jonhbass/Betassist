@@ -219,6 +219,31 @@ export default function WithdrawRequests() {
       });
       localStorage.setItem('USER_HISTORY', JSON.stringify(history));
 
+      // Criar notificação de retirada rechazada
+      const notifications = JSON.parse(
+        localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
+      );
+      const newNotification = {
+        id: Date.now(),
+        user: req.user,
+        amount: req.amount,
+        date: new Date().toLocaleString('es-AR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        read: false,
+        type: 'withdraw-rejected',
+        message: adminMessage,
+      };
+      notifications.push(newNotification);
+      localStorage.setItem(
+        'WITHDRAW_NOTIFICATIONS',
+        JSON.stringify(notifications)
+      );
+
       alert(`❌ Retiro de ${req.user} rechazado`);
     }
   };
