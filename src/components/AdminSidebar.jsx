@@ -33,6 +33,9 @@ export default function AdminSidebar({
 
   function handleCreateUser() {
     onNavigateToSection('create');
+    if (window.innerWidth < 900 && isOpen) {
+      onToggleSidebar();
+    }
   }
 
   function handleDepositRequests() {
@@ -49,6 +52,9 @@ export default function AdminSidebar({
 
   function handleSupport() {
     onNavigateToSection('support');
+    if (window.innerWidth < 900 && isOpen) {
+      onToggleSidebar();
+    }
   }
 
   function handleAdminManagement() {
