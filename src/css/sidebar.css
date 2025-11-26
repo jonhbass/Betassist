@@ -86,6 +86,15 @@
   background: linear-gradient(90deg, #0b5cc0, #1aa3ff);
   color: #fff;
   font-weight: 700;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(26, 163, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ba-action.highlight .ba-action-icon {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  opacity: 1;
 }
 
 .ba-sidebar.collapsed .ba-action.highlight {
