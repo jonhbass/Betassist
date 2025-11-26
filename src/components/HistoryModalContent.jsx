@@ -209,7 +209,7 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: statusFilter === 'Todas' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Todas' ? '#000' : '#fff',
-              border: '1px solid #ffc107',
+              border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
               fontWeight: 'bold',
@@ -221,10 +221,9 @@ export default function HistoryModalContent({ onOpenSupport }) {
             onClick={() => setStatusFilter('Rechazadas')}
             style={{
               padding: '8px 16px',
-              background:
-                statusFilter === 'Rechazadas' ? '#ffc107' : 'transparent',
+              background: statusFilter === 'Rechazadas' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Rechazadas' ? '#000' : '#fff',
-              border: '1px solid #ffc107',
+              border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
             }}
@@ -235,10 +234,9 @@ export default function HistoryModalContent({ onOpenSupport }) {
             onClick={() => setStatusFilter('Aceptadas')}
             style={{
               padding: '8px 16px',
-              background:
-                statusFilter === 'Aceptadas' ? '#ffc107' : 'transparent',
+              background: statusFilter === 'Aceptadas' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Aceptadas' ? '#000' : '#fff',
-              border: '1px solid #ffc107',
+              border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
             }}
@@ -249,10 +247,9 @@ export default function HistoryModalContent({ onOpenSupport }) {
             onClick={() => setStatusFilter('Pendientes')}
             style={{
               padding: '8px 16px',
-              background:
-                statusFilter === 'Pendientes' ? '#ffc107' : 'transparent',
+              background: statusFilter === 'Pendientes' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Pendientes' ? '#000' : '#fff',
-              border: '1px solid #ffc107',
+              border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
             }}
@@ -264,9 +261,9 @@ export default function HistoryModalContent({ onOpenSupport }) {
             style={{
               padding: '8px 16px',
               background:
-                statusFilter === 'Solicitadas' ? '#ffc107' : 'transparent',
+                statusFilter === 'Solicitadas' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Solicitadas' ? '#000' : '#fff',
-              border: '1px solid #ffc107',
+              border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
             }}
