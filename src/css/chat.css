@@ -78,6 +78,92 @@
   color: #042533;
 }
 
+/* Emoji picker styles - Desktop only */
+.ba-chat-input-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ba-chat-input-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.ba-emoji-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  line-height: 1;
+}
+
+.ba-emoji-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ba-emoji-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ba-emoji-picker {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 8px;
+  background: #1a1f2e;
+  border: 1px solid rgba(0, 173, 181, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+  max-width: 320px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.ba-emoji-item {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s, transform 0.15s;
+  line-height: 1;
+}
+
+.ba-emoji-item:hover {
+  background: rgba(0, 173, 181, 0.2);
+  transform: scale(1.15);
+}
+
+.ba-emoji-picker::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ba-emoji-picker::-webkit-scrollbar-track {
+  background: rgba(11, 15, 26, 0.5);
+  border-radius: 3px;
+}
+
+.ba-emoji-picker::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #0b5cc0 0%, #00adb5 100%);
+  border-radius: 3px;
+}
+
 .ba-chat-avatar {
   width: 21px;
   height: 21px;
@@ -222,6 +308,16 @@
   .ba-chat-form button {
     padding: 10px 14px;
     font-size: 14px;
+  }
+
+  /* Esconder emoji picker no mobile */
+  .ba-emoji-toggle,
+  .ba-emoji-picker {
+    display: none;
+  }
+
+  .ba-chat-input-wrapper input {
+    padding-right: 10px;
   }
 }
 

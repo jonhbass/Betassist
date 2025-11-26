@@ -198,41 +198,17 @@ export default function CbuManagement() {
                   Assim será exibido na página de carga:
                 </p>
 
-                <div
-                  style={{
-                    background: '#1a2332',
-                    border: '2px solid #ffc107',
-                    borderRadius: '8px',
-                    padding: '20px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      color: '#ffc107',
-                      fontWeight: 'bold',
-                      marginBottom: '10px',
-                    }}
-                  >
-                    ¡IMPORTANTE!
-                  </div>
+                <div className="ba-cbu-preview-box">
+                  <div className="ba-cbu-important-label">¡IMPORTANTE!</div>
                   <p style={{ marginBottom: '15px' }}>
                     Para realizar la carga de fichas debes realizar una
                     transferencia al siguiente CBU:
                   </p>
-                  <div
-                    style={{
-                      background: '#0f1621',
-                      border: '1px solid #ffc107',
-                      borderRadius: '5px',
-                      padding: '12px',
-                      fontFamily: 'monospace',
-                      fontSize: '18px',
-                      color: '#fff',
-                      letterSpacing: '1px',
-                    }}
-                  >
-                    📄 {cbu || 'CBU no configurado'}
+                  <div className="ba-cbu-number-box">
+                    <span className="ba-cbu-icon">📄</span>
+                    <span className="ba-cbu-number">
+                      {cbu || 'CBU no configurado'}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -63,9 +63,39 @@ export default function Chat({ enabled = true }) {
   const [text, setText] = useState('');
   const [typing, setTyping] = useState('');
   const [socketState, setSocketState] = useState('disconnected'); // disconnected | connecting | connected
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const listRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimeout = useRef(null);
+  const emojiPickerRef = useRef(null);
+
+  // Lista de emojis populares
+  const EMOJI_LIST = [
+    '😀', '😂', '😍', '🥰', '😎', '🤩', '😊', '🙂',
+    '😉', '😏', '🤔', '😅', '😢', '😭', '😡', '🤬',
+    '👍', '👎', '👏', '🙌', '🤝', '💪', '✌️', '🤞',
+    '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '💔',
+    '🔥', '⭐', '✨', '💯', '🎉', '🎊', '🏆', '🥇',
+    '⚽', '🏀', '🎮', '🎯', '🎲', '💰', '💵', '💸',
+  ];
+
+  // Fechar emoji picker ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+      }
+    }
+    if (showEmojiPicker) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showEmojiPicker]);
+
+  function insertEmoji(emoji) {
+    setText((prev) => prev + emoji);
+    setShowEmojiPicker(false);
+  }
 
   // Socket.IO connection
   useEffect(() => {
@@ -362,12 +392,37 @@ export default function Chat({ enabled = true }) {
       )}
 
       <form className="ba-chat-form" onSubmit={send}>
-        <input
-          value={text}
-          onChange={onTyping}
-          placeholder={enabled ? `Escriba un mensaje...` : 'Chat desactivado'}
-          disabled={!enabled}
-        />
+        <div className="ba-chat-input-wrapper">
+          <input
+            value={text}
+            onChange={onTyping}
+            placeholder={enabled ? `Escriba un mensaje...` : 'Chat desactivado'}
+            disabled={!enabled}
+          />
+          <button
+            type="button"
+            className="ba-emoji-toggle"
+            onClick={() => setShowEmojiPicker((prev) => !prev)}
+            disabled={!enabled}
+            title="Emojis"
+          >
+            😊
+          </button>
+          {showEmojiPicker && (
+            <div className="ba-emoji-picker" ref={emojiPickerRef}>
+              {EMOJI_LIST.map((emoji) => (
+                <button
+                  key={emoji}
+                  type="button"
+                  className="ba-emoji-item"
+                  onClick={() => insertEmoji(emoji)}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         <button type="submit" disabled={!enabled}>
           Enviar
         </button>
