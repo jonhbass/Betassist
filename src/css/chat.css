@@ -96,23 +96,24 @@
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background: transparent;
-  border: none;
+  background: #2a3441 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   font-size: 20px;
   cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
   transition: background 0.2s, border-color 0.2s;
   line-height: 1;
 }
 
 .ba-emoji-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #3a4451 !important;
+  border-color: rgba(79, 209, 255, 0.3) !important;
 }
 
 .ba-emoji-toggle.active {
-  background: #4fd1ff;
-  border-radius: 6px;
+  background: #4fd1ff !important;
+  border-color: #4fd1ff !important;
 }
 
 .ba-emoji-toggle:disabled {
@@ -318,7 +319,7 @@
   /* Esconder emoji picker no mobile */
   .ba-emoji-toggle,
   .ba-emoji-picker {
-    display: none;
+    display: none !important;
   }
 
   .ba-chat-input-wrapper input {

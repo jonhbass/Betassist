@@ -152,8 +152,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: filter === 'Todas' ? '#ffc107' : '#2a2a3e',
               color: filter === 'Todas' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                filter === 'Todas'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
               fontWeight: 'bold',
             }}
@@ -166,8 +169,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: filter === 'Recargas' ? '#ffc107' : '#2a2a3e',
               color: filter === 'Recargas' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                filter === 'Recargas'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
             }}
           >
@@ -179,8 +185,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: filter === 'Retiros' ? '#ffc107' : '#2a2a3e',
               color: filter === 'Retiros' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                filter === 'Retiros'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
             }}
           >
@@ -192,8 +201,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: filter === 'Bonificaciones' ? '#ffc107' : '#2a2a3e',
               color: filter === 'Bonificaciones' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                filter === 'Bonificaciones'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
             }}
           >
@@ -209,8 +221,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: statusFilter === 'Todas' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Todas' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                statusFilter === 'Todas'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
               fontWeight: 'bold',
             }}
@@ -223,8 +238,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: statusFilter === 'Rechazadas' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Rechazadas' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                statusFilter === 'Rechazadas'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
             }}
           >
@@ -236,8 +254,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: statusFilter === 'Aceptadas' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Aceptadas' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                statusFilter === 'Aceptadas'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
             }}
           >
@@ -249,8 +270,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               padding: '8px 16px',
               background: statusFilter === 'Pendientes' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Pendientes' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                statusFilter === 'Pendientes'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
             }}
           >
@@ -263,8 +287,11 @@ export default function HistoryModalContent({ onOpenSupport }) {
               background:
                 statusFilter === 'Solicitadas' ? '#ffc107' : '#2a2a3e',
               color: statusFilter === 'Solicitadas' ? '#000' : '#fff',
-              border: 'none',
-              borderRadius: '4px',
+              border:
+                statusFilter === 'Solicitadas'
+                  ? '2px solid #ffc107'
+                  : '2px solid transparent',
+              borderRadius: '6px',
               cursor: 'pointer',
             }}
           >
