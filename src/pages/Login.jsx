@@ -116,25 +116,6 @@ export default function Login() {
         </label>
 
         <button type="submit">Iniciar Sesión</button>
-        <div
-          style={{
-            marginTop: 12,
-            textAlign: 'center',
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => navigate('/admin-login')}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#007bff',
-              cursor: 'pointer',
-            }}
-          >
-            Ingresar como administrador
-          </button>
-        </div>
       </form>
     </div>
   );

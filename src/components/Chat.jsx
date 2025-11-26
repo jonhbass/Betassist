@@ -68,21 +68,70 @@ export default function Chat({ enabled = true }) {
   const socketRef = useRef(null);
   const typingTimeout = useRef(null);
   const emojiPickerRef = useRef(null);
+  const emojiToggleRef = useRef(null);
 
   // Lista de emojis populares
   const EMOJI_LIST = [
-    '😀', '😂', '😍', '🥰', '😎', '🤩', '😊', '🙂',
-    '😉', '😏', '🤔', '😅', '😢', '😭', '😡', '🤬',
-    '👍', '👎', '👏', '🙌', '🤝', '💪', '✌️', '🤞',
-    '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '💔',
-    '🔥', '⭐', '✨', '💯', '🎉', '🎊', '🏆', '🥇',
-    '⚽', '🏀', '🎮', '🎯', '🎲', '💰', '💵', '💸',
+    '😀',
+    '😂',
+    '😍',
+    '🥰',
+    '😎',
+    '🤩',
+    '😊',
+    '🙂',
+    '😉',
+    '😏',
+    '🤔',
+    '😅',
+    '😢',
+    '😭',
+    '😡',
+    '🤬',
+    '👍',
+    '👎',
+    '👏',
+    '🙌',
+    '🤝',
+    '💪',
+    '✌️',
+    '🤞',
+    '❤️',
+    '🧡',
+    '💛',
+    '💚',
+    '💙',
+    '💜',
+    '🖤',
+    '💔',
+    '🔥',
+    '⭐',
+    '✨',
+    '💯',
+    '🎉',
+    '🎊',
+    '🏆',
+    '🥇',
+    '⚽',
+    '🏀',
+    '🎮',
+    '🎯',
+    '🎲',
+    '💰',
+    '💵',
+    '💸',
   ];
 
-  // Fechar emoji picker ao clicar fora
+  // Fechar emoji picker ao clicar fora (exceto no botão toggle)
   useEffect(() => {
     function handleClickOutside(event) {
-      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+      const clickedOutsidePicker =
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target);
+      const clickedOnToggle =
+        emojiToggleRef.current && emojiToggleRef.current.contains(event.target);
+
+      if (clickedOutsidePicker && !clickedOnToggle) {
         setShowEmojiPicker(false);
       }
     }
@@ -401,7 +450,8 @@ export default function Chat({ enabled = true }) {
           />
           <button
             type="button"
-            className="ba-emoji-toggle"
+            ref={emojiToggleRef}
+            className={`ba-emoji-toggle ${showEmojiPicker ? 'active' : ''}`}
             onClick={() => setShowEmojiPicker((prev) => !prev)}
             disabled={!enabled}
             title="Emojis"
