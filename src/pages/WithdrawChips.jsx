@@ -1,19 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/WithdrawChips.css';
 import { getServerUrl } from '../utils/serverUrl';
 
+// Limite diário máximo de retirada
+const DAILY_WITHDRAW_LIMIT = 500000.0;
+
+// Função para obter a data atual no formato YYYY-MM-DD
+const getTodayDate = () => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+// Função para obter o limite disponível do usuário
+const getDailyWithdrawData = (username) => {
+  const key = `DAILY_WITHDRAW_${username}`;
+  const stored = localStorage.getItem(key);
+  if (stored) {
+    const data = JSON.parse(stored);
+    // Verificar se é do dia atual
+    if (data.date === getTodayDate()) {
+      return data;
+    }
+  }
+  // Se não existe ou é de outro dia, retorna limite completo
+  return { date: getTodayDate(), usedAmount: 0 };
+};
+
+// Função para salvar o limite usado do usuário
+const saveDailyWithdrawData = (username, usedAmount) => {
+  const key = `DAILY_WITHDRAW_${username}`;
+  const data = { date: getTodayDate(), usedAmount };
+  localStorage.setItem(key, JSON.stringify(data));
+};
+
 export default function WithdrawChips() {
   const navigate = useNavigate();
   const [cbu, setCbu] = useState('');
   const [holder, setHolder] = useState('');
   const [amount, setAmount] = useState('');
+  const [availableForWithdraw, setAvailableForWithdraw] =
+    useState(DAILY_WITHDRAW_LIMIT);
 
-  // Função para permitir apenas números (para CBU)
+  const authUser = sessionStorage.getItem('authUser') || 'Anônimo';
+
+  // Carregar o limite disponível ao montar o componente
+  useEffect(() => {
+    const loadAvailableLimit = async () => {
+      // Primeiro tenta carregar do servidor
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/users/${authUser}`);
+        if (res.ok) {
+          const userData = await res.json();
+          if (
+            userData.dailyWithdraw &&
+            userData.dailyWithdraw.date === getTodayDate()
+          ) {
+            const available =
+              DAILY_WITHDRAW_LIMIT - (userData.dailyWithdraw.usedAmount || 0);
+            setAvailableForWithdraw(Math.max(0, available));
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn(
+          'Não foi possível carregar limite do servidor, usando localStorage'
+        );
+      }
+
+      // Fallback para localStorage
+      const data = getDailyWithdrawData(authUser);
+      const available = DAILY_WITHDRAW_LIMIT - data.usedAmount;
+      setAvailableForWithdraw(Math.max(0, available));
+    };
+
+    loadAvailableLimit();
+  }, [authUser]);
+
+  // Função para permitir alfanuméricos (para CBU/Alias)
   const handleCbuChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, '');
+    const value = e.target.value;
     setCbu(value);
   };
 
@@ -22,10 +91,6 @@ export default function WithdrawChips() {
     const value = e.target.value.replace(/[^0-9.,]/g, '');
     setAmount(value);
   };
-
-  // Simulação de saldo disponível
-  const currentBalance = 500000.0;
-  const availableForWithdraw = 500000.0;
 
   const handleBack = () => {
     navigate(-1);
@@ -48,12 +113,14 @@ export default function WithdrawChips() {
     }
 
     if (withdrawAmount > availableForWithdraw) {
-      alert('Valor superior al saldo disponible');
+      alert(
+        `El monto supera tu límite disponible de hoy ($${availableForWithdraw.toLocaleString(
+          'es-AR',
+          { minimumFractionDigits: 2 }
+        )})`
+      );
       return;
     }
-
-    // Obter usuário logado
-    const authUser = sessionStorage.getItem('authUser') || 'Anônimo';
 
     // Criar objeto da solicitação de retirada
     const newRequest = {
@@ -94,6 +161,29 @@ export default function WithdrawChips() {
       );
     }
 
+    // Atualizar o limite diário usado
+    const currentData = getDailyWithdrawData(authUser);
+    const newUsedAmount = currentData.usedAmount + withdrawAmount;
+    saveDailyWithdrawData(authUser, newUsedAmount);
+
+    // Atualizar também no servidor
+    try {
+      const serverUrl = getServerUrl();
+      await fetch(`${serverUrl}/users/${authUser}/daily-withdraw`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: getTodayDate(),
+          usedAmount: newUsedAmount,
+        }),
+      });
+    } catch (err) {
+      console.warn('Não foi possível salvar limite no servidor:', err);
+    }
+
+    // Atualizar estado local
+    setAvailableForWithdraw(Math.max(0, DAILY_WITHDRAW_LIMIT - newUsedAmount));
+
     alert('✅ Solicitud de retiro enviada con éxito');
     navigate('/home');
   };
@@ -128,13 +218,18 @@ export default function WithdrawChips() {
               Podés retirar hasta{' '}
               <span className="ba-balance-amount">
                 ${' '}
-                {currentBalance.toLocaleString('es-AR', {
+                {DAILY_WITHDRAW_LIMIT.toLocaleString('es-AR', {
                   minimumFractionDigits: 2,
                 })}{' '}
                 diarios
               </span>
               . Hoy te quedan{' '}
-              <span className="ba-balance-available">
+              <span
+                className="ba-balance-available"
+                style={{
+                  color: availableForWithdraw <= 0 ? '#ef4444' : '#22c55e',
+                }}
+              >
                 ${' '}
                 {availableForWithdraw.toLocaleString('es-AR', {
                   minimumFractionDigits: 2,
@@ -145,15 +240,14 @@ export default function WithdrawChips() {
 
           <form className="ba-withdraw-form" onSubmit={handleSubmit}>
             <div className="ba-form-group">
-              <label>CBU/CVU:</label>
+              <label>CBU/Alias:</label>
               <input
                 type="text"
                 className="ba-form-input"
-                placeholder="CBU/CVU (máximo 22 dígitos)"
+                placeholder="CBU o Alias"
                 value={cbu}
                 onChange={handleCbuChange}
                 maxLength={22}
-                inputMode="numeric"
               />
             </div>
 

@@ -266,11 +266,13 @@ export default function Chat({ enabled = true }) {
     const t = text.trim();
     if (!t) return;
     const currentUser = getCurrentUser();
+    const adminName = sessionStorage.getItem('adminUsername');
     const msg = {
       id: Date.now(),
       text: t,
       from: currentUser,
       time: new Date().toISOString(),
+      ...(isAdmin && adminName ? { isAdmin: true, adminName: adminName } : {}),
     };
     console.log('chat send', msg);
 
@@ -426,7 +428,11 @@ export default function Chat({ enabled = true }) {
                     : m.from.slice(0, 1).toUpperCase()}
                 </div>
                 <div className="ba-chat-msg-user">
-                  {m.from === 'system' ? 'Sistema' : m.from}
+                  {m.from === 'system'
+                    ? 'Sistema'
+                    : m.isAdmin
+                    ? `Admin ${m.adminName || m.from}`
+                    : m.from}
                 </div>
                 <div className="ba-chat-msg-time">{formatTime(m.time)}</div>
               </div>

@@ -138,7 +138,7 @@ export default function LoadChips() {
         minute: '2-digit',
       }),
       amount: parseFloat(amount),
-      cbu: holder, // CBU do usuário que está fazendo depósito
+      cbu: cbu, // CBU de destino (do sistema) para onde o usuário transferiu
       holder: holder,
       receipt: finalReceiptUrl, // URL do Cloudinary ou base64
       status: 'Pendiente',

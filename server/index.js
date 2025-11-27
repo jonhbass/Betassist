@@ -265,6 +265,40 @@ app.delete('/users/:username', (req, res) => {
   res.json({ ok: true });
 });
 
+// Update daily withdraw limit for user
+app.put('/users/:username/daily-withdraw', (req, res) => {
+  const username = req.params.username;
+  const { date, usedAmount } = req.body || {};
+
+  if (!date || usedAmount === undefined) {
+    return res.status(400).json({ error: 'missing date or usedAmount' });
+  }
+
+  const users = readUsers();
+  const idx = users.findIndex(
+    (u) => u.username.toLowerCase() === username.toLowerCase()
+  );
+
+  if (idx === -1) {
+    return res.status(404).json({ error: 'user not found' });
+  }
+
+  users[idx].dailyWithdraw = { date, usedAmount };
+  writeUsers(users);
+
+  // Emit update via socket
+  try {
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('user:update', { username, dailyWithdraw: { date, usedAmount } });
+    }
+  } catch (e) {
+    console.error('Failed to emit user update', e);
+  }
+
+  res.json({ ok: true, dailyWithdraw: { date, usedAmount } });
+});
+
 // Sync endpoint: replace all users (used by front-end fallback)
 app.post('/users/sync', (req, res) => {
   const list = Array.isArray(req.body) ? req.body : [];
