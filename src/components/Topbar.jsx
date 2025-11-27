@@ -267,20 +267,11 @@ export default function Topbar({
       {/* Menu Popup */}
       {showMenu && (
         <div className="ba-menu-popup" ref={menuRef}>
-          {/* Info do usuário e saldo */}
+          {/* Info do usuário */}
           <div className="ba-menu-header">
-            <div className="ba-menu-user">
+            <div className="ba-menu-user ba-menu-user-centered">
               <span className="ba-menu-icon">👤</span>
               <span className="ba-menu-username">{username}</span>
-            </div>
-            <div className="ba-menu-balance ba-balance">
-              <span className="ba-menu-icon">🔄</span>
-              <span className="ba-menu-balance-value">
-                {balance.toLocaleString('es-AR', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </span>
             </div>
           </div>
 

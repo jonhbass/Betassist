@@ -141,7 +141,7 @@
   }
 }
 
-/* Header do menu - Info do usuário e saldo */
+/* Header do menu - Info do usuário */
 .ba-menu-header {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(14, 165, 233, 0.3);
@@ -149,7 +149,7 @@
   padding: 10px;
   margin-bottom: 12px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -158,6 +158,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* Usuário centralizado quando sozinho */
+.ba-menu-user-centered {
+  justify-content: center;
 }
 
 .ba-menu-icon {
