@@ -39,10 +39,13 @@ export default function useAdminSupport() {
   function sendReply(e) {
     e && e.preventDefault();
     if (!replyText.trim() || !activeThread) return;
+    // Obter o nome do admin logado
+    const adminName = sessionStorage.getItem('adminUsername') || 'Admin';
     const msg = {
       id: Date.now(),
       text: replyText.trim(),
       from: 'admin',
+      adminName: adminName,
       thread: activeThread,
       time: new Date().toISOString(),
     };

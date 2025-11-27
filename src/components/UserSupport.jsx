@@ -211,6 +211,8 @@ export default function UserSupport() {
                         ? 'Sistema'
                         : m.from === username
                         ? 'Você'
+                        : m.from === 'admin'
+                        ? `Admin ${m.adminName || ''}`
                         : m.from}
                     </div>
                     <div

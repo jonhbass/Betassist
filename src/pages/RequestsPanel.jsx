@@ -60,7 +60,6 @@ export default function RequestsPanel() {
   const authUser = sessionStorage.getItem('authUser');
 
   // Filtros
-  const [typeFilter, setTypeFilter] = useState('Todas');
   const [statusFilter, setStatusFilter] = useState('Todas');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -118,9 +117,8 @@ export default function RequestsPanel() {
 
   // Filtrar e ordenar solicitações (mais recentes primeiro)
   const filteredRequests = requests.filter((req) => {
-    const typeMatch = typeFilter === 'Todas' || req.type === typeFilter;
     const statusMatch = matchesStatusFilter(req.status, statusFilter);
-    return typeMatch && statusMatch;
+    return statusMatch;
   });
 
   const sortedRequests = [...filteredRequests].sort(
@@ -154,43 +152,8 @@ export default function RequestsPanel() {
           <h2 className="ba-requests-title">📊 Historial de Transacciones</h2>
         </div>
 
-        {/* Filtros */}
+        {/* Filtros por Status */}
         <div className="ba-filter-section">
-          <div className="ba-filter-row">
-            <button
-              className={`ba-filter-btn primary ${
-                typeFilter === 'Todas' ? 'active' : ''
-              }`}
-              onClick={() => setTypeFilter('Todas')}
-            >
-              Todas
-            </button>
-            <button
-              className={`ba-filter-btn secondary ${
-                typeFilter === 'Recarga' ? 'active' : ''
-              }`}
-              onClick={() => setTypeFilter('Recarga')}
-            >
-              Recargas
-            </button>
-            <button
-              className={`ba-filter-btn secondary ${
-                typeFilter === 'Retiros' ? 'active' : ''
-              }`}
-              onClick={() => setTypeFilter('Retiros')}
-            >
-              Retiros
-            </button>
-            <button
-              className={`ba-filter-btn secondary ${
-                typeFilter === 'Bonificaciones' ? 'active' : ''
-              }`}
-              onClick={() => setTypeFilter('Bonificaciones')}
-            >
-              Bonificaciones
-            </button>
-          </div>
-
           <div className="ba-filter-row">
             <button
               className={`ba-filter-btn primary ${
@@ -223,14 +186,6 @@ export default function RequestsPanel() {
               onClick={() => setStatusFilter('Pendientes')}
             >
               Pendientes
-            </button>
-            <button
-              className={`ba-filter-btn secondary ${
-                statusFilter === 'Solicitadas' ? 'active' : ''
-              }`}
-              onClick={() => setStatusFilter('Solicitadas')}
-            >
-              Solicitadas
             </button>
           </div>
         </div>

@@ -310,6 +310,8 @@ export default function SupportChatModal({ onClose }) {
                       ? 'Sistema'
                       : m.from === username
                       ? 'Usted'
+                      : m.from === 'admin'
+                      ? `Admin ${m.adminName || ''}`
                       : m.from}
                   </span>
                   <span

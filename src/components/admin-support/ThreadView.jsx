@@ -113,7 +113,9 @@ export default function ThreadView({
                         fontWeight: 500,
                       }}
                     >
-                      {m.from === 'admin' ? 'Admin' : m.from}
+                      {m.from === 'admin'
+                        ? `Admin ${m.adminName || ''}`
+                        : m.from}
                     </div>
                     <div
                       style={{

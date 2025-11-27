@@ -73,26 +73,6 @@ export default function Sidebar({
             </button>
           </li>
         )}
-        {isAdmin && onToggleChat && (
-          <li>
-            <button
-              className="ba-action"
-              onClick={onToggleChat}
-              title={
-                !isOpen ? (chatEnabled ? 'Desativar Chat' : 'Ativar Chat') : ''
-              }
-            >
-              <span className="ba-action-icon">
-                {chatEnabled ? '🔇' : '🔊'}
-              </span>
-              {isOpen && (
-                <span className="ba-action-text">
-                  {chatEnabled ? 'Desativar Chat' : 'Ativar Chat'}
-                </span>
-              )}
-            </button>
-          </li>
-        )}
         <li>
           <button
             className="ba-action primary"
