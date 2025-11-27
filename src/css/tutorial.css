@@ -5,27 +5,59 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.26);
   z-index: 9998;
   animation: fadeIn 0.3s ease;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Highlight do elemento */
+/* ============================================================
+   TUTORIAL HIGHLIGHT - Destaque do elemento selecionado
+   ============================================================
+   Esta é a borda/moldura que aparece ao redor do elemento
+   que está sendo explicado no tutorial.
+   
+   Para ajustar a aparência do destaque:
+   - border: cor e espessura da borda azul ao redor
+   - border-radius: arredondamento dos cantos
+   - box-shadow: 
+       * 0 0 0 9999px rgba(0,0,0,0.75) = escurece o resto da tela
+       * 0 0 30px rgba(28,163,255,0.6) = brilho azul externo
+       * inset ... = clareia o interior do elemento
+   - backdrop-filter: brightness/contrast = clareia o elemento
+   
+   Para mudar a cor do brilho: altere os valores rgba(28,163,255,X)
+   Para mais/menos escurecimento do fundo: altere rgba(0,0,0,0.75)
+   ============================================================ */
 .tutorial-highlight {
   position: fixed;
+  /* Borda azul ao redor do elemento - ajuste a cor aqui */
   border: 3px solid #1ca3ff;
   border-radius: 12px;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75), 0 0 30px rgba(28, 163, 255, 0.6),
-    inset 0 0 0 9999px rgba(255, 255, 255, 0.08);
+  /* Sombras: fundo escuro + brilho azul + clareia interior */
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75),
+    /* Escurece o resto da tela */ 0 0 30px rgba(28, 163, 255, 0.6),
+    /* Brilho azul externo */ inset 0 0 0 9999px rgba(255, 255, 255, 0.08); /* Clareia interior */
   z-index: 9999;
   pointer-events: none;
   animation: pulse 2s ease-in-out infinite;
+  /* Aumenta brilho e contraste do elemento destacado */
   backdrop-filter: brightness(1.4) contrast(1.1);
   -webkit-backdrop-filter: brightness(1.4) contrast(1.1);
 }
 
+/* ============================================================
+   ANIMAÇÃO PULSE - Efeito de pulsação do destaque
+   ============================================================
+   Faz a borda e o brilho pulsarem para chamar atenção.
+   
+   Para ajustar a animação:
+   - Valores em 0%/100%: estado inicial/final
+   - Valores em 50%: estado intermediário (mais intenso)
+   - border-color: cor da borda durante a pulsação
+   - 0 0 30px/40px: intensidade do brilho (maior = mais forte)
+   ============================================================ */
 @keyframes pulse {
   0%,
   100% {
@@ -42,19 +74,36 @@
   }
 }
 
-/* Tooltip do tutorial */
+/* ============================================================
+   TUTORIAL TOOLTIP - Janela de instrução
+   ============================================================
+   Para ajustar a aparência da janela do tutorial, modifique:
+   - background: cor de fundo (gradiente)
+   - border: cor e espessura da borda
+   - border-radius: arredondamento dos cantos
+   - padding: espaçamento interno
+   - max-width: largura máxima da janela
+   - box-shadow: sombra e brilho externo
+   ============================================================ */
 .tutorial-tooltip {
   position: fixed;
-  background: linear-gradient(135deg, #0a3d62 0%, #082c4a 100%);
-  border: 2px solid #1ca3ff;
+  /* Fundo mais claro e vibrante para melhor visibilidade */
+  background: linear-gradient(135deg, #0d4f7a 0%, #0a3d62 50%, #082c4a 100%);
+  /* Borda mais grossa e brilhante */
+  border: 3px solid #1ca3ff;
   border-radius: 16px;
-  padding: 24px;
-  max-width: 380px;
+  padding: 28px;
+  max-width: 400px;
   width: auto;
   z-index: 10000;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  /* Sombra mais intensa para destacar do fundo escuro */
+  box-shadow: 0 0 40px rgba(28, 164, 255, 0.16), 0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   animation: slideIn 0.3s ease;
   color: #fff;
+  /* Brilho interno sutil para efeito de vidro */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* Posicionamento Desktop - sem transform para evitar overflow */
@@ -90,12 +139,20 @@
   margin-bottom: 16px;
 }
 
+/* ============================================================
+   TUTORIAL STEP INDICATOR - Indicador "Paso X de Y"
+   ============================================================
+   Para ajustar o indicador de passo:
+   - font-size: tamanho da fonte
+   - color: cor do texto (amarelo padrão)
+   ============================================================ */
 .tutorial-step {
-  font-size: 13px;
+  font-size: 14px;
   color: #ffc107;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .tutorial-close {
@@ -119,19 +176,36 @@
   transform: rotate(90deg);
 }
 
-/* Conteúdo */
+/* ============================================================
+   TUTORIAL TITLE - Título da janela
+   ============================================================
+   Para ajustar o título:
+   - font-size: tamanho da fonte
+   - color: cor do texto
+   - text-shadow: sombra/brilho do texto
+   ============================================================ */
 .tutorial-title {
   margin: 0 0 12px 0;
-  font-size: 22px;
+  font-size: 24px;
   color: #fff;
   font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* ============================================================
+   TUTORIAL DESCRIPTION - Descrição/texto da janela
+   ============================================================
+   Para ajustar a descrição:
+   - font-size: tamanho da fonte
+   - color: cor do texto
+   - line-height: espaçamento entre linhas
+   ============================================================ */
 .tutorial-description {
   margin: 0 0 24px 0;
-  font-size: 15px;
-  line-height: 1.6;
-  color: #dff4ff;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Footer com botões */
