@@ -24,7 +24,7 @@ const tutorialStepsDesktop = [
     title: '💬 Chat Global',
     description:
       'Chatea con otros usuarios en tiempo real. Comparte estrategias y mantente conectado con la comunidad.',
-    position: 'left', // Alterado de 'top' para 'left' para não sair da tela
+    position: 'center', // Centralizado para não sair da tela
   },
   {
     id: 4,
@@ -155,6 +155,12 @@ export default function Tutorial({ isOpen, onClose }) {
       } else {
         // Desktop: posicionamento relativo ao elemento com detecção de limites
         switch (step.position) {
+          case 'center':
+            // Centralizar o tooltip na tela (ideal para elementos grandes como o chat)
+            top = window.innerHeight / 2;
+            left = window.innerWidth / 2;
+            break;
+
           case 'right':
             top = rect.top + rect.height / 2;
             left = rect.right + 20;
@@ -163,6 +169,11 @@ export default function Tutorial({ isOpen, onClose }) {
             if (left + tooltipWidth > window.innerWidth - padding) {
               // Posicionar à esquerda
               left = rect.left - tooltipWidth - 20;
+            }
+            // Se ainda sai, centralizar
+            if (left < padding) {
+              left = window.innerWidth / 2;
+              top = window.innerHeight / 2;
             }
             break;
 
