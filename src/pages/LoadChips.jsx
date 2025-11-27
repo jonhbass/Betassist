@@ -13,6 +13,12 @@ export default function LoadChips() {
   const [receiptFile, setReceiptFile] = useState(null);
   const [receiptPreview, setReceiptPreview] = useState('');
 
+  // Função para permitir apenas números, ponto e vírgula (para valores monetários)
+  const handleAmountChange = (e) => {
+    const value = e.target.value.replace(/[^0-9.,]/g, '');
+    setAmount(value);
+  };
+
   useEffect(() => {
     // Carregar CBU do servidor ou localStorage
     const loadCbu = async () => {
@@ -200,13 +206,12 @@ export default function LoadChips() {
             <div className="ba-form-group">
               <label>Monto:</label>
               <input
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
                 className="ba-form-input"
                 placeholder="Ejemplo: 1000.00"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={handleAmountChange}
+                inputMode="decimal"
               />
             </div>
 

@@ -11,6 +11,18 @@ export default function WithdrawChips() {
   const [holder, setHolder] = useState('');
   const [amount, setAmount] = useState('');
 
+  // Função para permitir apenas números (para CBU)
+  const handleCbuChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    setCbu(value);
+  };
+
+  // Função para permitir apenas números, ponto e vírgula (para valores monetários)
+  const handleAmountChange = (e) => {
+    const value = e.target.value.replace(/[^0-9.,]/g, '');
+    setAmount(value);
+  };
+
   // Simulação de saldo disponível
   const currentBalance = 500000.0;
   const availableForWithdraw = 500000.0;
@@ -139,8 +151,9 @@ export default function WithdrawChips() {
                 className="ba-form-input"
                 placeholder="CBU/CVU (máximo 22 dígitos)"
                 value={cbu}
-                onChange={(e) => setCbu(e.target.value)}
+                onChange={handleCbuChange}
                 maxLength={22}
+                inputMode="numeric"
               />
             </div>
 
@@ -162,7 +175,8 @@ export default function WithdrawChips() {
                 className="ba-form-input"
                 placeholder="$10.000"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={handleAmountChange}
+                inputMode="decimal"
               />
             </div>
 
