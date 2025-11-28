@@ -181,6 +181,7 @@ app.get('/users', (req, res) => {
 });
 
 // Return users with block status (for admin panel)
+// IMPORTANTE: Esta rota deve vir ANTES de /users/:username
 app.get('/users/admin/list', (req, res) => {
   const users = readUsers();
   res.json(
@@ -190,6 +191,24 @@ app.get('/users/admin/list', (req, res) => {
       banned: u.banned || false,
     }))
   );
+});
+
+// Verificar status do usuário (bloqueios)
+// IMPORTANTE: Esta rota deve vir ANTES de /users/:username
+app.get('/users/:username/status', (req, res) => {
+  const { username } = req.params;
+  const users = readUsers();
+  const user = users.find(
+    (u) => u.username.toLowerCase() === username.toLowerCase()
+  );
+
+  if (!user) return res.status(404).json({ error: 'not found' });
+
+  res.json({
+    username: user.username,
+    chatBlocked: user.chatBlocked || false,
+    banned: user.banned || false,
+  });
 });
 
 // Return specific user details (balance, history, dailyWithdraw, bloqueios)
@@ -347,23 +366,6 @@ app.put('/users/:username/ban', (req, res) => {
   }
 
   res.json({ ok: true, banned: users[idx].banned });
-});
-
-// Verificar status do usuário (bloqueios)
-app.get('/users/:username/status', (req, res) => {
-  const { username } = req.params;
-  const users = readUsers();
-  const user = users.find(
-    (u) => u.username.toLowerCase() === username.toLowerCase()
-  );
-
-  if (!user) return res.status(404).json({ error: 'not found' });
-
-  res.json({
-    username: user.username,
-    chatBlocked: user.chatBlocked || false,
-    banned: user.banned || false,
-  });
 });
 
 // Update daily withdraw limit for user
