@@ -94,37 +94,60 @@ export default function Login() {
   return (
     <div className="login-wrap">
       <SupportButton />
-      <form className="login-card" onSubmit={handleSubmit}>
-        {error && <p className="login-error">{error}</p>}
-        <div className="login-header">
-          <img src={Icon} alt="StarWin Logo" className="header-icon" />
-          <h2>
-            <span style={{ color: '#1ca3ff' }}>Star</span>
-            <span style={{ color: '#ffc107' }}>Win</span>
-          </h2>
+
+      {/* Container que agrupa banner + card de login */}
+      <div className="login-container">
+        {/* Banner de boas-vindas */}
+        <div className="login-welcome-banner">
+          <div className="login-welcome-glow"></div>
+          <div className="login-welcome-content">
+            <h3 className="login-welcome-title">
+              <span className="login-welcome-wave">👋</span> ¡Hola!
+            </h3>
+            <p className="login-welcome-text">
+              Estás a un paso de recibir un{' '}
+              <span className="login-welcome-highlight">30% extra</span> por tu
+              registro.
+            </p>
+            <p className="login-welcome-cta">
+              Pedí tu cuenta en el chat de abajo y empezá a disfrutar.
+              <span className="login-welcome-rockets">🚀✨</span>
+            </p>
+          </div>
         </div>
 
-        <label>
-          Usuario
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Ingrese su usuario"
-          />
-        </label>
+        <form className="login-card" onSubmit={handleSubmit}>
+          {error && <p className="login-error">{error}</p>}
+          <div className="login-header">
+            <img src={Icon} alt="StarWin Logo" className="header-icon" />
+            <h2>
+              <span style={{ color: '#1ca3ff' }}>Star</span>
+              <span style={{ color: '#ffc107' }}>Win</span>
+            </h2>
+          </div>
 
-        <label>
-          Contraseña
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Ingrese su contraseña"
-          />
-        </label>
+          <label>
+            Usuario
+            <input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Ingrese su usuario"
+            />
+          </label>
 
-        <button type="submit">Iniciar Sesión</button>
-      </form>
+          <label>
+            Contraseña
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Ingrese su contraseña"
+            />
+          </label>
+
+          <button type="submit">Iniciar Sesión</button>
+        </form>
+      </div>
     </div>
   );
 }

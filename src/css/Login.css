@@ -16,16 +16,16 @@
   background: #111; /* Cor de fundo do card */
   border: 1px solid #1f2740; /* Borda do card */
   border-radius: 12px; /* Bordas arredondadas do card */
-  padding: 24px; /* Espaçamento interno do card */
+  padding: 18px 24px 24px; /* Menos padding no topo */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Sombra do card */
 }
 
 .login-card h2 {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 } /*Altura Box Login*/
 .login-card label {
   display: block;
-  margin: 10px 0;
+  margin: 8px 0;
   font-size: 14px;
 } /*Altura Box Login*/
 
@@ -126,24 +126,24 @@
   align-items: center; /* Centraliza verticalmente */
   justify-content: center; /* Centraliza horizontalmente */
   gap: 0px; /* Espaçamento entre o ícone e o texto */
-  margin-bottom: 20px; /* Espaçamento abaixo do cabeçalho */
+  margin-bottom: 10px; /* Espaçamento reduzido abaixo do cabeçalho */
 }
 
 .login-header h2 {
   /*Texto StarWin*/
   font-family: 'Poppins', sans-serif; /* ou Orbitron se quiser mais tech */
-  font-size: 30px; /* Tamanho da fonte */
+  font-size: 26px; /* Tamanho da fonte reduzido */
   font-weight: 700; /* Negrito */
   color: #fff; /* Cor do texto */
   letter-spacing: 1px; /* Espaçamento entre letras */
   text-shadow: 0 0 6px #00acb58f, 0 0 8px #00acb55a, 0 0 8px #00acb52f; /* Efeito de brilho no texto */
-  margin-left: -18px; /* Aproxima do ícone */
+  margin-left: -14px; /* Aproxima do ícone */
 }
 
 .login-header .header-icon {
-  width: 60px; /* Largura do ícone */
+  width: 50px; /* Largura do ícone reduzida */
   height: auto; /* Mantém a proporção do ícone */
-  max-width: 60px; /* Define a largura máxima do ícone */
+  max-width: 50px; /* Define a largura máxima do ícone */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -155,9 +155,251 @@
   ); /* Efeito de brilho ao passar o mouse */
 }
 
+/* Subtítulo para Admin Login */
+.admin-login-subtitle {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #aaa;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.5px;
+}
+
 /* Forçar exibição do botão de suporte no mobile na tela de login */
 @media (max-width: 768px) {
   .login-wrap .ba-support-fab {
     display: flex !important;
+  }
+}
+
+/* ============================================
+   CONTAINER - Agrupa Banner + Login Card
+   ============================================ */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0; /* Sem espaço - banner conectado ao card */
+  width: 100%;
+  max-width: 320px;
+}
+
+/* ============================================
+   BANNER DE BOAS-VINDAS - Login
+   ============================================ */
+.login-welcome-banner {
+  position: relative;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(11, 92, 192, 0.2) 0%,
+    rgba(26, 163, 255, 0.12) 50%,
+    rgba(255, 193, 7, 0.1) 100%
+  );
+  border: 1px solid rgba(26, 163, 255, 0.3);
+  border-bottom: none; /* Remove borda inferior para conectar com o card */
+  border-radius: 16px 16px 0 0; /* Apenas bordas superiores arredondadas */
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2), 0 0 40px rgba(26, 163, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: bannerFadeIn 0.6s ease-out;
+}
+
+/* Ajustar o login-card quando está dentro do container */
+.login-container .login-card {
+  width: 100%;
+  border-radius: 0 0 16px 16px; /* Apenas bordas inferiores arredondadas */
+  border-top: 1px solid rgba(26, 163, 255, 0.2); /* Linha sutil de separação */
+  margin: 0;
+}
+
+@keyframes bannerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-welcome-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(26, 163, 255, 0.15) 0%,
+    transparent 50%
+  );
+  animation: glowPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.login-welcome-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.login-welcome-wave {
+  display: inline-block;
+  font-size: 26px;
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: waveHand 1.5s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes waveHand {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50%,
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.login-welcome-title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(90deg, #1ca3ff, #ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+}
+
+.login-welcome-title .login-welcome-wave {
+  -webkit-text-fill-color: initial;
+  background: none;
+}
+
+.login-welcome-text {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #e6f7ff;
+  line-height: 1.4;
+}
+
+.login-welcome-highlight {
+  display: inline-block;
+  padding: 2px 10px;
+  background: linear-gradient(90deg, #ffc107, #ffdb4d);
+  color: #000;
+  font-weight: 700;
+  border-radius: 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 12px rgba(255, 193, 7, 0.4);
+  animation: highlightPulse 2s ease-in-out infinite;
+}
+
+@keyframes highlightPulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 12px rgba(255, 193, 7, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(255, 193, 7, 0.6);
+  }
+}
+
+.login-welcome-cta {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+}
+
+.login-welcome-rockets {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 16px;
+  animation: rocketFloat 2s ease-in-out infinite;
+}
+
+@keyframes rocketFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(5deg);
+  }
+}
+
+/* Responsividade do banner e container */
+@media (max-width: 480px) {
+  .login-container {
+    width: 90%;
+    max-width: 320px;
+  }
+
+  .login-welcome-banner {
+    padding: 16px 18px;
+  }
+
+  .login-container .login-card {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .login-welcome-wave {
+    font-size: 28px;
+  }
+
+  .login-welcome-title {
+    font-size: 18px;
+    margin: 6px 0 10px;
+  }
+
+  .login-welcome-text {
+    font-size: 13px;
+  }
+
+  .login-welcome-highlight {
+    font-size: 12px;
+    padding: 2px 8px;
+  }
+
+  .login-welcome-cta {
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .login-welcome-rockets {
+    font-size: 14px;
   }
 }

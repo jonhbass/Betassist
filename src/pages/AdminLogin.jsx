@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/Login.css';
+import Icon from '../assets/icon.svg';
 import { getServerUrl } from '../utils/serverUrl';
 
 export default function AdminLogin() {
@@ -85,8 +86,13 @@ export default function AdminLogin() {
       <form className="login-card" onSubmit={handleSubmit}>
         {error && <p className="login-error">{error}</p>}
         <div className="login-header">
-          <h2>Administración</h2>
+          <img src={Icon} alt="StarWin Logo" className="header-icon" />
+          <h2>
+            <span style={{ color: '#1ca3ff' }}>Star</span>
+            <span style={{ color: '#ffc107' }}>Win</span>
+          </h2>
         </div>
+        <h3 className="admin-login-subtitle">Administración</h3>
 
         <label>
           Nombre de usuario *
@@ -113,25 +119,6 @@ export default function AdminLogin() {
         </label>
 
         <button type="submit">Ingresar como Admin</button>
-        <div
-          style={{
-            marginTop: 12,
-            textAlign: 'center',
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => navigate('/login')}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#007bff',
-              cursor: 'pointer',
-            }}
-          >
-            Ingresar como usuario
-          </button>
-        </div>
       </form>
     </div>
   );
