@@ -20,13 +20,37 @@
   margin: 0;
   color: #e9f6ff;
 }
+
+/* ============================================
+   BOXES DO PAINEL ADMIN (Gestionar Usuarios)
+   ============================================
+   .ba-admin-form = Box "Crear nuevo usuario"
+   .ba-admin-list = Box "Usuarios existentes"
+   ============================================ */
 .ba-admin-list,
 .ba-admin-form {
+  /* Cor de fundo semi-transparente */
   background: rgba(255, 255, 255, 0.02);
+
+  /* Borda sutil */
   border: 1px solid rgba(255, 255, 255, 0.03);
+
+  /* Espaçamento interno */
   padding: 16px;
+
+  /* Cantos arredondados */
   border-radius: 8px;
+
+  /* ============================================
+     LARGURA DOS BOXES NO DESKTOP
+     Ajuste max-width para alterar a largura
+     ============================================ */
+  width: 90%;
+  max-width: 1100px; /* Largura máxima - ajuste aqui */
+  margin-left: auto;
+  margin-right: auto;
 }
+
 .ba-admin-main {
   display: flex;
   gap: 20px;
@@ -129,14 +153,45 @@
   text-align: center;
 }
 
+/* ============================================
+   SEÇÕES DO PAINEL ADMIN (Boxes de formulário)
+   ============================================
+   Controla o estilo dos boxes "Crear nuevo usuario" 
+   e "Usuarios existentes" na página de gestão
+   ============================================ */
 .ba-admin-section {
+  /* Cor de fundo semi-transparente */
   background: rgba(255, 255, 255, 0.02);
+
+  /* Borda sutil com cor clara */
   border: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* Cantos arredondados - aumente para mais curva */
   border-radius: 12px;
+
+  /* Espaçamento interno */
   padding: 2rem;
+
+  /* Espaço entre as seções */
   margin-bottom: 2rem;
+
+  /* ============================================
+     LARGURA FIXA PARA DESKTOP
+     Garante que ambos os boxes tenham o mesmo tamanho
+     Ajuste o valor de max-width conforme necessário
+     ============================================ */
+  width: 100% !important;
+  max-width: 1100px !important; /* Largura máxima dos boxes - ajuste aqui */
+  margin-left: auto !important;
+  margin-right: auto !important;
+
+  /* Adiciona borda lateral azul decorativa (igual à imagem) */
+  border-left: 4px solid rgba(14, 165, 233, 0.8);
 }
 
+/* ============================================
+   TÍTULO DAS SEÇÕES
+   ============================================ */
 .ba-section-title {
   color: #b3e5fc;
   font-size: 1.5rem;
@@ -682,6 +737,7 @@
 .ba-user-card {
   display: flex;
   align-items: center;
+  /* Nome à esquerda, botões à direita */
   justify-content: space-between;
   padding: 12px 16px;
   background: rgba(11, 15, 26, 0.6);
@@ -694,6 +750,43 @@
   background: rgba(11, 15, 26, 0.8);
   border-color: #00adb5;
   box-shadow: 0 2px 8px rgba(0, 173, 181, 0.2);
+}
+
+/* ============================================
+   MOBILE: Layout responsivo para cards de usuário
+   ============================================ */
+@media (max-width: 767px) {
+  .ba-users-grid {
+    max-height: 300px; /* Mais espaço no mobile */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+  }
+
+  .ba-user-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .ba-user-info {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .ba-user-actions-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ba-btn-edit,
+  .ba-btn-delete {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+  }
 }
 
 .ba-user-info {
@@ -855,23 +948,53 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* ============================================
+   LISTA DE USUÁRIOS EXISTENTES
+   ============================================
+   Container que agrupa todos os cards de usuário
+   ============================================ */
 .ba-users-list {
+  /* Layout vertical com espaço entre itens */
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 12px; /* Espaço entre os cards de usuário */
+
+  /* Altura máxima com scroll se necessário */
+  max-height: 400px; /* Ajuste a altura máxima da lista */
+  overflow-y: auto; /* Scroll vertical quando exceder */
+
+  /* Padding para a scrollbar não sobrepor conteúdo */
+  padding-right: 8px;
 }
 
+/* ============================================
+   CARD INDIVIDUAL DE USUÁRIO
+   ============================================
+   Cada linha com nome do usuário e botões de ação
+   ============================================ */
 .ba-user-item {
+  /* Layout horizontal com itens nas extremidades */
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  /* Espaçamento interno do card */
   padding: 12px 16px;
+
+  /* Fundo semi-transparente */
   background: rgba(255, 255, 255, 0.03);
+
+  /* Borda com cor azul clara */
   border: 1px solid rgba(14, 165, 233, 0.3);
+
+  /* Cantos arredondados */
   border-radius: 8px;
+
+  /* Animação suave ao passar mouse */
   transition: all 0.2s;
 }
 
+/* Efeito hover no card de usuário */
 .ba-user-item:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(14, 165, 233, 0.5);
@@ -899,6 +1022,10 @@
 .ba-user-actions {
   display: flex;
   gap: 8px;
+  /* Centraliza os botões verticalmente */
+  align-items: center;
+  /* Garante que os botões fiquem alinhados à direita do card */
+  margin-left: auto;
 }
 
 .ba-btn-user-action {
