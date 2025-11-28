@@ -174,6 +174,20 @@ function writeConfig(data) {
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
+// Utilitários de data (baseados em UTC para consistência global)
+function getTodayDateUTC() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function normalizeDailyWithdraw(user) {
+  const today = getTodayDateUTC();
+  const dw = user.dailyWithdraw || { date: today, usedAmount: 0 };
+  if (dw.date !== today) {
+    return { date: today, usedAmount: 0 };
+  }
+  return dw;
+}
+
 // Return users (only usernames)
 app.get('/users', (req, res) => {
   const users = readUsers();
@@ -220,11 +234,13 @@ app.get('/users/:username', (req, res) => {
   );
   if (!user) return res.status(404).json({ error: 'not found' });
 
+  const dailyWithdraw = normalizeDailyWithdraw(user);
+
   res.json({
     username: user.username,
     balance: user.balance || 0,
     history: user.history || [],
-    dailyWithdraw: user.dailyWithdraw || null,
+    dailyWithdraw,
     chatBlocked: user.chatBlocked || false,
     banned: user.banned || false,
   });

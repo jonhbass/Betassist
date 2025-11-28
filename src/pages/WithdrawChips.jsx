@@ -9,33 +9,7 @@ import { ensureSocket } from '../utils/socket';
 // Limite diário máximo de retirada
 const DAILY_WITHDRAW_LIMIT = 500000.0;
 
-// Função para obter a data atual no formato YYYY-MM-DD
-const getTodayDate = () => {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
-};
-
-// Função para obter o limite disponível do usuário
-const getDailyWithdrawData = (username) => {
-  const key = `DAILY_WITHDRAW_${username}`;
-  const stored = localStorage.getItem(key);
-  if (stored) {
-    const data = JSON.parse(stored);
-    // Verificar se é do dia atual
-    if (data.date === getTodayDate()) {
-      return data;
-    }
-  }
-  // Se não existe ou é de outro dia, retorna limite completo
-  return { date: getTodayDate(), usedAmount: 0 };
-};
-
-// Função para salvar o limite usado do usuário
-const saveDailyWithdrawData = (username, usedAmount) => {
-  const key = `DAILY_WITHDRAW_${username}`;
-  const data = { date: getTodayDate(), usedAmount };
-  localStorage.setItem(key, JSON.stringify(data));
-};
+// Removido uso de localStorage para evitar divergências de fuso horário.
 
 export default function WithdrawChips() {
   const navigate = useNavigate();
@@ -47,37 +21,26 @@ export default function WithdrawChips() {
 
   const authUser = sessionStorage.getItem('authUser') || 'Anônimo';
 
-  // Carregar o limite disponível ao montar o componente
+  // Carregar o limite disponível ao montar o componente (sempre do servidor)
   useEffect(() => {
     const loadAvailableLimit = async () => {
-      // Primeiro tenta carregar do servidor
       try {
         const serverUrl = getServerUrl();
         const res = await fetch(`${serverUrl}/users/${authUser}`);
         if (res.ok) {
           const userData = await res.json();
-          if (
-            userData.dailyWithdraw &&
-            userData.dailyWithdraw.date === getTodayDate()
-          ) {
+          if (userData.dailyWithdraw) {
             const available =
               DAILY_WITHDRAW_LIMIT - (userData.dailyWithdraw.usedAmount || 0);
             setAvailableForWithdraw(Math.max(0, available));
-            // Atualizar localStorage também
-            saveDailyWithdrawData(authUser, userData.dailyWithdraw.usedAmount);
             return;
           }
         }
       } catch {
-        console.warn(
-          'Não foi possível carregar limite do servidor, usando localStorage'
-        );
+        console.warn('Não foi possível carregar limite do servidor');
       }
-
-      // Fallback para localStorage
-      const data = getDailyWithdrawData(authUser);
-      const available = DAILY_WITHDRAW_LIMIT - data.usedAmount;
-      setAvailableForWithdraw(Math.max(0, available));
+      // Fallback: assume limite completo para melhor UX
+      setAvailableForWithdraw(DAILY_WITHDRAW_LIMIT);
     };
 
     loadAvailableLimit();
@@ -94,16 +57,9 @@ export default function WithdrawChips() {
               data.username.toLowerCase() === authUser.toLowerCase()
             ) {
               if (data.dailyWithdraw) {
-                const today = getTodayDate();
-                if (data.dailyWithdraw.date === today) {
-                  const available =
-                    DAILY_WITHDRAW_LIMIT - (data.dailyWithdraw.usedAmount || 0);
-                  setAvailableForWithdraw(Math.max(0, available));
-                  saveDailyWithdrawData(
-                    authUser,
-                    data.dailyWithdraw.usedAmount
-                  );
-                }
+                const available =
+                  DAILY_WITHDRAW_LIMIT - (data.dailyWithdraw.usedAmount || 0);
+                setAvailableForWithdraw(Math.max(0, available));
               }
             }
           };
