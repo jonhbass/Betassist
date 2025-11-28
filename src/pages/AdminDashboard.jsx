@@ -18,6 +18,7 @@ export default function AdminDashboard() {
   const [toast, setToast] = useState('');
   const [editing, setEditing] = useState(null);
   const [editingPassword, setEditingPassword] = useState('');
+  const [searchTerm, setSearchTerm] = useState(''); // Busca de usuários
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeSection, setActiveSection] = useState('create');
   const [pendingDeposits, setPendingDeposits] = useState(0);
@@ -45,7 +46,8 @@ export default function AdminDashboard() {
     if (USE_API) {
       try {
         const serverUrl = getServerUrl();
-        const res = await fetch(`${serverUrl}/users`);
+        // Usar endpoint admin que retorna status de bloqueio
+        const res = await fetch(`${serverUrl}/users/admin/list`);
         const data = await res.json();
         setUsers(data || []);
         return;
@@ -327,6 +329,80 @@ export default function AdminDashboard() {
     showToast('Contraseña actualizada');
   }
 
+  // ============================================
+  // BLOQUEIO DE CHAT - Impede envio de mensagens
+  // ============================================
+  async function handleToggleChatBlock(u) {
+    const newBlocked = !u.chatBlocked;
+    const action = newBlocked ? 'bloquear' : 'desbloquear';
+
+    if (
+      !confirm(
+        `¿${newBlocked ? 'Bloquear' : 'Desbloquear'} chat del usuario ${
+          u.username
+        }?`
+      )
+    )
+      return;
+
+    try {
+      const serverUrl = getServerUrl();
+      const res = await fetch(
+        `${serverUrl}/users/${encodeURIComponent(u.username)}/chat-block`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ blocked: newBlocked }),
+        }
+      );
+      if (!res.ok) throw new Error('failed');
+      showToast(
+        `Chat ${newBlocked ? 'bloqueado' : 'desbloqueado'} para ${u.username}`
+      );
+      loadUsers();
+    } catch (err) {
+      console.error('Chat block failed', err);
+      showToast(`Fallo al ${action} chat`);
+    }
+  }
+
+  // ============================================
+  // BANIMENTO - Bloqueia acesso completo ao sistema
+  // ============================================
+  async function handleToggleBan(u) {
+    const newBanned = !u.banned;
+    const action = newBanned ? 'suspender' : 'reactivar';
+
+    if (
+      !confirm(
+        `¿${newBanned ? 'Suspender' : 'Reactivar'} cuenta del usuario ${
+          u.username
+        }?`
+      )
+    )
+      return;
+
+    try {
+      const serverUrl = getServerUrl();
+      const res = await fetch(
+        `${serverUrl}/users/${encodeURIComponent(u.username)}/ban`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ banned: newBanned }),
+        }
+      );
+      if (!res.ok) throw new Error('failed');
+      showToast(
+        `Cuenta ${newBanned ? 'suspendida' : 'reactivada'}: ${u.username}`
+      );
+      loadUsers();
+    } catch (err) {
+      console.error('Ban failed', err);
+      showToast(`Fallo al ${action} cuenta`);
+    }
+  }
+
   function toggleChat() {
     const newState = !chatEnabled;
     console.log(
@@ -439,61 +515,114 @@ export default function AdminDashboard() {
                   }}
                 >
                   <h3>Usuarios existentes</h3>
+
+                  {/* Campo de busca */}
+                  <div className="ba-search-container">
+                    <input
+                      type="text"
+                      placeholder="🔍 Buscar usuario..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="ba-search-input"
+                    />
+                    {searchTerm && (
+                      <button
+                        className="ba-search-clear"
+                        onClick={() => setSearchTerm('')}
+                        title="Limpiar búsqueda"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+
                   <div className="ba-users-grid">
-                    {users.map((u) => (
-                      <div key={u.username} className="ba-user-card">
-                        <div className="ba-user-info">
-                          <span className="ba-user-name">{u.username}</span>
+                    {users
+                      .filter((u) =>
+                        u.username
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                      )
+                      .map((u) => (
+                        <div key={u.username} className="ba-user-card">
+                          <div className="ba-user-info">
+                            <span className="ba-user-name">{u.username}</span>
+                          </div>
+                          <div className="ba-user-actions-row">
+                            {editing === u.username ? (
+                              <>
+                                <input
+                                  placeholder="Nueva contraseña"
+                                  value={editingPassword}
+                                  onChange={(e) =>
+                                    setEditingPassword(e.target.value)
+                                  }
+                                  className="ba-edit-input"
+                                />
+                                <button
+                                  onClick={() => handleSaveEdit(u)}
+                                  className="ba-btn-save"
+                                >
+                                  Guardar
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setEditing(null);
+                                    setEditingPassword('');
+                                  }}
+                                  className="ba-btn-cancel"
+                                >
+                                  Cancelar
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    setEditing(u.username);
+                                    setEditingPassword('');
+                                  }}
+                                  className="ba-btn-edit"
+                                >
+                                  Editar contraseña
+                                </button>
+                                <button
+                                  onClick={() => handleToggleChatBlock(u)}
+                                  className={`ba-btn-chat-block ${
+                                    u.chatBlocked ? 'blocked' : ''
+                                  }`}
+                                  title={
+                                    u.chatBlocked
+                                      ? 'Desbloquear chat'
+                                      : 'Bloquear chat'
+                                  }
+                                >
+                                  {u.chatBlocked ? '🔊 Chat' : '🔇 Chat'}
+                                </button>
+                                <button
+                                  onClick={() => handleToggleBan(u)}
+                                  className={`ba-btn-ban ${
+                                    u.banned ? 'banned' : ''
+                                  }`}
+                                  title={
+                                    u.banned
+                                      ? 'Reactivar cuenta'
+                                      : 'Suspender cuenta'
+                                  }
+                                >
+                                  {u.banned ? '✅ Activo' : '🚫 Suspender'}
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(u)}
+                                  className="ba-btn-delete"
+                                >
+                                  Eliminar
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </div>
-                        <div className="ba-user-actions-row">
-                          {editing === u.username ? (
-                            <>
-                              <input
-                                placeholder="Nueva contraseña"
-                                value={editingPassword}
-                                onChange={(e) =>
-                                  setEditingPassword(e.target.value)
-                                }
-                                className="ba-edit-input"
-                              />
-                              <button
-                                onClick={() => handleSaveEdit(u)}
-                                className="ba-btn-save"
-                              >
-                                Guardar
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setEditing(null);
-                                  setEditingPassword('');
-                                }}
-                                className="ba-btn-cancel"
-                              >
-                                Cancelar
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => {
-                                  setEditing(u.username);
-                                  setEditingPassword('');
-                                }}
-                                className="ba-btn-edit"
-                              >
-                                Editar contraseña
-                              </button>
-                              <button
-                                onClick={() => handleDelete(u)}
-                                className="ba-btn-delete"
-                              >
-                                Eliminar
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </section>
               </>

@@ -49,6 +49,16 @@
   max-width: 1100px; /* Largura máxima - ajuste aqui */
   margin-left: auto;
   margin-right: auto;
+
+  /* ============================================
+     ALTURA DOS BOXES
+     Por padrão a altura é automática (auto)
+     Descomente as linhas abaixo para definir altura fixa ou máxima
+     ============================================ */
+  /* height: 400px; */ /* Altura fixa - ajuste o valor */
+  /* min-height: 200px; */ /* Altura mínima */
+  /* max-height: 500px; */ /* Altura máxima com scroll */
+  /* overflow-y: auto; */ /* Ativar scroll vertical se usar max-height */
 }
 
 .ba-admin-main {
@@ -708,7 +718,15 @@
   flex-direction: column;
   gap: 12px;
   margin-top: 16px;
-  max-height: 180px;
+
+  /* ============================================
+     ALTURA DA LISTA DE USUÁRIOS
+     Cada card de usuário tem ~55px de altura
+     Ajuste max-height para mostrar mais/menos usuários
+     180px = ~3 usuários | 420px = ~7 usuários
+     ============================================ */
+  max-height: 420px; /* Mostra ~7 usuários antes do scroll */
+
   overflow-y: auto;
   padding-right: 8px;
 }
@@ -734,6 +752,62 @@
   box-shadow: 0 0 6px rgba(0, 173, 181, 0.5);
 }
 
+/* ============================================
+   CAMPO DE BUSCA DE USUÁRIOS
+   ============================================ */
+.ba-search-container {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.ba-search-input {
+  width: 100%;
+  max-width: 400px;
+  height: 44px;
+  padding: 0 40px 0 16px;
+  background: rgba(11, 15, 26, 0.8);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.ba-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ba-search-input:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.ba-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ba-search-clear:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
 .ba-user-card {
   display: flex;
   align-items: center;
@@ -757,7 +831,11 @@
    ============================================ */
 @media (max-width: 767px) {
   .ba-users-grid {
-    max-height: 300px; /* Mais espaço no mobile */
+    /* ============================================
+       ALTURA DA LISTA NO MOBILE
+       180px = ~3 usuários (como estava antes)
+       ============================================ */
+    max-height: 180px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
   }
@@ -889,6 +967,78 @@
   background: rgba(158, 158, 158, 0.3);
   border-color: rgba(158, 158, 158, 0.4);
   transform: translateY(-1px);
+}
+
+/* ============================================
+   BOTÕES DE BLOQUEIO DE USUÁRIO
+   ============================================ */
+
+/* Botão Bloquear/Desbloquear Chat */
+.ba-btn-chat-block {
+  height: 36px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  background: rgba(255, 193, 7, 0.15);
+  border: 1px solid rgba(255, 193, 7, 0.4);
+  color: #ffc107;
+}
+
+.ba-btn-chat-block:hover {
+  background: rgba(255, 193, 7, 0.25);
+  border-color: rgba(255, 193, 7, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Estado: Chat bloqueado */
+.ba-btn-chat-block.blocked {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.4);
+  color: #4caf50;
+}
+
+.ba-btn-chat-block.blocked:hover {
+  background: rgba(76, 175, 80, 0.25);
+  border-color: rgba(76, 175, 80, 0.6);
+}
+
+/* Botão Suspender/Reativar Conta */
+.ba-btn-ban {
+  height: 36px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  background: rgba(255, 87, 34, 0.15);
+  border: 1px solid rgba(255, 87, 34, 0.4);
+  color: #ff5722;
+}
+
+.ba-btn-ban:hover {
+  background: rgba(255, 87, 34, 0.25);
+  border-color: rgba(255, 87, 34, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Estado: Conta banida/suspensa */
+.ba-btn-ban.banned {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.4);
+  color: #4caf50;
+}
+
+.ba-btn-ban.banned:hover {
+  background: rgba(76, 175, 80, 0.25);
+  border-color: rgba(76, 175, 80, 0.6);
 }
 
 /* User Management List Styles */

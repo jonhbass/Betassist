@@ -174,16 +174,43 @@ export default function Dashboard() {
               : 'Chat desativado pelo admin'
           );
         });
+
+        // Listener para banimento - força logout imediato
+        const currentUser = getAuthUser();
+        sock.on('user:banned', (data) => {
+          if (
+            currentUser &&
+            data.username.toLowerCase() === currentUser.toLowerCase()
+          ) {
+            alert('Tu cuenta ha sido suspendida por el administrador.');
+            removeAuthUser();
+            navigate('/login', { replace: true });
+          }
+        });
+
+        // Listener para exclusão de usuário - força logout imediato
+        sock.on('user:deleted', (data) => {
+          if (
+            currentUser &&
+            data.username.toLowerCase() === currentUser.toLowerCase()
+          ) {
+            alert('Tu cuenta ha sido eliminada.');
+            removeAuthUser();
+            navigate('/login', { replace: true });
+          }
+        });
       });
     });
 
     return () => {
       if (socketInstance) {
         socketInstance.off('chat:state-changed');
+        socketInstance.off('user:banned');
+        socketInstance.off('user:deleted');
         // Não desconectamos aqui pois o socket pode ser compartilhado
       }
     };
-  }, []);
+  }, [navigate]);
 
   // Listen for new notifications
   useEffect(() => {

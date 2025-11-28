@@ -64,6 +64,7 @@ export default function Chat({ enabled = true }) {
   const [typing, setTyping] = useState('');
   const [socketState, setSocketState] = useState('disconnected'); // disconnected | connecting | connected
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [chatBlocked, setChatBlocked] = useState(false); // Bloqueio de chat
   const listRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimeout = useRef(null);
@@ -146,6 +147,27 @@ export default function Chat({ enabled = true }) {
     setShowEmojiPicker(false);
   }
 
+  // Verificar se usuário está bloqueado no chat
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (!currentUser || currentUser === 'Guest') return;
+
+    const checkBlockStatus = async () => {
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/users/${currentUser}/status`);
+        if (res.ok) {
+          const data = await res.json();
+          setChatBlocked(data.chatBlocked || false);
+        }
+      } catch (err) {
+        console.error('Erro ao verificar status de bloqueio:', err);
+      }
+    };
+
+    checkBlockStatus();
+  }, []);
+
   // Socket.IO connection
   useEffect(() => {
     if (!USE_SOCKET) return;
@@ -170,6 +192,14 @@ export default function Chat({ enabled = true }) {
         console.log('🔄 Socket não conectado, tentando conectar...');
         socket.connect();
       }
+
+      // Listener para atualização de bloqueio em tempo real
+      const onChatBlocked = (data) => {
+        if (data.username.toLowerCase() === getCurrentUser().toLowerCase()) {
+          setChatBlocked(data.chatBlocked);
+        }
+      };
+      socket.on('user:chat-blocked', onChatBlocked);
 
       const onConnect = () => {
         console.log('✅ Chat socket CONECTADO:', socket.id);
@@ -232,6 +262,7 @@ export default function Chat({ enabled = true }) {
         socket.off('chat:cleared', onCleared);
         socket.off('connect_error', onConnectError);
         socket.off('disconnect', onDisconnect);
+        socket.off('user:chat-blocked', onChatBlocked);
       };
     });
 
@@ -270,6 +301,13 @@ export default function Chat({ enabled = true }) {
 
   function send(e) {
     e && e.preventDefault();
+
+    // Verificar se usuário está bloqueado
+    if (chatBlocked && !isAdmin) {
+      alert('Tu cuenta está bloqueada para enviar mensajes en el chat.');
+      return;
+    }
+
     const t = text.trim();
     if (!t) return;
     const currentUser = getCurrentUser();

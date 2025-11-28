@@ -180,7 +180,19 @@ app.get('/users', (req, res) => {
   res.json(users.map((u) => ({ username: u.username })));
 });
 
-// Return specific user details (balance, history, dailyWithdraw)
+// Return users with block status (for admin panel)
+app.get('/users/admin/list', (req, res) => {
+  const users = readUsers();
+  res.json(
+    users.map((u) => ({
+      username: u.username,
+      chatBlocked: u.chatBlocked || false,
+      banned: u.banned || false,
+    }))
+  );
+});
+
+// Return specific user details (balance, history, dailyWithdraw, bloqueios)
 app.get('/users/:username', (req, res) => {
   const { username } = req.params;
   const users = readUsers();
@@ -194,6 +206,8 @@ app.get('/users/:username', (req, res) => {
     balance: user.balance || 0,
     history: user.history || [],
     dailyWithdraw: user.dailyWithdraw || null,
+    chatBlocked: user.chatBlocked || false,
+    banned: user.banned || false,
   });
 });
 
@@ -231,13 +245,21 @@ app.post('/login', async (req, res) => {
     (x) => x.username.toLowerCase() === username.toLowerCase()
   );
   if (!u) return res.status(401).json({ error: 'invalid' });
+
+  // Verificar se usuário está banido
+  if (u.banned) {
+    return res
+      .status(403)
+      .json({ error: 'banned', message: 'Tu cuenta ha sido suspendida.' });
+  }
+
   try {
     const ok = await bcrypt.compare(
       String(password),
       String(u.passwordHash || '')
     );
     if (!ok) return res.status(401).json({ error: 'invalid' });
-    return res.json({ ok: true });
+    return res.json({ ok: true, chatBlocked: u.chatBlocked || false });
   } catch (err) {
     console.error('login error', err);
     return res.status(500).json({ error: 'error' });
@@ -263,7 +285,85 @@ app.delete('/users/:username', (req, res) => {
   let users = readUsers();
   users = users.filter((u) => u.username !== username);
   writeUsers(users);
+
+  // Emitir evento para forçar logout do usuário excluído
+  io.emit('user:deleted', { username });
+
   res.json({ ok: true });
+});
+
+// ============================================
+// BLOQUEIO DE CHAT - Impede usuário de enviar mensagens no chat principal
+// ============================================
+app.put('/users/:username/chat-block', (req, res) => {
+  const username = req.params.username;
+  const { blocked } = req.body;
+
+  const users = readUsers();
+  const idx = users.findIndex(
+    (u) => u.username.toLowerCase() === username.toLowerCase()
+  );
+
+  if (idx === -1) {
+    return res.status(404).json({ error: 'user not found' });
+  }
+
+  users[idx].chatBlocked = blocked === true;
+  writeUsers(users);
+
+  // Emitir evento para atualizar o cliente em tempo real
+  io.emit('user:chat-blocked', {
+    username: users[idx].username,
+    chatBlocked: users[idx].chatBlocked,
+  });
+
+  res.json({ ok: true, chatBlocked: users[idx].chatBlocked });
+});
+
+// ============================================
+// BANIMENTO - Bloqueia completamente o acesso do usuário
+// ============================================
+app.put('/users/:username/ban', (req, res) => {
+  const username = req.params.username;
+  const { banned } = req.body;
+
+  const users = readUsers();
+  const idx = users.findIndex(
+    (u) => u.username.toLowerCase() === username.toLowerCase()
+  );
+
+  if (idx === -1) {
+    return res.status(404).json({ error: 'user not found' });
+  }
+
+  users[idx].banned = banned === true;
+  writeUsers(users);
+
+  // Emitir evento para forçar logout imediato se banido
+  if (users[idx].banned) {
+    io.emit('user:banned', { username: users[idx].username });
+  } else {
+    io.emit('user:unbanned', { username: users[idx].username });
+  }
+
+  res.json({ ok: true, banned: users[idx].banned });
+});
+
+// Verificar status do usuário (bloqueios)
+app.get('/users/:username/status', (req, res) => {
+  const { username } = req.params;
+  const users = readUsers();
+  const user = users.find(
+    (u) => u.username.toLowerCase() === username.toLowerCase()
+  );
+
+  if (!user) return res.status(404).json({ error: 'not found' });
+
+  res.json({
+    username: user.username,
+    chatBlocked: user.chatBlocked || false,
+    banned: user.banned || false,
+  });
 });
 
 // Update daily withdraw limit for user

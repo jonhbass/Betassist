@@ -58,6 +58,14 @@ export default function Login() {
               password,
             }),
           });
+
+          // Verificar se usuário está banido
+          if (resp.status === 403) {
+            const data = await resp.json();
+            setError(data.message || 'Tu cuenta ha sido suspendida.');
+            return;
+          }
+
           if (!resp.ok) throw new Error('invalid');
           clearVisitorId();
           sessionStorage.removeItem('isAdmin'); // Garante que usuário normal não tenha flag de admin
