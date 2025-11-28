@@ -2,15 +2,52 @@ import React, { useEffect, useRef, useState } from 'react';
 import '../css/carrossel.css';
 import { getServerUrl } from '../utils/serverUrl';
 
+// Cache duration: 5 minutes
+const CACHE_KEY = 'BANNERS_CACHE';
+const CACHE_DURATION = 5 * 60 * 1000;
+
 export default function Carrossel({ slides = [] }) {
-  const [bannerUrls, setBannerUrls] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [bannerUrls, setBannerUrls] = useState(() => {
+    // Tentar carregar do cache imediatamente para evitar flash
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { urls, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_DURATION && urls?.length > 0) {
+          return urls;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return [];
+  });
+  const [isLoading, setIsLoading] = useState(bannerUrls.length === 0);
 
   useEffect(() => {
+    // Se já temos banners do cache, não mostrar loading
+    if (bannerUrls.length > 0) {
+      setIsLoading(false);
+    }
+
     const loadBanners = async () => {
-      setIsLoading(true);
+      // Verificar cache primeiro
+      try {
+        const cached = sessionStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { urls, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_DURATION && urls?.length > 0) {
+            setBannerUrls(urls);
+            setIsLoading(false);
+            return; // Cache válido, não precisa buscar do servidor
+          }
+        }
+      } catch {
+        // ignore cache errors
+      }
+
+      // Buscar do servidor
       let banners = [];
-      // 1. Tentar carregar do servidor
       try {
         const serverUrl = getServerUrl();
         const res = await fetch(`${serverUrl}/banners`);
@@ -21,7 +58,7 @@ export default function Carrossel({ slides = [] }) {
         console.error('Erro ao carregar banners do servidor:', e);
       }
 
-      // 2. Fallback para LocalStorage (chave BANNERS)
+      // Fallback para LocalStorage
       if (!banners.length) {
         try {
           const stored = localStorage.getItem('BANNERS');
@@ -33,7 +70,7 @@ export default function Carrossel({ slides = [] }) {
         }
       }
 
-      // 3. Fallback para chave antiga (CUSTOM_BANNERS) se necessário
+      // Fallback para chave antiga
       if (!banners.length) {
         try {
           const stored = localStorage.getItem('CUSTOM_BANNERS');
@@ -45,19 +82,31 @@ export default function Carrossel({ slides = [] }) {
         }
       }
 
-      // Extrair URLs
+      // Extrair URLs e salvar no cache
       if (banners.length > 0) {
         const urls = banners.map((b) => b.url).filter(Boolean);
         setBannerUrls(urls);
-        setIsLoading(false);
-      } else {
+        // Salvar no cache
+        try {
+          sessionStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({
+              urls,
+              timestamp: Date.now(),
+            })
+          );
+        } catch {
+          // ignore
+        }
+      } else if (slides.length > 0) {
         setBannerUrls(slides);
-        setIsLoading(false);
       }
+      setIsLoading(false);
     };
 
     loadBanners();
-  }, [slides]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const usedSlides = bannerUrls.length > 0 ? bannerUrls : [];
 
