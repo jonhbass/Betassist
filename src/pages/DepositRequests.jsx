@@ -136,29 +136,7 @@ export default function DepositRequests() {
         console.error('Erro ao atualizar saldo do usuário:', error);
       }
 
-      // Criar notificação de depósito aprovado
-      const notifications = JSON.parse(
-        localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
-      );
-      const newNotification = {
-        id: Date.now(),
-        user: req.user,
-        amount: req.amount,
-        date: new Date().toLocaleString('es-AR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        read: false,
-        type: 'approved',
-      };
-      notifications.push(newNotification);
-      localStorage.setItem(
-        'DEPOSIT_NOTIFICATIONS',
-        JSON.stringify(notifications)
-      );
+      // Removido: criação local de notificação (servidor já emite notification:new)
 
       alert(`✅ Solicitud de ${req.user} aprobada y saldo actualizado`);
     }
@@ -214,30 +192,7 @@ export default function DepositRequests() {
       });
       localStorage.setItem('USER_HISTORY', JSON.stringify(history));
 
-      // Criar notificação de depósito rechazado
-      const notifications = JSON.parse(
-        localStorage.getItem('DEPOSIT_NOTIFICATIONS') || '[]'
-      );
-      const newNotification = {
-        id: Date.now(),
-        user: req.user,
-        amount: req.amount,
-        date: new Date().toLocaleString('es-AR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        read: false,
-        type: 'deposit-rejected',
-        message: adminMessage,
-      };
-      notifications.push(newNotification);
-      localStorage.setItem(
-        'DEPOSIT_NOTIFICATIONS',
-        JSON.stringify(notifications)
-      );
+      // Removido: criação local de notificação de rejeição (servidor já emite)
 
       alert(`❌ Solicitud de ${req.user} rechazada`);
     }

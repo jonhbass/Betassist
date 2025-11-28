@@ -138,11 +138,6 @@ export default function WithdrawRequests() {
         console.error('Erro ao atualizar saldo do usuário:', error);
       }
 
-      // Criar notificação de retirada aprovada
-      const notifications = JSON.parse(
-        localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
-      );
-
       // Atualizar limite diário de retirada do usuário
       try {
         await fetch(`${serverUrl}/users/${req.user}/daily-withdraw`, {
@@ -157,25 +152,7 @@ export default function WithdrawRequests() {
         console.warn('Não foi possível atualizar limite diário:', err);
       }
 
-      const newNotification = {
-        id: Date.now(),
-        user: req.user,
-        amount: req.amount,
-        date: new Date().toLocaleString('es-AR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        read: false,
-        type: 'withdraw-approved',
-      };
-      notifications.push(newNotification);
-      localStorage.setItem(
-        'WITHDRAW_NOTIFICATIONS',
-        JSON.stringify(notifications)
-      );
+      // Removido: criação local de notificação (servidor já emite notification:new)
 
       alert(`✅ Retiro de ${req.user} aprobado y saldo actualizado`);
     }
@@ -234,30 +211,7 @@ export default function WithdrawRequests() {
       });
       localStorage.setItem('USER_HISTORY', JSON.stringify(history));
 
-      // Criar notificação de retirada rechazada
-      const notifications = JSON.parse(
-        localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
-      );
-      const newNotification = {
-        id: Date.now(),
-        user: req.user,
-        amount: req.amount,
-        date: new Date().toLocaleString('es-AR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        read: false,
-        type: 'withdraw-rejected',
-        message: adminMessage,
-      };
-      notifications.push(newNotification);
-      localStorage.setItem(
-        'WITHDRAW_NOTIFICATIONS',
-        JSON.stringify(notifications)
-      );
+      // Removido: criação local de notificação de rejeição (servidor já emite)
 
       alert(`❌ Retiro de ${req.user} rechazado`);
     }

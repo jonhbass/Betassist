@@ -253,10 +253,13 @@ export default function Dashboard() {
 
         try {
           const existing = JSON.parse(localStorage.getItem(storageKey) || '[]');
-          localStorage.setItem(
-            storageKey,
-            JSON.stringify([notif, ...existing])
-          );
+          // Evitar duplicados pelo mesmo ID
+          if (!existing.some((n) => n.id === notif.id)) {
+            localStorage.setItem(
+              storageKey,
+              JSON.stringify([notif, ...existing])
+            );
+          }
         } catch (e) {
           console.error('Error saving notification', e);
         }
