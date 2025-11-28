@@ -63,11 +63,12 @@ export default function RequestsPanel() {
   const [statusFilter, setStatusFilter] = useState('Todas');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [requests, setRequests] = useState([]);
+  const [requests, setRequests] = useState([]); // histórico (aprovadas / rejeitadas)
+  const [pendingRequests, setPendingRequests] = useState([]); // pendentes atuais (deposits + withdrawals)
 
   // Carregar histórico do servidor
   useEffect(() => {
-    const loadHistory = async () => {
+    const loadHistoryAndPending = async () => {
       if (!authUser) return;
       try {
         const serverUrl = getServerUrl();
@@ -79,16 +80,126 @@ export default function RequestsPanel() {
       } catch (error) {
         console.error('Erro ao carregar histórico:', error);
       }
+
+      // Carregar solicitações pendentes (deposits + withdrawals) separadamente
+      try {
+        const serverUrl = getServerUrl();
+        const [depRes, witRes] = await Promise.all([
+          fetch(`${serverUrl}/deposits`),
+          fetch(`${serverUrl}/withdrawals`),
+        ]);
+        let pending = [];
+        if (depRes.ok) {
+          const deposits = await depRes.json();
+          pending.push(
+            ...deposits
+              .filter(
+                (d) =>
+                  d.user &&
+                  d.user.toLowerCase() === authUser.toLowerCase() &&
+                  normalizeText(d.status) === 'pendiente'
+              )
+              .map((d) => ({
+                id: d.id,
+                type: 'Recarga',
+                amount: Number(d.amount) || 0,
+                date: d.date || new Date(d.id).toLocaleString('es-AR'),
+                status: 'Pendiente',
+                message: 'Solicitud de recarga pendiente',
+                canClaim: false,
+              }))
+          );
+        }
+        if (witRes.ok) {
+          const withdrawals = await witRes.json();
+          pending.push(
+            ...withdrawals
+              .filter(
+                (w) =>
+                  w.user &&
+                  w.user.toLowerCase() === authUser.toLowerCase() &&
+                  normalizeText(w.status) === 'pendiente'
+              )
+              .map((w) => ({
+                id: w.id,
+                type: 'Retiro',
+                amount: Number(w.amount) || 0,
+                date: w.date || new Date(w.id).toLocaleString('es-AR'),
+                status: 'Pendiente',
+                message: 'Solicitud de retiro pendiente',
+                canClaim: false,
+              }))
+          );
+        }
+        setPendingRequests(pending);
+      } catch (e) {
+        console.error('Erro ao carregar pendentes:', e);
+        setPendingRequests([]);
+      }
     };
 
-    loadHistory();
+    loadHistoryAndPending();
 
-    const handleUpdate = (data) => {
+    const handleUpdate = async (data) => {
       if (
         data.username &&
         data.username.toLowerCase() === authUser.toLowerCase()
       ) {
         if (data.history) setRequests(data.history);
+        // Recarregar pendentes quando há atualização do usuário
+        try {
+          const serverUrl = getServerUrl();
+          const [depRes, witRes] = await Promise.all([
+            fetch(`${serverUrl}/deposits`),
+            fetch(`${serverUrl}/withdrawals`),
+          ]);
+          let pending = [];
+          if (depRes.ok) {
+            const deposits = await depRes.json();
+            pending.push(
+              ...deposits
+                .filter(
+                  (d) =>
+                    d.user &&
+                    d.user.toLowerCase() === authUser.toLowerCase() &&
+                    normalizeText(d.status) === 'pendiente'
+                )
+                .map((d) => ({
+                  id: d.id,
+                  type: 'Recarga',
+                  amount: Number(d.amount) || 0,
+                  date: d.date || new Date(d.id).toLocaleString('es-AR'),
+                  status: 'Pendiente',
+                  message: 'Solicitud de recarga pendiente',
+                  canClaim: false,
+                }))
+            );
+          }
+          if (witRes.ok) {
+            const withdrawals = await witRes.json();
+            pending.push(
+              ...withdrawals
+                .filter(
+                  (w) =>
+                    w.user &&
+                    w.user.toLowerCase() === authUser.toLowerCase() &&
+                    normalizeText(w.status) === 'pendiente'
+                )
+                .map((w) => ({
+                  id: w.id,
+                  type: 'Retiro',
+                  amount: Number(w.amount) || 0,
+                  date: w.date || new Date(w.id).toLocaleString('es-AR'),
+                  status: 'Pendiente',
+                  message: 'Solicitud de retiro pendiente',
+                  canClaim: false,
+                }))
+            );
+          }
+          setPendingRequests(pending);
+        } catch (e) {
+          console.error('Erro ao atualizar pendentes:', e);
+        }
       }
     };
 
@@ -116,7 +227,10 @@ export default function RequestsPanel() {
   };
 
   // Filtrar e ordenar solicitações (mais recentes primeiro)
-  const filteredRequests = requests.filter((req) => {
+  // Combina histórico com pendentes (mantendo ids distintos)
+  const combinedRequests = [...requests, ...pendingRequests];
+
+  const filteredRequests = combinedRequests.filter((req) => {
     const statusMatch = matchesStatusFilter(req.status, statusFilter);
     return statusMatch;
   });
@@ -237,7 +351,11 @@ export default function RequestsPanel() {
                     <td>
                       <span
                         className={`ba-status-badge ${
-                          req.status === 'Exitosa' ? 'success' : 'rejected'
+                          req.status === 'Exitosa'
+                            ? 'success'
+                            : req.status === 'Pendiente'
+                            ? 'pending'
+                            : 'rejected'
                         }`}
                       >
                         {req.status}
