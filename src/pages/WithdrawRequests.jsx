@@ -142,6 +142,21 @@ export default function WithdrawRequests() {
       const notifications = JSON.parse(
         localStorage.getItem('WITHDRAW_NOTIFICATIONS') || '[]'
       );
+
+      // Atualizar limite diário de retirada do usuário
+      try {
+        await fetch(`${serverUrl}/users/${req.user}/daily-withdraw`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: req.amount,
+            action: 'add',
+          }),
+        });
+      } catch (err) {
+        console.warn('Não foi possível atualizar limite diário:', err);
+      }
+
       const newNotification = {
         id: Date.now(),
         user: req.user,

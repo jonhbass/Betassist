@@ -12,6 +12,28 @@ export default function LoadChips() {
   const [cbu, setCbu] = useState('');
   const [receiptFile, setReceiptFile] = useState(null);
   const [receiptPreview, setReceiptPreview] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  // Função para copiar CBU
+  const handleCopyCbu = async () => {
+    if (!cbu) return;
+    try {
+      await navigator.clipboard.writeText(cbu);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Erro ao copiar:', err);
+      // Fallback para navegadores antigos
+      const textArea = document.createElement('textarea');
+      textArea.value = cbu;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   // Função para permitir apenas números, ponto e vírgula (para valores monetários)
   const handleAmountChange = (e) => {
@@ -79,8 +101,19 @@ export default function LoadChips() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Converter valor no formato argentino (1.000,00) para número
+    // 1. Remove pontos de milhar
+    // 2. Substitui vírgula decimal por ponto
+    // 3. Remove outros caracteres não numéricos
+    let cleanAmount = amount
+      .replace(/\./g, '') // Remove pontos de milhar
+      .replace(',', '.') // Substitui vírgula decimal por ponto
+      .replace(/[^0-9.-]/g, ''); // Remove caracteres não numéricos
+
+    const numericAmount = parseFloat(cleanAmount);
+
     // Validações
-    if (!amount || parseFloat(amount) <= 0) {
+    if (!amount || isNaN(numericAmount) || numericAmount <= 0) {
       alert('Por favor, ingrese un monto válido');
       return;
     }
@@ -110,7 +143,7 @@ export default function LoadChips() {
         body: JSON.stringify({
           base64Image: receiptPreview,
           username: authUser,
-          amount: parseFloat(amount),
+          amount: numericAmount,
           holder: holder,
         }),
       });
@@ -137,7 +170,7 @@ export default function LoadChips() {
         hour: '2-digit',
         minute: '2-digit',
       }),
-      amount: parseFloat(amount),
+      amount: numericAmount,
       cbu: cbu, // CBU de destino (do sistema) para onde o usuário transferiu
       holder: holder,
       receipt: finalReceiptUrl, // URL do Cloudinary ou base64
@@ -195,7 +228,33 @@ export default function LoadChips() {
             siguiente CBU:
           </p>
 
-          <div className="ba-cbu-box">📄 {cbu}</div>
+          <button
+            type="button"
+            className="ba-cbu-box"
+            onClick={handleCopyCbu}
+            style={{
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              transition: 'all 0.3s ease',
+              border: copied ? '2px solid #22c55e' : '2px solid transparent',
+            }}
+            title="Haz clic para copiar el CBU"
+          >
+            <span style={{ fontSize: '18px' }}>{copied ? '✅' : '📋'}</span>
+            <span>{cbu}</span>
+            <span
+              style={{
+                fontSize: '12px',
+                opacity: 0.7,
+                marginLeft: '8px',
+              }}
+            >
+              {copied ? '¡Copiado!' : '(Copiar)'}
+            </span>
+          </button>
 
           <p className="ba-load-instructions">
             Luego debes informar el importe que transferiste a continuación, el

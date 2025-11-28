@@ -105,7 +105,16 @@ export default function WithdrawChips() {
       return;
     }
 
-    const withdrawAmount = parseFloat(amount.replace(/[^0-9.-]+/g, ''));
+    // Converter valor no formato argentino (400.000,00) para número
+    // 1. Remove pontos de milhar
+    // 2. Substitui vírgula decimal por ponto
+    // 3. Remove outros caracteres não numéricos
+    let cleanAmount = amount
+      .replace(/\./g, '') // Remove pontos de milhar
+      .replace(',', '.') // Substitui vírgula decimal por ponto
+      .replace(/[^0-9.-]/g, ''); // Remove caracteres não numéricos
+
+    const withdrawAmount = parseFloat(cleanAmount);
 
     if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
       alert('Por favor, ingrese un monto válido');
@@ -161,28 +170,8 @@ export default function WithdrawChips() {
       );
     }
 
-    // Atualizar o limite diário usado
-    const currentData = getDailyWithdrawData(authUser);
-    const newUsedAmount = currentData.usedAmount + withdrawAmount;
-    saveDailyWithdrawData(authUser, newUsedAmount);
-
-    // Atualizar também no servidor
-    try {
-      const serverUrl = getServerUrl();
-      await fetch(`${serverUrl}/users/${authUser}/daily-withdraw`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          date: getTodayDate(),
-          usedAmount: newUsedAmount,
-        }),
-      });
-    } catch (err) {
-      console.warn('Não foi possível salvar limite no servidor:', err);
-    }
-
-    // Atualizar estado local
-    setAvailableForWithdraw(Math.max(0, DAILY_WITHDRAW_LIMIT - newUsedAmount));
+    // NOTA: O limite diário será descontado apenas quando o admin APROVAR a solicitação
+    // Isso é feito no servidor (PUT /withdrawals/:id) e no WithdrawRequests.jsx
 
     alert('✅ Solicitud de retiro enviada con éxito');
     navigate('/home');

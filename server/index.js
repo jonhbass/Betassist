@@ -268,11 +268,7 @@ app.delete('/users/:username', (req, res) => {
 // Update daily withdraw limit for user
 app.put('/users/:username/daily-withdraw', (req, res) => {
   const username = req.params.username;
-  const { date, usedAmount } = req.body || {};
-
-  if (!date || usedAmount === undefined) {
-    return res.status(400).json({ error: 'missing date or usedAmount' });
-  }
+  const { date, usedAmount, amount, action } = req.body || {};
 
   const users = readUsers();
   const idx = users.findIndex(
@@ -283,20 +279,44 @@ app.put('/users/:username/daily-withdraw', (req, res) => {
     return res.status(404).json({ error: 'user not found' });
   }
 
-  users[idx].dailyWithdraw = { date, usedAmount };
+  // Obter data atual
+  const today = new Date().toISOString().split('T')[0];
+
+  // Obter dados atuais do limite diário
+  let currentDailyWithdraw = users[idx].dailyWithdraw || {
+    date: today,
+    usedAmount: 0,
+  };
+
+  // Se é um novo dia, resetar o limite
+  if (currentDailyWithdraw.date !== today) {
+    currentDailyWithdraw = { date: today, usedAmount: 0 };
+  }
+
+  // Se é uma ação de adicionar (quando aprovado pelo admin)
+  if (action === 'add' && amount !== undefined) {
+    currentDailyWithdraw.usedAmount =
+      (currentDailyWithdraw.usedAmount || 0) + amount;
+  }
+  // Se é uma definição direta (compatibilidade)
+  else if (date && usedAmount !== undefined) {
+    currentDailyWithdraw = { date, usedAmount };
+  }
+
+  users[idx].dailyWithdraw = currentDailyWithdraw;
   writeUsers(users);
 
   // Emit update via socket
   try {
     const io = req.app.get('io');
     if (io) {
-      io.emit('user:update', { username, dailyWithdraw: { date, usedAmount } });
+      io.emit('user:update', { username, dailyWithdraw: currentDailyWithdraw });
     }
   } catch (e) {
     console.error('Failed to emit user update', e);
   }
 
-  res.json({ ok: true, dailyWithdraw: { date, usedAmount } });
+  res.json({ ok: true, dailyWithdraw: currentDailyWithdraw });
 });
 
 // Sync endpoint: replace all users (used by front-end fallback)
@@ -510,6 +530,23 @@ app.put('/withdrawals/:id', (req, res) => {
         `💸 Retiro aprovado: ${username} - Saldo anterior: $${currentBalance} → Nuevo saldo: $${newBalance}`
       );
 
+      // ATUALIZAR LIMITE DIÁRIO DE RETIRADA
+      const today = new Date().toISOString().split('T')[0];
+      let dailyWithdraw = user.dailyWithdraw || { date: today, usedAmount: 0 };
+
+      // Se é um novo dia, resetar
+      if (dailyWithdraw.date !== today) {
+        dailyWithdraw = { date: today, usedAmount: 0 };
+      }
+
+      // Adicionar o valor aprovado ao limite usado
+      dailyWithdraw.usedAmount = (dailyWithdraw.usedAmount || 0) + amount;
+      user.dailyWithdraw = dailyWithdraw;
+
+      console.log(
+        `📊 Limite diário atualizado: ${username} - Usado hoje: $${dailyWithdraw.usedAmount}`
+      );
+
       if (!user.history) user.history = [];
       user.history.push({
         id: Date.now(),
@@ -525,11 +562,12 @@ app.put('/withdrawals/:id', (req, res) => {
 
       const io = req.app.get('io');
       if (io) {
-        // Emitir atualização de saldo e histórico
+        // Emitir atualização de saldo, histórico e limite diário
         io.emit('user:update', {
           username: user.username,
           balance: user.balance,
           history: user.history,
+          dailyWithdraw: user.dailyWithdraw,
         });
 
         // Emitir notificação de retirada aprovada
