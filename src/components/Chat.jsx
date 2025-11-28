@@ -154,14 +154,21 @@ export default function Chat({ enabled = true }) {
     const url = getServerUrl();
     console.log('🌐 Chat conectando ao servidor via ensureSocket:', url);
 
+    // Mostrar "Connecting..." enquanto aguarda
+    setSocketState('connecting');
+
     ensureSocket(url).then((socket) => {
       if (!mounted) return;
       socketRef.current = socket;
 
-      // Se já estiver conectado
+      // Verificar estado atual do socket
       if (socket.connected) {
         console.log('✅ Chat socket já estava CONECTADO:', socket.id);
         setSocketState('connected');
+      } else {
+        // Forçar reconexão se não estiver conectado
+        console.log('🔄 Socket não conectado, tentando conectar...');
+        socket.connect();
       }
 
       const onConnect = () => {

@@ -191,17 +191,16 @@ export default function AdminDashboard() {
     ensureSocket().then((socketInstance) => {
       if (socketInstance) {
         setSocket(socketInstance);
+        // Forçar conexão se não estiver conectado
+        if (!socketInstance.connected) {
+          socketInstance.connect();
+        }
         console.log('Admin socket conectado');
       }
     });
 
-    return () => {
-      ensureSocket().then((socketInstance) => {
-        if (socketInstance) {
-          socketInstance.disconnect();
-        }
-      });
-    };
+    // NÃO desconectar no cleanup - o socket é compartilhado globalmente
+    // e outros componentes (como Chat) podem estar usando
   }, []);
 
   async function saveUsers(list) {
