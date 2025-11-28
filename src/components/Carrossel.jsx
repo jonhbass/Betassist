@@ -4,9 +4,11 @@ import { getServerUrl } from '../utils/serverUrl';
 
 export default function Carrossel({ slides = [] }) {
   const [bannerUrls, setBannerUrls] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadBanners = async () => {
+      setIsLoading(true);
       let banners = [];
       // 1. Tentar carregar do servidor
       try {
@@ -47,8 +49,10 @@ export default function Carrossel({ slides = [] }) {
       if (banners.length > 0) {
         const urls = banners.map((b) => b.url).filter(Boolean);
         setBannerUrls(urls);
+        setIsLoading(false);
       } else {
         setBannerUrls(slides);
+        setIsLoading(false);
       }
     };
 
@@ -111,7 +115,11 @@ export default function Carrossel({ slides = [] }) {
     >
       <div className="ba-carousel-inner">
         {usedSlides.length === 0 ? (
-          <div className="ba-slide active ba-slide-placeholder">
+          <div
+            className={`ba-slide active ba-slide-placeholder ${
+              isLoading ? 'skeleton' : ''
+            }`}
+          >
             <div className="ba-placeholder-content">
               <h2>🖼️ Ningún banner registrado</h2>
               <p>Configure los banners en el panel de administración</p>
