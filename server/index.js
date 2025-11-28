@@ -180,7 +180,7 @@ app.get('/users', (req, res) => {
   res.json(users.map((u) => ({ username: u.username })));
 });
 
-// Return specific user details (balance, history)
+// Return specific user details (balance, history, dailyWithdraw)
 app.get('/users/:username', (req, res) => {
   const { username } = req.params;
   const users = readUsers();
@@ -193,6 +193,7 @@ app.get('/users/:username', (req, res) => {
     username: user.username,
     balance: user.balance || 0,
     history: user.history || [],
+    dailyWithdraw: user.dailyWithdraw || null,
   });
 });
 
