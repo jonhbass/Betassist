@@ -174,13 +174,16 @@ function writeConfig(data) {
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
-// Utilitários de data (baseados em UTC para consistência global)
-function getTodayDateUTC() {
-  return new Date().toISOString().split('T')[0];
+// Utilitários de data (baseados no horário da Argentina UTC-3)
+function getTodayDateArgentina() {
+  const now = new Date();
+  // Argentina é UTC-3, então subtraímos 3 horas do UTC
+  const argentinaTime = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+  return argentinaTime.toISOString().split('T')[0];
 }
 
 function normalizeDailyWithdraw(user) {
-  const today = getTodayDateUTC();
+  const today = getTodayDateArgentina();
   const dw = user.dailyWithdraw || { date: today, usedAmount: 0 };
   if (dw.date !== today) {
     return { date: today, usedAmount: 0 };
@@ -398,8 +401,8 @@ app.put('/users/:username/daily-withdraw', (req, res) => {
     return res.status(404).json({ error: 'user not found' });
   }
 
-  // Obter data atual
-  const today = new Date().toISOString().split('T')[0];
+  // Obter data atual (horário da Argentina)
+  const today = getTodayDateArgentina();
 
   // Obter dados atuais do limite diário
   let currentDailyWithdraw = users[idx].dailyWithdraw || {
@@ -650,7 +653,7 @@ app.put('/withdrawals/:id', (req, res) => {
       );
 
       // ATUALIZAR LIMITE DIÁRIO DE RETIRADA
-      const today = new Date().toISOString().split('T')[0];
+      const today = getTodayDateArgentina();
       let dailyWithdraw = user.dailyWithdraw || { date: today, usedAmount: 0 };
 
       // Se é um novo dia, resetar

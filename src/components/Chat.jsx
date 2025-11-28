@@ -30,7 +30,7 @@ export default function Chat({ enabled = true }) {
         return [
           {
             id: 1,
-            text: 'Bem-vindo ao chat! 👋',
+            text: '¡Bienvenido al chat! 👋',
             from: 'system',
             time: new Date().toISOString(),
           },
@@ -41,7 +41,7 @@ export default function Chat({ enabled = true }) {
         : [
             {
               id: 1,
-              text: 'Bem-vindo ao chat! 👋',
+              text: '¡Bienvenido al chat! 👋',
               from: 'system',
               time: new Date().toISOString(),
             },
@@ -52,7 +52,7 @@ export default function Chat({ enabled = true }) {
       return [
         {
           id: 1,
-          text: 'Bem-vindo ao chat! 👋',
+          text: '¡Bienvenido al chat! 👋',
           from: 'system',
           time: new Date().toISOString(),
         },
