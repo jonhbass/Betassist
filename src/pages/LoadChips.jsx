@@ -234,22 +234,25 @@ export default function LoadChips() {
             onClick={handleCopyCbu}
             style={{
               cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              border: copied ? '2px solid #22c55e' : '2px solid transparent',
+              color: '#fff',
+              background: 'rgba(0, 0, 0, 0.2)',
+              width: '100%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '10px',
-              transition: 'all 0.3s ease',
-              border: copied ? '2px solid #22c55e' : '2px solid transparent',
+              gap: '0.5rem',
             }}
             title="Haz clic para copiar el CBU"
           >
             <span style={{ fontSize: '18px' }}>{copied ? '✅' : '📋'}</span>
-            <span>{cbu}</span>
+            <span style={{ color: '#fff', fontWeight: 'bold' }}>{cbu}</span>
             <span
               style={{
                 fontSize: '12px',
                 opacity: 0.7,
-                marginLeft: '8px',
+                color: '#fff',
               }}
             >
               {copied ? '¡Copiado!' : '(Copiar)'}

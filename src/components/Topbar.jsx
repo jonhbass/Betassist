@@ -19,7 +19,7 @@ export default function Topbar({
 }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
-  const [balance, setBalance] = useState(0);
+  const [_balance, setBalance] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
   const [iconGlowing, setIconGlowing] = useState(false);
   const menuRef = useRef(null);

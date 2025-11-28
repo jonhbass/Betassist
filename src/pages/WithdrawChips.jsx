@@ -4,6 +4,7 @@ import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/WithdrawChips.css';
 import { getServerUrl } from '../utils/serverUrl';
+import { ensureSocket } from '../utils/socket';
 
 // Limite diário máximo de retirada
 const DAILY_WITHDRAW_LIMIT = 500000.0;
@@ -62,10 +63,12 @@ export default function WithdrawChips() {
             const available =
               DAILY_WITHDRAW_LIMIT - (userData.dailyWithdraw.usedAmount || 0);
             setAvailableForWithdraw(Math.max(0, available));
+            // Atualizar localStorage também
+            saveDailyWithdrawData(authUser, userData.dailyWithdraw.usedAmount);
             return;
           }
         }
-      } catch (err) {
+      } catch {
         console.warn(
           'Não foi possível carregar limite do servidor, usando localStorage'
         );
@@ -78,6 +81,46 @@ export default function WithdrawChips() {
     };
 
     loadAvailableLimit();
+
+    // Escutar atualizações do socket para atualizar o limite em tempo real
+    let socketInstance = null;
+    const setupSocket = async () => {
+      try {
+        socketInstance = await ensureSocket();
+        if (socketInstance) {
+          const handleUserUpdate = (data) => {
+            if (
+              data.username &&
+              data.username.toLowerCase() === authUser.toLowerCase()
+            ) {
+              if (data.dailyWithdraw) {
+                const today = getTodayDate();
+                if (data.dailyWithdraw.date === today) {
+                  const available =
+                    DAILY_WITHDRAW_LIMIT - (data.dailyWithdraw.usedAmount || 0);
+                  setAvailableForWithdraw(Math.max(0, available));
+                  saveDailyWithdrawData(
+                    authUser,
+                    data.dailyWithdraw.usedAmount
+                  );
+                }
+              }
+            }
+          };
+          socketInstance.on('user:update', handleUserUpdate);
+        }
+      } catch (err) {
+        console.warn('Erro ao configurar socket:', err);
+      }
+    };
+
+    setupSocket();
+
+    return () => {
+      if (socketInstance) {
+        socketInstance.off('user:update');
+      }
+    };
   }, [authUser]);
 
   // Função para permitir alfanuméricos (para CBU/Alias)

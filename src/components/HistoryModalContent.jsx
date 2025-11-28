@@ -9,13 +9,6 @@ const STATUS_MAP = {
   Solicitadas: ['solicitada', 'solicitado', 'solicitud'],
 };
 
-// Mapeamento de tipos para aceitar variações
-const TYPE_MAP = {
-  Recargas: ['recarga', 'recargas', 'deposito', 'depósito'],
-  Retiros: ['retiro', 'retiros', 'saque', 'saques', 'withdrawal'],
-  Bonificaciones: ['bonificacion', 'bonificaciones', 'bonus', 'bono'],
-};
-
 const normalizeText = (value) =>
   typeof value === 'string' ? value.trim().toLowerCase() : '';
 
@@ -24,13 +17,6 @@ const matchesStatusFilter = (status, selectedFilter) => {
   const normalizedStatus = normalizeText(status);
   const allowedValues = STATUS_MAP[selectedFilter] || [];
   return allowedValues.some((token) => normalizedStatus === token);
-};
-
-const matchesTypeFilter = (type, selectedFilter) => {
-  if (selectedFilter === 'Todas') return true;
-  const normalizedType = normalizeText(type);
-  const allowedValues = TYPE_MAP[selectedFilter] || [];
-  return allowedValues.some((token) => normalizedType === token);
 };
 
 const getSortableTimestamp = (entry) => {

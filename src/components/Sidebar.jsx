@@ -8,8 +8,6 @@ export default function Sidebar({
   user = '',
   onToast = () => {},
   isAdmin = false,
-  onToggleChat = () => {},
-  chatEnabled = true,
   onToggleSidebar = () => {},
 }) {
   const navigate = useNavigate();
