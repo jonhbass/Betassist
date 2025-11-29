@@ -142,6 +142,16 @@
   font-size: 0.9rem;
 }
 
+/* Célula de ações - botões lado a lado */
+.ba-requests-table td:last-child {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.ba-action-btn + .ba-action-btn {
+  margin-left: 0.5rem;
+}
+
 .ba-status-indicator {
   width: 12px;
   height: 12px;
