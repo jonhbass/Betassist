@@ -71,12 +71,12 @@ export default function CbuManagement() {
     const cleanCbu = cbu.trim().replace(/\s/g, '');
 
     if (!cleanCbu) {
-      showToast('❌ O CBU não pode estar vazio');
+      showToast('❌ El CBU/Alias no puede estar vacío');
       return;
     }
 
-    if (!/^\d+$/.test(cleanCbu)) {
-      showToast('❌ O CBU deve conter apenas números');
+    if (!/^[a-zA-Z0-9.]+$/.test(cleanCbu)) {
+      showToast('❌ El CBU/Alias solo puede contener letras, números y puntos');
       return;
     }
 
@@ -95,7 +95,7 @@ export default function CbuManagement() {
     // Salvar no localStorage
     localStorage.setItem('DEPOSIT_CBU', cleanCbu);
     setCbu(cleanCbu);
-    showToast('✅ CBU atualizado com sucesso!');
+    showToast('✅ CBU/Alias actualizado con éxito!');
   };
 
   const handleCopy = () => {
@@ -136,20 +136,20 @@ export default function CbuManagement() {
           <div className="ba-content">
             <div className="ba-admin-container">
               <h1 className="ba-admin-title">Gestionar CBU para Depósitos</h1>
-              {/* Formulário de edição */}
+              {/* Formulario de edición */}
               <div className="ba-admin-section">
-                <h2 className="ba-section-title">Configurar CBU</h2>
+                <h2 className="ba-section-title">Configurar CBU/Alias</h2>
 
                 <form onSubmit={handleSaveCbu} className="ba-admin-form">
                   <div className="ba-form-group">
-                    <label htmlFor="cbu-input">Número CBU *</label>
+                    <label htmlFor="cbu-input">CBU o Alias *</label>
                     <div style={{ display: 'flex', gap: '10px' }}>
                       <input
                         id="cbu-input"
                         type="text"
                         value={cbu}
                         onChange={(e) => setCbu(e.target.value)}
-                        placeholder="Ingrese el número de cuenta (solo números)"
+                        placeholder="Ingrese CBU o Alias"
                         style={{
                           flex: 1,
                           fontFamily: 'monospace',
@@ -161,7 +161,7 @@ export default function CbuManagement() {
                         type="button"
                         className="ba-btn secondary"
                         onClick={handleCopy}
-                        title="Copiar CBU"
+                        title="Copiar CBU/Alias"
                       >
                         📋
                       </button>
@@ -173,7 +173,7 @@ export default function CbuManagement() {
                         color: '#999',
                       }}
                     >
-                      {cbu.length} caracteres digitados
+                      {cbu.length} caracteres ingresados
                     </small>
                   </div>
 
@@ -185,7 +185,7 @@ export default function CbuManagement() {
                     }}
                   >
                     <button type="submit" className="ba-btn primary">
-                      💾 Salvar CBU
+                      💾 Guardar CBU/Alias
                     </button>
                   </div>
                 </form>
@@ -193,9 +193,9 @@ export default function CbuManagement() {
 
               {/* Preview */}
               <div className="ba-admin-section">
-                <h2 className="ba-section-title">Preview</h2>
+                <h2 className="ba-section-title">Vista previa</h2>
                 <p style={{ marginBottom: '15px', color: '#ccc' }}>
-                  Assim será exibido na página de carga:
+                  Así se mostrará en la página de carga:
                 </p>
 
                 <div className="ba-cbu-preview-box">
