@@ -864,6 +864,15 @@ const io = new Server(server, {
 
 app.set('io', io);
 
+// Rastrear usuários online no chat
+const onlineUsers = new Map(); // socketId -> username
+
+function broadcastOnlineCount() {
+  const count = onlineUsers.size;
+  console.log(`📊 Usuários online: ${count}`);
+  io.emit('chat:online-count', { count });
+}
+
 io.on('connection', (socket) => {
   console.log('socket connected', socket.id);
 
@@ -875,6 +884,27 @@ io.on('connection', (socket) => {
   // Send current chat enabled state
   const config = readConfig();
   socket.emit('chat:state-changed', { enabled: config.chatEnabled !== false });
+
+  // Enviar contagem atual de usuários online
+  socket.emit('chat:online-count', { count: onlineUsers.size });
+
+  // Handler para registrar usuário online
+  socket.on('chat:join', (data) => {
+    const username = data?.username || 'Anónimo';
+    onlineUsers.set(socket.id, username);
+    console.log(`👤 ${username} entrou no chat (${socket.id})`);
+    broadcastOnlineCount();
+  });
+
+  // Handler para quando o socket desconecta
+  socket.on('disconnect', (reason) => {
+    const username = onlineUsers.get(socket.id);
+    if (username) {
+      console.log(`👋 ${username} saiu do chat (${reason})`);
+      onlineUsers.delete(socket.id);
+      broadcastOnlineCount();
+    }
+  });
 
   socket.on('chat:message', (msg) => {
     try {

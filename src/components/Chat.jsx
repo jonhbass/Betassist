@@ -65,6 +65,7 @@ export default function Chat({ enabled = true }) {
   const [socketState, setSocketState] = useState('disconnected'); // disconnected | connecting | connected
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [chatBlocked, setChatBlocked] = useState(false); // Bloqueio de chat
+  const [onlineCount, setOnlineCount] = useState(0); // Contador de usuários online
   const listRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimeout = useRef(null);
@@ -204,6 +205,12 @@ export default function Chat({ enabled = true }) {
       const onConnect = () => {
         console.log('✅ Chat socket CONECTADO:', socket.id);
         if (mounted) setSocketState('connected');
+        // Registrar usuário no chat
+        socket.emit('chat:join', { username: getCurrentUser() });
+      };
+
+      const onOnlineCount = (data) => {
+        if (mounted) setOnlineCount(data.count || 0);
       };
 
       const onHistory = (list) => {
@@ -252,6 +259,7 @@ export default function Chat({ enabled = true }) {
       socket.on('chat:cleared', onCleared);
       socket.on('connect_error', onConnectError);
       socket.on('disconnect', onDisconnect);
+      socket.on('chat:online-count', onOnlineCount);
 
       // Cleanup listeners on unmount
       return () => {
@@ -263,6 +271,7 @@ export default function Chat({ enabled = true }) {
         socket.off('connect_error', onConnectError);
         socket.off('disconnect', onDisconnect);
         socket.off('user:chat-blocked', onChatBlocked);
+        socket.off('chat:online-count', onOnlineCount);
       };
     });
 
@@ -394,7 +403,15 @@ export default function Chat({ enabled = true }) {
   return (
     <div className="ba-chat-wrap">
       <div className="ba-chat-header">
-        <div className="ba-chat-title">Chat</div>
+        <div className="ba-chat-title">
+          Chat
+          {onlineCount > 0 && (
+            <span className="ba-online-count" title="Usuarios en línea">
+              <span className="ba-online-dot"></span>
+              {onlineCount} Conectados
+            </span>
+          )}
+        </div>
         <div className="ba-chat-controls">
           <div className={`ba-socket-badge ${socketState}`}>{socketState}</div>
           {!enabled && (
