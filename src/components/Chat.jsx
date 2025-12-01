@@ -373,8 +373,8 @@ export default function Chat({ enabled = true }) {
 
   function clearChat() {
     const confirmMsg = isAdmin
-      ? 'Limpar histórico do chat para TODOS os usuários?'
-      : 'Limpar histórico do chat local?';
+      ? '¿Limpiar historial del chat para TODOS los usuarios?'
+      : '¿Limpiar historial del chat local?';
 
     if (!confirm(confirmMsg)) return;
 
@@ -388,13 +388,13 @@ export default function Chat({ enabled = true }) {
 
     if (USE_SOCKET && socketRef.current) {
       if (isAdmin) {
-        // Admin limpa para todos
+        // Admin limpia para todos
         socketRef.current.emit('chat:clear-global');
       } else {
-        // Usuário normal apenas notifica que limpou localmente
+        // Usuario normal solo notifica que limpió localmente
         socketRef.current.emit('chat:main-message', {
           id: Date.now(),
-          text: `${getCurrentUser()} limpou o chat local`,
+          text: `${getCurrentUser()} limpió el chat local`,
           from: 'system',
           time: new Date().toISOString(),
         });
@@ -421,7 +421,7 @@ export default function Chat({ enabled = true }) {
           )}
           {isAdmin && (
             <button className="ba-btn small" onClick={clearChat} type="button">
-              Limpar
+              Limpiar
             </button>
           )}
         </div>
@@ -483,7 +483,7 @@ export default function Chat({ enabled = true }) {
                   }}
                   title={
                     isAdmin && m.from !== 'system' && !isMe
-                      ? `Abrir chat de suporte com ${m.from}`
+                      ? `Abrir chat de soporte con ${m.from}`
                       : ''
                   }
                 >

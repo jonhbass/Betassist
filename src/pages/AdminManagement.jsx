@@ -231,7 +231,7 @@ export default function AdminManagement() {
             <div
               className="ba-sidebar-overlay"
               onClick={toggleSidebar}
-              aria-label="Fechar menu lateral"
+              aria-label="Cerrar menú lateral"
             />
           )}
 

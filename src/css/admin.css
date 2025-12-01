@@ -628,14 +628,103 @@
   font-weight: 600;
 }
 
-/* File Input Styles */
+/* File Input Styles - Custom Upload */
+.ba-file-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.ba-file-upload-wrapper:hover {
+  border-color: rgba(11, 92, 192, 0.5);
+  background: rgba(11, 92, 192, 0.05);
+}
+
+.ba-file-input-hidden {
+  display: none;
+}
+
+.ba-file-upload-btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #0b5cc0 0%, #084a9a 100%);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.ba-file-upload-btn:hover {
+  background: linear-gradient(135deg, #1a6fd4 0%, #0b5cc0 100%);
+  transform: translateY(-1px);
+}
+
+.ba-file-upload-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Legacy file input styles (keep for compatibility) */
 .ba-file-input {
   padding: 0.75rem !important;
   background: rgba(0, 0, 0, 0.3) !important;
   border: 2px dashed rgba(255, 255, 255, 0.2) !important;
   cursor: pointer !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: #fff;
+  border-radius: 8px;
+  text-align: center;
 }
 
+/* Estilo para o input file no mobile */
+.ba-file-input::file-selector-button {
+  padding: 8px 16px;
+  margin-right: 12px;
+  background: linear-gradient(135deg, #0b5cc0 0%, #084a9a 100%);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ba-file-input::file-selector-button:hover {
+  background: linear-gradient(135deg, #1a6fd4 0%, #0b5cc0 100%);
+}
+
+/* Responsividade para mobile */
+@media (max-width: 480px) {
+  .ba-file-input {
+    font-size: 12px;
+    padding: 0.5rem !important;
+  }
+
+  .ba-file-input::file-selector-button {
+    padding: 6px 12px;
+    margin-right: 8px;
+    font-size: 12px;
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
 .ba-file-input:hover {
   border-color: rgba(11, 92, 192, 0.5) !important;
   background: rgba(11, 92, 192, 0.05) !important;

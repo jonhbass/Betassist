@@ -284,7 +284,7 @@ export default function BannerManagement() {
             <div
               className="ba-sidebar-overlay"
               onClick={toggleSidebar}
-              aria-label="Fechar menu lateral"
+              aria-label="Cerrar menú lateral"
             />
           )}
 
@@ -338,7 +338,7 @@ export default function BannerManagement() {
                         type="text"
                         value={bannerUrl}
                         onChange={(e) => setBannerUrl(e.target.value)}
-                        placeholder="https://exemplo.com/banner.jpg"
+                        placeholder="https://ejemplo.com/banner.jpg"
                         autoComplete="off"
                       />
                       <small
@@ -347,19 +347,32 @@ export default function BannerManagement() {
                           marginTop: '0.5rem',
                         }}
                       >
-                        Recomendado: 1920x600px ou proporção 16:5
+                        Recomendado: 1920x600px o proporción 16:5
                       </small>
                     </div>
                   ) : (
                     <div className="ba-form-group">
-                      <label htmlFor="banner-file">Selecionar Imagem</label>
-                      <input
-                        id="banner-file"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileSelect}
-                        className="ba-file-input"
-                      />
+                      <label>Seleccionar Imagen</label>
+                      <div className="ba-file-upload-wrapper">
+                        <label
+                          htmlFor="banner-file"
+                          className="ba-file-upload-btn"
+                        >
+                          📁 Elegir Archivo
+                        </label>
+                        <span className="ba-file-upload-text">
+                          {selectedFile
+                            ? selectedFile.name
+                            : 'Ningún archivo seleccionado'}
+                        </span>
+                        <input
+                          id="banner-file"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileSelect}
+                          className="ba-file-input-hidden"
+                        />
+                      </div>
                       {selectedFile && (
                         <div className="ba-file-info">
                           <span>📎 {selectedFile.name}</span>
@@ -372,6 +385,8 @@ export default function BannerManagement() {
                         style={{
                           color: 'rgba(255,255,255,0.6)',
                           marginTop: '0.5rem',
+                          textAlign: 'center',
+                          display: 'block',
                         }}
                       >
                         Formatos: JPG, PNG, GIF, WEBP | Máximo: 5MB
@@ -385,7 +400,7 @@ export default function BannerManagement() {
                       className="ba-btn primary"
                       disabled={isUploading}
                     >
-                      {isUploading ? '⏳ Enviando...' : '➕ Adicionar Banner'}
+                      {isUploading ? '⏳ Enviando...' : '➕ Agregar Banner'}
                     </button>
                     <button
                       type="button"
@@ -393,7 +408,7 @@ export default function BannerManagement() {
                       onClick={handlePreview}
                       disabled={isUploading}
                     >
-                      👁️ Visualizar
+                      👁️ Vista Previa
                     </button>
                   </div>
                 </form>
@@ -402,7 +417,7 @@ export default function BannerManagement() {
                 {previewUrl && (
                   <div className="ba-banner-preview">
                     <h3 style={{ color: '#b3e5fc', marginBottom: '1rem' }}>
-                      Prévia do Banner:
+                      Vista Previa del Banner:
                     </h3>
                     <div className="ba-preview-container">
                       <img

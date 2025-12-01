@@ -324,7 +324,7 @@ export default function Dashboard() {
             <div
               className="ba-sidebar-overlay"
               onClick={toggleSidebar}
-              aria-label="Fechar menu lateral"
+              aria-label="Cerrar menú lateral"
             />
           )}
 

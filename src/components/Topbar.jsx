@@ -191,8 +191,8 @@ export default function Topbar({
           <button
             className="ba-sidebar-toggle-btn"
             onClick={onToggleSidebar}
-            aria-label="Abrir menu lateral"
-            title="Abrir menu"
+            aria-label="Abrir menú lateral"
+            title="Abrir menú"
           >
             ☰
           </button>
