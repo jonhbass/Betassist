@@ -25,7 +25,8 @@ export default function ThreadList({
     >
       {threads.length === 0 && <div className="ba-muted">Ningún mensaje</div>}
       {threads.map((t) => {
-        const isExternalVisitor = t.id.startsWith('usuario');
+        const isExternalVisitor =
+          t.id.startsWith('usuario') || t.id.startsWith('visitante_');
         const userColor = !isExternalVisitor ? getUserColor(t.id) : null;
 
         const avatarBg = isExternalVisitor

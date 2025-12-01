@@ -1,14 +1,30 @@
 /**
  * Gera e persiste um ID único para visitantes externos
- * Formato: usuario1, usuario2, usuario3, etc.
+ * Formato: visitante_<uuid> para garantir unicidade entre dispositivos
  */
 
 const VISITOR_ID_KEY = 'VISITOR_ID';
-const VISITOR_COUNTER_KEY = 'VISITOR_COUNTER';
+
+/**
+ * Gera um UUID v4 simples
+ * @returns {string}
+ */
+function generateUUID() {
+  // Usa crypto.randomUUID se disponível (navegadores modernos)
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback para geração manual
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 /**
  * Obtém ou cria um ID de visitante único
- * @returns {string} ID do visitante (ex: 'usuario1')
+ * @returns {string} ID do visitante (ex: 'visitante_a1b2c3d4')
  */
 export function getOrCreateVisitorId() {
   // Verifica se já existe um ID armazenado
@@ -17,31 +33,16 @@ export function getOrCreateVisitorId() {
     return existingId;
   }
 
-  // Se não existe, gera um novo ID
-  const counter = getNextCounter();
-  const newId = `usuario${counter}`;
+  // Se não existe, gera um novo ID único
+  const uuid = generateUUID();
+  // Usa os primeiros 8 caracteres do UUID para um ID mais curto mas ainda único
+  const shortId = uuid.replace(/-/g, '').substring(0, 8);
+  const newId = `visitante_${shortId}`;
 
   // Armazena o ID para uso futuro
   localStorage.setItem(VISITOR_ID_KEY, newId);
 
   return newId;
-}
-
-/**
- * Obtém o próximo número do contador global de visitantes
- * @returns {number}
- */
-function getNextCounter() {
-  try {
-    const stored = localStorage.getItem(VISITOR_COUNTER_KEY);
-    const current = stored ? parseInt(stored, 10) : 0;
-    const next = current + 1;
-    localStorage.setItem(VISITOR_COUNTER_KEY, next.toString());
-    return next;
-  } catch {
-    // Fallback para timestamp se houver erro
-    return Date.now() % 10000;
-  }
 }
 
 /**
@@ -58,6 +59,9 @@ export function clearVisitorId() {
  */
 export function isVisitor(username) {
   return (
-    !username || username === 'Visitante' || username.startsWith('usuario')
+    !username ||
+    username === 'Visitante' ||
+    username.startsWith('usuario') ||
+    username.startsWith('visitante_')
   );
 }
