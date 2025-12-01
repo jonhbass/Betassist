@@ -728,9 +728,16 @@
 
 .ba-form-inline {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
   flex-wrap: wrap;
+}
+
+.ba-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .ba-form-label {
@@ -1372,7 +1379,12 @@
 
   .ba-form-inline {
     flex-direction: column;
-    gap: 0.75rem;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .ba-form-field {
+    width: 100%;
   }
 
   .ba-form-input,

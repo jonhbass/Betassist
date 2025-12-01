@@ -487,19 +487,25 @@ export default function AdminDashboard() {
                   <h3>Crear nuevo usuario</h3>
                   <form onSubmit={handleCreate} className="ba-user-create-form">
                     <div className="ba-form-inline">
-                      <label className="ba-form-label">Usuario</label>
-                      <input
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="ba-form-input"
-                      />
-                      <label className="ba-form-label">Contraseña</label>
-                      <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="ba-form-input"
-                      />
+                      <div className="ba-form-field">
+                        <label className="ba-form-label">Usuario</label>
+                        <input
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          className="ba-form-input"
+                          placeholder="Nombre de usuario"
+                        />
+                      </div>
+                      <div className="ba-form-field">
+                        <label className="ba-form-label">Contraseña</label>
+                        <input
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="ba-form-input"
+                          placeholder="Mínimo 6 caracteres"
+                        />
+                      </div>
                       <button type="submit" className="ba-form-submit">
                         Crear
                       </button>

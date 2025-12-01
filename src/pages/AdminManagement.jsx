@@ -256,26 +256,32 @@ export default function AdminManagement() {
                   onSubmit={handleCreateAdmin}
                 >
                   <div className="ba-form-inline">
-                    <label className="ba-form-label">Usuário</label>
-                    <input
-                      id="admin-username"
-                      type="text"
-                      value={newAdminUsername}
-                      onChange={(e) => setNewAdminUsername(e.target.value)}
-                      autoComplete="off"
-                      className="ba-form-input"
-                    />
-                    <label className="ba-form-label">Senha</label>
-                    <input
-                      id="admin-password"
-                      type="password"
-                      value={newAdminPassword}
-                      onChange={(e) => setNewAdminPassword(e.target.value)}
-                      autoComplete="new-password"
-                      className="ba-form-input"
-                    />
+                    <div className="ba-form-field">
+                      <label className="ba-form-label">Usuario</label>
+                      <input
+                        id="admin-username"
+                        type="text"
+                        value={newAdminUsername}
+                        onChange={(e) => setNewAdminUsername(e.target.value)}
+                        autoComplete="off"
+                        className="ba-form-input"
+                        placeholder="Nombre de usuario"
+                      />
+                    </div>
+                    <div className="ba-form-field">
+                      <label className="ba-form-label">Contraseña</label>
+                      <input
+                        id="admin-password"
+                        type="password"
+                        value={newAdminPassword}
+                        onChange={(e) => setNewAdminPassword(e.target.value)}
+                        autoComplete="new-password"
+                        className="ba-form-input"
+                        placeholder="Mínimo 6 caracteres"
+                      />
+                    </div>
                     <button type="submit" className="ba-form-submit">
-                      Criar
+                      Crear
                     </button>
                   </div>
                 </form>
