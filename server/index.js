@@ -891,8 +891,13 @@ io.on('connection', (socket) => {
   // Handler para registrar usuário online
   socket.on('chat:join', (data) => {
     const username = data?.username || 'Anónimo';
+    const wasAlreadyJoined = onlineUsers.has(socket.id);
     onlineUsers.set(socket.id, username);
-    console.log(`👤 ${username} entrou no chat (${socket.id})`);
+
+    if (!wasAlreadyJoined) {
+      console.log(`👤 ${username} entrou no chat (${socket.id})`);
+    }
+    // Sempre fazer broadcast para garantir que todos recebam a contagem atualizada
     broadcastOnlineCount();
   });
 

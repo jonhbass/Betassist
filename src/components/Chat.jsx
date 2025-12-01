@@ -188,6 +188,8 @@ export default function Chat({ enabled = true }) {
       if (socket.connected) {
         console.log('✅ Chat socket já estava CONECTADO:', socket.id);
         setSocketState('connected');
+        // Socket já conectado - emitir join imediatamente
+        socket.emit('chat:join', { username: getCurrentUser() });
       } else {
         // Forçar reconexão se não estiver conectado
         console.log('🔄 Socket não conectado, tentando conectar...');
