@@ -163,6 +163,8 @@
 /* Usuário centralizado quando sozinho */
 .ba-menu-user-centered {
   justify-content: center;
+  width: 100%;
+  text-align: center;
 }
 
 .ba-menu-icon {

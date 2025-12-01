@@ -106,18 +106,21 @@
 
 .ba-form-group {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .ba-form-group label {
-  width: 120px;
+  width: 100%;
   font-weight: bold;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .ba-form-input {
-  flex: 1;
+  width: 100%;
+  max-width: 400px;
   background-color: #050c1f;
   border: 1px solid #1e3a8a;
   border-radius: 4px;
@@ -189,16 +192,5 @@
     justify-content: center;
     font-size: 1.3rem;
     text-align: center;
-  }
-
-  .ba-form-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .ba-form-group label {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 0.5rem;
   }
 }
