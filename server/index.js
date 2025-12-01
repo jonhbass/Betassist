@@ -1033,6 +1033,37 @@ app.post('/messages/mark-handled', (req, res) => {
   }
 });
 
+// Delete all messages from a specific thread (admin support)
+app.delete('/messages/thread/:threadId', (req, res) => {
+  const { threadId } = req.params;
+  if (!threadId) return res.status(400).json({ error: 'missing threadId' });
+  try {
+    const list = readChatSupport();
+    const target = String(threadId).toLowerCase();
+    // Filtrar todas as mensagens que NÃO pertencem ao thread
+    const next = list.filter((m) => {
+      const msgThread = String(m.thread || m.from || '').toLowerCase();
+      return msgThread !== target;
+    });
+    writeChatSupport(next);
+    try {
+      io.emit('chat:history', next);
+      io.emit('chat:thread-deleted', { threadId });
+    } catch {
+      void 0;
+    }
+    console.log(
+      `🗑️ Thread deletado: ${threadId} (${
+        list.length - next.length
+      } mensagens removidas)`
+    );
+    return res.json({ ok: true, deleted: list.length - next.length });
+  } catch (err) {
+    console.error('failed to delete thread', err);
+    return res.status(500).json({ error: 'failed' });
+  }
+});
+
 // Servir arquivos estáticos do build em produção
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(process.cwd(), 'dist');

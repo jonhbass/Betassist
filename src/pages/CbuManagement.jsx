@@ -143,36 +143,26 @@ export default function CbuManagement() {
                 <form onSubmit={handleSaveCbu} className="ba-admin-form">
                   <div className="ba-form-group">
                     <label htmlFor="cbu-input">CBU o Alias *</label>
-                    <div style={{ display: 'flex', gap: '10px' }}>
+                    <div className="ba-cbu-input-group">
                       <input
                         id="cbu-input"
                         type="text"
                         value={cbu}
                         onChange={(e) => setCbu(e.target.value)}
                         placeholder="Ingrese CBU o Alias"
-                        style={{
-                          flex: 1,
-                          fontFamily: 'monospace',
-                          fontSize: '16px',
-                        }}
+                        className="ba-cbu-input"
                         autoComplete="off"
                       />
                       <button
                         type="button"
-                        className="ba-btn secondary"
+                        className="ba-btn secondary ba-cbu-copy-btn"
                         onClick={handleCopy}
                         title="Copiar CBU/Alias"
                       >
                         📋
                       </button>
                     </div>
-                    <small
-                      style={{
-                        display: 'block',
-                        marginTop: '8px',
-                        color: '#999',
-                      }}
-                    >
+                    <small className="ba-cbu-counter">
                       {cbu.length} caracteres ingresados
                     </small>
                   </div>

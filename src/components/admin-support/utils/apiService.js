@@ -51,3 +51,18 @@ export async function markThreadHandled(threadId) {
     void e;
   }
 }
+
+export async function deleteThread(threadId) {
+  try {
+    const res = await fetch(
+      `${API_URL}/messages/thread/${encodeURIComponent(threadId)}`,
+      {
+        method: 'DELETE',
+      }
+    );
+    return res.ok;
+  } catch (e) {
+    console.error('Failed to delete thread:', e);
+    return false;
+  }
+}

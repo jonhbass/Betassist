@@ -250,6 +250,83 @@
   background: rgba(11, 92, 192, 0.05);
 }
 
+/* ============================================
+   CBU/ALIAS INPUT GROUP - Responsivo
+   ============================================ */
+.ba-cbu-input-group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ba-cbu-input-group:focus-within {
+  border-color: rgba(11, 92, 192, 0.8);
+  background: rgba(11, 92, 192, 0.05);
+}
+
+.ba-cbu-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  min-width: 0; /* Permite shrink no flex */
+}
+
+.ba-cbu-input:focus {
+  outline: none;
+}
+
+.ba-cbu-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ba-cbu-copy-btn {
+  flex-shrink: 0;
+  padding: 0.75rem 1rem !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  font-size: 1.1rem;
+}
+
+.ba-cbu-copy-btn:hover {
+  background: rgba(11, 92, 192, 0.3) !important;
+}
+
+.ba-cbu-counter {
+  display: block;
+  margin-top: 8px;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+/* Mobile responsivo para CBU input */
+@media (max-width: 480px) {
+  .ba-cbu-input-group {
+    flex-direction: column;
+  }
+
+  .ba-cbu-input {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+
+  .ba-cbu-copy-btn {
+    border-left: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0 0 8px 8px !important;
+    padding: 0.75rem !important;
+  }
+}
+
 .ba-input {
   width: 100%;
   padding: 0.75rem;

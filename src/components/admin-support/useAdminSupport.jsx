@@ -3,6 +3,7 @@ import {
   postMessage,
   markThreadHandled,
   fetchMessages,
+  deleteThread as deleteThreadApi,
 } from './utils/apiService';
 import { computeThreads, markMessagesAsHandled } from './utils/threadHelpers';
 import { useSocketMessages } from './hooks/useSocketMessages';
@@ -82,7 +83,7 @@ export default function useAdminSupport() {
     await markThreadHandled(activeThread);
   }
 
-  function deleteThread(threadId) {
+  async function deleteThread(threadId) {
     // Remove todas as mensagens do thread localmente
     setMessages((m) =>
       m.filter((msg) => {
@@ -97,8 +98,8 @@ export default function useAdminSupport() {
       setActiveThread(null);
     }
 
-    // TODO: Implementar exclusão no servidor se necessário
-    // await deleteThreadOnServer(threadId);
+    // Deletar no servidor
+    await deleteThreadApi(threadId);
   }
 
   useEffect(() => {
