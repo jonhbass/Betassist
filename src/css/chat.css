@@ -69,6 +69,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   background: transparent;
   color: #fff;
+  font-size: 16px; /* Prevents iOS Safari auto-zoom on focus */
 }
 .ba-chat-form button {
   padding: 8px 12px;
@@ -344,7 +345,7 @@
 
   .ba-chat-form input {
     padding: 10px;
-    font-size: 14px;
+    font-size: 16px; /* Prevents iOS Safari auto-zoom */
   }
 
   .ba-chat-form button {
@@ -401,7 +402,7 @@
 
   .ba-chat-form input {
     padding: 8px;
-    font-size: 13px;
+    font-size: 16px; /* Prevents iOS Safari auto-zoom */
   }
 
   .ba-chat-form button {
