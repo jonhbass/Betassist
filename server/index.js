@@ -279,9 +279,8 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) return res.status(400).json({ error: 'missing' });
   const users = readUsers();
-  const u = users.find(
-    (x) => x.username.toLowerCase() === username.toLowerCase()
-  );
+  // Case-sensitive: username deve corresponder exatamente
+  const u = users.find((x) => x.username === username);
   if (!u) return res.status(401).json({ error: 'invalid' });
 
   // Verificar se usuário está banido

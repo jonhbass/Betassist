@@ -38,9 +38,7 @@ export default function Login() {
     e.preventDefault();
     const users = getUsers();
     const ok = users.some(
-      (u) =>
-        u.username.toLowerCase() === username.toLowerCase() &&
-        u.password === password
+      (u) => u.username === username && u.password === password
     );
     if (USE_API) {
       // call server login
