@@ -447,7 +447,16 @@ export default function Chat({ enabled = true }) {
 
       <div className="ba-chat-list" ref={listRef}>
         {messages.map((m) => {
-          const isMe = m.from === getCurrentUser();
+          const currentUser = getCurrentUser();
+          const currentAdminName = sessionStorage.getItem('adminUsername');
+
+          // Verificar se a mensagem é do usuário atual
+          // Para admins: verificar se é do mesmo admin (comparar adminName)
+          // Para usuários normais: comparar from com username
+          const isMe = m.isAdmin
+            ? m.adminName === currentAdminName && isAdmin
+            : m.from === currentUser;
+
           const userColor =
             !isMe && m.from !== 'system' ? getUserColor(m.from) : undefined;
 
@@ -518,6 +527,8 @@ export default function Chat({ enabled = true }) {
             placeholder={enabled ? `Escriba un mensaje...` : 'Chat desactivado'}
             disabled={!enabled}
           />
+        </div>
+        <div className="ba-emoji-wrapper">
           <button
             type="button"
             ref={emojiToggleRef}

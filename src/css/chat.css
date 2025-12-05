@@ -82,26 +82,27 @@
 /* Emoji picker styles - Desktop only */
 .ba-chat-input-wrapper {
   flex: 1;
-  position: relative;
   display: flex;
   align-items: center;
 }
 
 .ba-chat-input-wrapper input {
   width: 100%;
-  padding-right: 40px;
+}
+
+/* Wrapper for emoji button - positioned outside input */
+.ba-emoji-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .ba-emoji-toggle {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
   background: #2a3441 !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
-  padding: 6px 8px;
+  padding: 8px 10px;
   border-radius: 8px;
   transition: background 0.2s, border-color 0.2s;
   line-height: 1;
@@ -354,13 +355,10 @@
   }
 
   /* Esconder emoji picker no mobile */
+  .ba-emoji-wrapper,
   .ba-emoji-toggle,
   .ba-emoji-picker {
     display: none !important;
-  }
-
-  .ba-chat-input-wrapper input {
-    padding-right: 10px;
   }
 }
 
