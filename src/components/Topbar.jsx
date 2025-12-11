@@ -4,6 +4,7 @@ import Icon from '../assets/icon.svg';
 import { getAuthUser } from '../utils/auth';
 import { getServerUrl } from '../utils/serverUrl';
 import { ensureSocket } from '../utils/socket';
+import { isSoundEnabled, toggleSound } from '../utils/notificationSound';
 import '../css/topbar.css';
 
 export default function Topbar({
@@ -22,11 +23,17 @@ export default function Topbar({
   const [_balance, setBalance] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
   const [iconGlowing, setIconGlowing] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(isSoundEnabled());
   const menuRef = useRef(null);
   const menuButtonRef = useRef(null);
 
   const handleIconClick = () => {
     setIconGlowing(!iconGlowing);
+  };
+
+  const handleToggleSound = () => {
+    const newState = toggleSound();
+    setSoundEnabled(newState);
   };
 
   useEffect(() => {
@@ -251,6 +258,15 @@ export default function Topbar({
       {/* Modo admin - Info e logout */}
       {adminMode && (
         <div className="ba-top-admin-actions">
+          <button
+            className={`ba-admin-sound-btn ${
+              soundEnabled ? 'enabled' : 'disabled'
+            }`}
+            onClick={handleToggleSound}
+            title={soundEnabled ? 'Desactivar sonido' : 'Activar sonido'}
+          >
+            {soundEnabled ? '🔔' : '🔕'}
+          </button>
           <div className="ba-admin-user-info">
             <span className="ba-admin-icon">👨‍💼</span>
             <span className="ba-admin-username">{adminUsername}</span>

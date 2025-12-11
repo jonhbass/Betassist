@@ -5,6 +5,7 @@ import {
   off as socketOff,
 } from '../../../utils/socket';
 import { getServerUrl } from '../../../utils/serverUrl';
+import { playNotificationSound } from '../../../utils/notificationSound';
 
 const API_URL = getServerUrl();
 const USE_SOCKET = true;
@@ -35,6 +36,10 @@ export function useSocketMessages(setMessages, activeThreadRef) {
         onMessage = (msg) => {
           if (!mounted) return;
           try {
+            // Tocar som apenas para mensagens de usuários (não de admin)
+            if (msg.from !== 'admin') {
+              playNotificationSound('message');
+            }
             setMessages((prev) => {
               const incoming = { ...msg };
               try {
