@@ -232,6 +232,32 @@ export default function AdminDashboard() {
     // e outros componentes (como Chat) podem estar usando
   }, []);
 
+  // Listener global para sons de mensagens de suporte
+  useEffect(() => {
+    let socketInstance = null;
+
+    const handleNewMessage = (msg) => {
+      // Tocar som apenas para mensagens de usuários (não de admin)
+      // e apenas se NÃO estiver na seção de suporte (para evitar som duplicado)
+      if (msg.from !== 'admin' && activeSection !== 'support') {
+        playNotificationSound('message');
+      }
+    };
+
+    ensureSocket().then((s) => {
+      if (s) {
+        socketInstance = s;
+        s.on('chat:message', handleNewMessage);
+      }
+    });
+
+    return () => {
+      if (socketInstance) {
+        socketInstance.off('chat:message', handleNewMessage);
+      }
+    };
+  }, [activeSection]);
+
   async function saveUsers(list) {
     if (USE_API) {
       try {
