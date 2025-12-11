@@ -16,6 +16,7 @@ import NotificationsModal from '../components/NotificationsModal';
 import Tutorial from '../components/Tutorial';
 import { getAuthUser, removeAuthUser } from '../utils/auth';
 import { getServerUrl } from '../utils/serverUrl';
+import { useAdminNotifications } from '../utils/useAdminNotifications';
 
 export default function Dashboard() {
   const [user, setUser] = useState('');
@@ -31,11 +32,17 @@ export default function Dashboard() {
     const stored = localStorage.getItem('chatEnabled');
     return stored === null ? true : stored === 'true';
   });
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => {
+    // Inicializar com o valor do sessionStorage
+    return sessionStorage.getItem('isAdmin') === 'true';
+  });
   const [socket, setSocket] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showHamburgerMenu, setShowHamburgerMenu] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+
+  // Ativar notificações sonoras apenas se for admin
+  useAdminNotifications(isAdmin);
 
   const handleNotifyClick = React.useCallback(() => {
     setShowNotifications((prev) => {

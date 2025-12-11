@@ -12,6 +12,7 @@ import WithdrawChips from '../pages/WithdrawChips';
 import RequestsPanel from '../pages/RequestsPanel';
 import DepositRequests from '../pages/DepositRequests';
 import WithdrawRequests from '../pages/WithdrawRequests';
+import AdminNotificationWrapper from '../components/AdminNotificationWrapper';
 import { getAuthUser } from '../utils/auth';
 
 function ProtectedRoute({ children }) {
@@ -28,7 +29,7 @@ function AdminRoute({ children }) {
   if (!isAdmin) {
     return <Navigate to="/admin-login" replace />;
   }
-  return children;
+  return <AdminNotificationWrapper>{children}</AdminNotificationWrapper>;
 }
 
 export function Routers() {
