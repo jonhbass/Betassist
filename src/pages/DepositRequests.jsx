@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/RequestsPanel.css';
 import { getServerUrl } from '../utils/serverUrl';
-import { playNotificationSound } from '../utils/notificationSound';
 
 export default function DepositRequests() {
   const navigate = useNavigate();
@@ -14,7 +13,6 @@ export default function DepositRequests() {
   const [requests, setRequests] = useState([]);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [adminMessages, setAdminMessages] = useState({});
-  const prevPendingCountRef = useRef(0);
 
   // Carregar solicitações do servidor
   useEffect(() => {
@@ -24,21 +22,7 @@ export default function DepositRequests() {
         const res = await fetch(`${serverUrl}/deposits`);
         if (res.ok) {
           const data = await res.json();
-          const newRequests = Array.isArray(data) ? data : [];
-
-          // Contar pendentes e tocar som se houver novos
-          const pendingCount = newRequests.filter(
-            (r) => r.status === 'Pendiente'
-          ).length;
-          if (
-            pendingCount > prevPendingCountRef.current &&
-            prevPendingCountRef.current !== 0
-          ) {
-            playNotificationSound('deposit');
-          }
-          prevPendingCountRef.current = pendingCount;
-
-          setRequests(newRequests);
+          setRequests(Array.isArray(data) ? data : []);
         } else {
           // Fallback para localStorage
           const stored = localStorage.getItem('DEPOSIT_REQUESTS');

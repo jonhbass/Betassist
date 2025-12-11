@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../css/Dashboard.css';
 import '../css/admin.css';
@@ -8,6 +8,7 @@ import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import { getServerUrl } from '../utils/serverUrl';
 import { ensureSocket } from '../utils/socket';
+import { playNotificationSound } from '../utils/notificationSound';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -29,6 +30,12 @@ export default function AdminDashboard() {
     const stored = localStorage.getItem('chatEnabled');
     return stored === null ? true : stored === 'true';
   });
+
+  // Refs para rastrear contagens anteriores (para sons de notificação)
+  const prevPendingDepositsRef = useRef(0);
+  const prevPendingWithdrawsRef = useRef(0);
+  const prevUnreadMessagesRef = useRef(0);
+  const isFirstLoadRef = useRef(true);
 
   const USE_API = true;
 
@@ -178,6 +185,26 @@ export default function AdminDashboard() {
           ).length;
         }
         setUnreadMessages(unhandledCount);
+
+        // Tocar sons de notificação (apenas após o primeiro carregamento)
+        if (!isFirstLoadRef.current) {
+          // Novo depósito pendente
+          if (pendingDep > prevPendingDepositsRef.current) {
+            playNotificationSound('deposit');
+          }
+          // Novo saque pendente
+          else if (pendingWith > prevPendingWithdrawsRef.current) {
+            playNotificationSound('withdraw');
+          }
+          // Nova mensagem de suporte (som apenas se não estiver na seção de suporte)
+          // O som do chat já é tratado pelo WebSocket no useSocketMessages
+        }
+
+        // Atualizar refs
+        prevPendingDepositsRef.current = pendingDep;
+        prevPendingWithdrawsRef.current = pendingWith;
+        prevUnreadMessagesRef.current = unhandledCount;
+        isFirstLoadRef.current = false;
       } catch (error) {
         console.error('Erro ao atualizar contadores:', error);
       }

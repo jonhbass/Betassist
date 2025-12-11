@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Topbar from '../components/Topbar';
 import Footer from '../components/Footer';
 import '../css/RequestsPanel.css';
 import { getServerUrl } from '../utils/serverUrl';
-import { playNotificationSound } from '../utils/notificationSound';
 
 export default function WithdrawRequests() {
   const navigate = useNavigate();
@@ -13,7 +12,6 @@ export default function WithdrawRequests() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [requests, setRequests] = useState([]);
   const [adminMessages, setAdminMessages] = useState({});
-  const prevPendingCountRef = useRef(0);
 
   // Carregar solicitações do servidor
   useEffect(() => {
@@ -23,21 +21,7 @@ export default function WithdrawRequests() {
         const res = await fetch(`${serverUrl}/withdrawals`);
         if (res.ok) {
           const data = await res.json();
-          const newRequests = Array.isArray(data) ? data : [];
-
-          // Contar pendentes e tocar som se houver novos
-          const pendingCount = newRequests.filter(
-            (r) => r.status === 'Pendiente'
-          ).length;
-          if (
-            pendingCount > prevPendingCountRef.current &&
-            prevPendingCountRef.current !== 0
-          ) {
-            playNotificationSound('withdraw');
-          }
-          prevPendingCountRef.current = pendingCount;
-
-          setRequests(newRequests);
+          setRequests(Array.isArray(data) ? data : []);
         } else {
           // Fallback para localStorage
           const stored = localStorage.getItem('WITHDRAW_REQUESTS');
