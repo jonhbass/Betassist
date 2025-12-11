@@ -24,7 +24,8 @@ export default function ThreadView({
     <div
       className="ba-admin-thread-view"
       style={{
-        flex: 1,
+        flex: '1 1 auto',
+        minHeight: 300,
         maxHeight: 600,
         display: 'flex',
         flexDirection: 'column',
@@ -67,7 +68,13 @@ export default function ThreadView({
 
           <div
             className="ba-chat-list"
-            style={{ overflow: 'auto', padding: 8, flex: 1 }}
+            style={{
+              overflow: 'auto',
+              padding: 8,
+              flex: '1 1 auto',
+              minHeight: 200,
+              WebkitOverflowScrolling: 'touch' /* Safari smooth scroll */,
+            }}
           >
             {activeObj?.messages.map((m) => {
               const isMe = m.from === 'admin';

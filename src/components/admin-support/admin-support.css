@@ -268,6 +268,7 @@
   display: flex;
   gap: 12px;
   height: 400px; /* Altura fixa para garantir layout */
+  min-height: 400px; /* Safari fix */
 }
 
 /* Responsividade para mobile */
@@ -275,17 +276,31 @@
   .ba-admin-support-grid {
     flex-direction: column;
     height: auto;
+    min-height: auto;
   }
 
   .ba-admin-threads {
     width: 100% !important;
     max-height: 200px !important;
+    min-height: 120px;
     margin-bottom: 12px;
+    flex-shrink: 0; /* Safari fix - evita que encolha */
   }
 
   .ba-admin-thread-view {
     height: 400px !important; /* Forçar altura fixa no mobile */
+    min-height: 400px !important; /* Safari fix */
     max-height: 400px !important;
+    flex: 1 1 auto; /* Safari fix */
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .ba-admin-thread-view .ba-chat-list {
+    flex: 1 1 auto !important; /* Safari fix */
+    min-height: 250px !important; /* Garante altura mínima para mensagens */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch; /* Safari smooth scroll */
   }
 
   /* Ajuste do botão de enviar no mobile */
