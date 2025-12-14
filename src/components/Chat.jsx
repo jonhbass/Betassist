@@ -17,6 +17,40 @@ const getUserColor = (username) => {
   return `hsl(${h}, 70%, 50%)`;
 };
 
+// Função auxiliar para formatar data para separadores
+const formatDateSeparator = (dateStr) => {
+  try {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const isToday = date.toDateString() === today.toDateString();
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+
+    if (isToday) return 'Hoy';
+    if (isYesterday) return 'Ayer';
+
+    // Para outras datas, mostrar dia/mês/ano
+    return date.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  } catch {
+    return '';
+  }
+};
+
+// Função para obter apenas a data (sem hora) de uma string ISO
+const getDateOnly = (dateStr) => {
+  try {
+    return new Date(dateStr).toDateString();
+  } catch {
+    return '';
+  }
+};
+
 export default function Chat({ enabled = true }) {
   const navigate = useNavigate();
   const getCurrentUser = () => getAuthUser() || 'Guest';
@@ -147,6 +181,28 @@ export default function Chat({ enabled = true }) {
     setText((prev) => prev + emoji);
     setShowEmojiPicker(false);
   }
+
+  // Carregar histórico de mensagens via HTTP ao montar o componente
+  // Isso garante que as mensagens apareçam mesmo antes do socket conectar
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/messages/main`);
+        if (res.ok) {
+          const history = await res.json();
+          if (Array.isArray(history) && history.length > 0) {
+            setMessages(history);
+          }
+        }
+      } catch (err) {
+        console.log('Não foi possível carregar histórico via HTTP:', err);
+        // Continua com localStorage como fallback
+      }
+    };
+
+    loadChatHistory();
+  }, []);
 
   // Verificar se usuário está bloqueado no chat
   useEffect(() => {
@@ -446,9 +502,15 @@ export default function Chat({ enabled = true }) {
       )}
 
       <div className="ba-chat-list" ref={listRef}>
-        {messages.map((m) => {
+        {messages.map((m, index) => {
           const currentUser = getCurrentUser();
           const currentAdminName = sessionStorage.getItem('adminUsername');
+
+          // Verificar se precisa mostrar separador de data
+          const currentDate = getDateOnly(m.time);
+          const prevMessage = index > 0 ? messages[index - 1] : null;
+          const prevDate = prevMessage ? getDateOnly(prevMessage.time) : null;
+          const showDateSeparator = currentDate && currentDate !== prevDate;
 
           // Verificar se a mensagem é do usuário atual
           // Para admins: verificar se é do mesmo admin (comparar adminName)
@@ -474,43 +536,50 @@ export default function Chat({ enabled = true }) {
           };
 
           return (
-            <div key={m.id} className={`ba-chat-msg ${isMe ? 'me' : 'other'}`}>
-              <div className="ba-chat-msg-header">
-                <div
-                  className="ba-chat-avatar"
-                  onClick={handleAvatarClick}
-                  style={{
-                    cursor:
+            <React.Fragment key={m.id}>
+              {showDateSeparator && (
+                <div className="ba-chat-date-separator">
+                  <span>{formatDateSeparator(m.time)}</span>
+                </div>
+              )}
+              <div className={`ba-chat-msg ${isMe ? 'me' : 'other'}`}>
+                <div className="ba-chat-msg-header">
+                  <div
+                    className="ba-chat-avatar"
+                    onClick={handleAvatarClick}
+                    style={{
+                      cursor:
+                        isAdmin && m.from !== 'system' && !isMe
+                          ? 'pointer'
+                          : 'default',
+                      backgroundColor: userColor,
+                      color: userColor ? '#fff' : undefined,
+                      border: userColor
+                        ? '1px solid rgba(255,255,255,0.2)'
+                        : undefined,
+                    }}
+                    title={
                       isAdmin && m.from !== 'system' && !isMe
-                        ? 'pointer'
-                        : 'default',
-                    backgroundColor: userColor,
-                    color: userColor ? '#fff' : undefined,
-                    border: userColor
-                      ? '1px solid rgba(255,255,255,0.2)'
-                      : undefined,
-                  }}
-                  title={
-                    isAdmin && m.from !== 'system' && !isMe
-                      ? `Abrir chat de soporte con ${m.from}`
-                      : ''
-                  }
-                >
-                  {m.from === 'system'
-                    ? '🔔'
-                    : m.from.slice(0, 1).toUpperCase()}
+                        ? `Abrir chat de soporte con ${m.from}`
+                        : ''
+                    }
+                  >
+                    {m.from === 'system'
+                      ? '🔔'
+                      : m.from.slice(0, 1).toUpperCase()}
+                  </div>
+                  <div className="ba-chat-msg-user">
+                    {m.from === 'system'
+                      ? 'Sistema'
+                      : m.isAdmin
+                      ? `Admin ${m.adminName || m.from}`
+                      : m.from}
+                  </div>
+                  <div className="ba-chat-msg-time">{formatTime(m.time)}</div>
                 </div>
-                <div className="ba-chat-msg-user">
-                  {m.from === 'system'
-                    ? 'Sistema'
-                    : m.isAdmin
-                    ? `Admin ${m.adminName || m.from}`
-                    : m.from}
-                </div>
-                <div className="ba-chat-msg-time">{formatTime(m.time)}</div>
+                <div className="ba-chat-text">{m.text}</div>
               </div>
-              <div className="ba-chat-text">{m.text}</div>
-            </div>
+            </React.Fragment>
           );
         })}
       </div>
