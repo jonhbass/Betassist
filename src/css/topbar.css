@@ -456,8 +456,10 @@
 
 /* Botão de som do admin */
 .ba-admin-sound-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px; /* Garantir área de toque mínima para mobile */
+  min-height: 44px;
   border-radius: 50%;
   border: 2px solid rgba(255, 193, 7, 0.4);
   background: rgba(255, 255, 255, 0.05);
@@ -467,6 +469,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* Evitar zoom duplo-tap no iOS */
+  user-select: none;
 }
 
 .ba-admin-sound-btn.enabled {
@@ -480,6 +485,12 @@
   transform: scale(1.05);
 }
 
+/* Feedback de toque para mobile */
+.ba-admin-sound-btn.enabled:active {
+  transform: scale(0.95);
+  background: rgba(76, 175, 80, 0.3);
+}
+
 .ba-admin-sound-btn.disabled {
   border-color: rgba(244, 67, 54, 0.4);
   background: rgba(244, 67, 54, 0.1);
@@ -489,6 +500,27 @@
   background: rgba(244, 67, 54, 0.2);
   box-shadow: 0 0 12px rgba(244, 67, 54, 0.4);
   transform: scale(1.05);
+}
+
+/* Feedback de toque para mobile */
+.ba-admin-sound-btn.disabled:active {
+  transform: scale(0.95);
+  background: rgba(244, 67, 54, 0.3);
+}
+
+/* Indicador de que o áudio precisa ser desbloqueado (mobile) */
+.ba-admin-sound-btn.needs-unlock {
+  animation: pulseUnlock 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseUnlock {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 193, 7, 0);
+  }
 }
 
 /* Responsive modo admin */

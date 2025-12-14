@@ -4,7 +4,12 @@ import Icon from '../assets/icon.svg';
 import { getAuthUser } from '../utils/auth';
 import { getServerUrl } from '../utils/serverUrl';
 import { ensureSocket } from '../utils/socket';
-import { isSoundEnabled, toggleSound } from '../utils/notificationSound';
+import {
+  isSoundEnabled,
+  toggleSound,
+  forceUnlockAudio,
+  isAudioReady,
+} from '../utils/notificationSound';
 import '../css/topbar.css';
 
 export default function Topbar({
@@ -24,6 +29,7 @@ export default function Topbar({
   const [unreadCount, setUnreadCount] = useState(0);
   const [iconGlowing, setIconGlowing] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(isSoundEnabled());
+  const [audioReady, setAudioReady] = useState(isAudioReady());
   const menuRef = useRef(null);
   const menuButtonRef = useRef(null);
 
@@ -31,10 +37,30 @@ export default function Topbar({
     setIconGlowing(!iconGlowing);
   };
 
-  const handleToggleSound = () => {
+  const handleToggleSound = async () => {
+    // Desbloquear áudio no primeiro toque (importante para iOS)
+    if (!audioReady) {
+      const unlocked = await forceUnlockAudio();
+      setAudioReady(unlocked);
+    }
     const newState = toggleSound();
     setSoundEnabled(newState);
   };
+
+  // Verificar se o áudio foi desbloqueado por outras interações
+  useEffect(() => {
+    if (audioReady || !adminMode) return;
+
+    const checkAudioReady = () => {
+      if (isAudioReady()) {
+        setAudioReady(true);
+      }
+    };
+
+    // Verificar periodicamente até o áudio ser desbloqueado
+    const interval = setInterval(checkAudioReady, 1000);
+    return () => clearInterval(interval);
+  }, [audioReady, adminMode]);
 
   useEffect(() => {
     // Obter usuário logado
@@ -261,9 +287,15 @@ export default function Topbar({
           <button
             className={`ba-admin-sound-btn ${
               soundEnabled ? 'enabled' : 'disabled'
-            }`}
+            } ${!audioReady && soundEnabled ? 'needs-unlock' : ''}`}
             onClick={handleToggleSound}
-            title={soundEnabled ? 'Desactivar sonido' : 'Activar sonido'}
+            title={
+              !audioReady && soundEnabled
+                ? 'Toque para activar sonido'
+                : soundEnabled
+                ? 'Desactivar sonido'
+                : 'Activar sonido'
+            }
           >
             {soundEnabled ? '🔔' : '🔕'}
           </button>
