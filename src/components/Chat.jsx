@@ -100,11 +100,14 @@ export default function Chat({ enabled = true }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [chatBlocked, setChatBlocked] = useState(false); // Bloqueio de chat
   const [onlineCount, setOnlineCount] = useState(0); // Contador de usuários online
+  const [showOnlineUsers, setShowOnlineUsers] = useState(false); // Modal de usuários online
+  const [onlineUsers, setOnlineUsers] = useState([]); // Lista de usuários online
   const listRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimeout = useRef(null);
   const emojiPickerRef = useRef(null);
   const emojiToggleRef = useRef(null);
+  const onlineUsersRef = useRef(null);
 
   // Lista de emojis populares
   const EMOJI_LIST = [
@@ -176,6 +179,30 @@ export default function Chat({ enabled = true }) {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showEmojiPicker]);
+
+  // Fechar modal de usuários online ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        onlineUsersRef.current &&
+        !onlineUsersRef.current.contains(event.target)
+      ) {
+        setShowOnlineUsers(false);
+      }
+    }
+    if (showOnlineUsers) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showOnlineUsers]);
+
+  // Solicitar lista de usuários quando abrir o modal
+  const handleShowOnlineUsers = () => {
+    if (socketRef.current) {
+      socketRef.current.emit('chat:get-online-users');
+    }
+    setShowOnlineUsers(true);
+  };
 
   function insertEmoji(emoji) {
     setText((prev) => prev + emoji);
@@ -310,6 +337,10 @@ export default function Chat({ enabled = true }) {
         if (mounted) setSocketState('disconnected');
       };
 
+      const onOnlineUsers = (data) => {
+        if (mounted) setOnlineUsers(data.users || []);
+      };
+
       socket.on('connect', onConnect);
       socket.on('chat:main-history', onHistory);
       socket.on('chat:main-message', onMessage);
@@ -318,6 +349,7 @@ export default function Chat({ enabled = true }) {
       socket.on('connect_error', onConnectError);
       socket.on('disconnect', onDisconnect);
       socket.on('chat:online-count', onOnlineCount);
+      socket.on('chat:online-users', onOnlineUsers);
 
       // Cleanup listeners on unmount
       return () => {
@@ -330,6 +362,7 @@ export default function Chat({ enabled = true }) {
         socket.off('disconnect', onDisconnect);
         socket.off('user:chat-blocked', onChatBlocked);
         socket.off('chat:online-count', onOnlineCount);
+        socket.off('chat:online-users', onOnlineUsers);
       };
     });
 
@@ -464,10 +497,15 @@ export default function Chat({ enabled = true }) {
         <div className="ba-chat-title">
           Chat
           {onlineCount > 0 && (
-            <span className="ba-online-count" title="Usuarios en línea">
+            <button
+              className="ba-online-count"
+              title="Ver usuarios en línea"
+              onClick={handleShowOnlineUsers}
+              type="button"
+            >
               <span className="ba-online-dot"></span>
               {onlineCount} Conectados
-            </span>
+            </button>
           )}
         </div>
         <div className="ba-chat-controls">
@@ -482,6 +520,33 @@ export default function Chat({ enabled = true }) {
           )}
         </div>
       </div>
+
+      {/* Modal de usuários online */}
+      {showOnlineUsers && (
+        <div className="ba-online-users-modal" ref={onlineUsersRef}>
+          <div className="ba-online-users-header">
+            <span className="ba-online-dot"></span>
+            Usuarios en línea ({onlineUsers.length})
+          </div>
+          <div className="ba-online-users-list">
+            {onlineUsers.length === 0 ? (
+              <div className="ba-online-users-empty">Cargando...</div>
+            ) : (
+              onlineUsers.map((user, index) => (
+                <div key={index} className="ba-online-user-item">
+                  <span
+                    className="ba-online-user-avatar"
+                    style={{ backgroundColor: getUserColor(user) }}
+                  >
+                    {user.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="ba-online-user-name">{user}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
 
       {!enabled && (
         <div

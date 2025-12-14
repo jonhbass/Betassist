@@ -872,6 +872,14 @@ function broadcastOnlineCount() {
   io.emit('chat:online-count', { count });
 }
 
+function getOnlineUsersList() {
+  // Retorna lista única de usernames (pode haver o mesmo user em múltiplas abas)
+  const uniqueUsers = [...new Set(onlineUsers.values())];
+  return uniqueUsers.sort((a, b) =>
+    a.toLowerCase().localeCompare(b.toLowerCase())
+  );
+}
+
 io.on('connection', (socket) => {
   console.log('socket connected', socket.id);
 
@@ -898,6 +906,12 @@ io.on('connection', (socket) => {
     }
     // Sempre fazer broadcast para garantir que todos recebam a contagem atualizada
     broadcastOnlineCount();
+  });
+
+  // Handler para solicitar lista de usuários online
+  socket.on('chat:get-online-users', () => {
+    const users = getOnlineUsersList();
+    socket.emit('chat:online-users', { users });
   });
 
   // Handler para quando o socket desconecta
