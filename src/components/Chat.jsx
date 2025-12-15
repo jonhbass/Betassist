@@ -517,6 +517,32 @@ export default function Chat({ enabled = true }) {
               {onlineCount} Conectados
             </button>
           )}
+          {/* Modal de usuários online - dentro do título para posicionamento */}
+          {showOnlineUsers && (
+            <div className="ba-online-users-modal" ref={onlineUsersRef}>
+              <div className="ba-online-users-header">
+                <span className="ba-online-dot"></span>
+                Usuarios en línea ({onlineUsers.length})
+              </div>
+              <div className="ba-online-users-list">
+                {onlineUsers.length === 0 ? (
+                  <div className="ba-online-users-empty">Cargando...</div>
+                ) : (
+                  onlineUsers.map((user, index) => (
+                    <div key={index} className="ba-online-user-item">
+                      <span
+                        className="ba-online-user-avatar"
+                        style={{ backgroundColor: getUserColor(user) }}
+                      >
+                        {user.charAt(0).toUpperCase()}
+                      </span>
+                      <span className="ba-online-user-name">{user}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
         </div>
         <div className="ba-chat-controls">
           <div className={`ba-socket-badge ${socketState}`}>{socketState}</div>
@@ -530,33 +556,6 @@ export default function Chat({ enabled = true }) {
           )}
         </div>
       </div>
-
-      {/* Modal de usuários online */}
-      {showOnlineUsers && (
-        <div className="ba-online-users-modal" ref={onlineUsersRef}>
-          <div className="ba-online-users-header">
-            <span className="ba-online-dot"></span>
-            Usuarios en línea ({onlineUsers.length})
-          </div>
-          <div className="ba-online-users-list">
-            {onlineUsers.length === 0 ? (
-              <div className="ba-online-users-empty">Cargando...</div>
-            ) : (
-              onlineUsers.map((user, index) => (
-                <div key={index} className="ba-online-user-item">
-                  <span
-                    className="ba-online-user-avatar"
-                    style={{ backgroundColor: getUserColor(user) }}
-                  >
-                    {user.charAt(0).toUpperCase()}
-                  </span>
-                  <span className="ba-online-user-name">{user}</span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
 
       {!enabled && (
         <div
