@@ -108,6 +108,7 @@ export default function Chat({ enabled = true }) {
   const emojiPickerRef = useRef(null);
   const emojiToggleRef = useRef(null);
   const onlineUsersRef = useRef(null);
+  const onlineUsersBtnRef = useRef(null);
 
   // Lista de emojis populares
   const EMOJI_LIST = [
@@ -180,13 +181,17 @@ export default function Chat({ enabled = true }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showEmojiPicker]);
 
-  // Fechar modal de usuários online ao clicar fora
+  // Fechar modal de usuários online ao clicar fora (exceto no botão)
   useEffect(() => {
     function handleClickOutside(event) {
-      if (
+      const clickedOutsideModal =
         onlineUsersRef.current &&
-        !onlineUsersRef.current.contains(event.target)
-      ) {
+        !onlineUsersRef.current.contains(event.target);
+      const clickedOnBtn =
+        onlineUsersBtnRef.current &&
+        onlineUsersBtnRef.current.contains(event.target);
+
+      if (clickedOutsideModal && !clickedOnBtn) {
         setShowOnlineUsers(false);
       }
     }
@@ -196,8 +201,12 @@ export default function Chat({ enabled = true }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showOnlineUsers]);
 
-  // Solicitar lista de usuários quando abrir o modal
+  // Toggle modal de usuários online
   const handleShowOnlineUsers = () => {
+    if (showOnlineUsers) {
+      setShowOnlineUsers(false);
+      return;
+    }
     if (socketRef.current) {
       socketRef.current.emit('chat:get-online-users');
     }
@@ -498,6 +507,7 @@ export default function Chat({ enabled = true }) {
           Chat
           {onlineCount > 0 && (
             <button
+              ref={onlineUsersBtnRef}
               className="ba-online-count"
               title="Ver usuarios en línea"
               onClick={handleShowOnlineUsers}

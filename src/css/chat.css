@@ -237,6 +237,9 @@
   align-items: center;
   margin-bottom: 8px;
   position: relative;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 32px;
 }
 
 .ba-chat-title {
@@ -245,6 +248,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* Online users counter - botão clicável */
@@ -296,12 +301,36 @@
 .ba-chat-controls {
   position: absolute;
   right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .ba-chat-controls {
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+/* Mobile: esconder badge de status no header (já temos indicador de conectados) */
+@media (max-width: 480px) {
+  .ba-chat-header {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ba-chat-controls {
+    position: static;
+    transform: none;
+  }
+
+  .ba-chat-controls .ba-socket-badge {
+    display: none;
+  }
+
+  .ba-chat-title {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Chat message header styles */
