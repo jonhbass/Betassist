@@ -271,6 +271,9 @@ app.post('/users', async (req, res) => {
   const hash = await bcrypt.hash(password, 10);
   users.push({ username, passwordHash: hash });
   writeUsers(users);
+  console.log(
+    `✅ [ADMIN] Usuário criado: ${username} (Total: ${users.length} usuários)`
+  );
   res.status(201).json({ ok: true });
 });
 
@@ -322,6 +325,10 @@ app.delete('/users/:username', (req, res) => {
   let users = readUsers();
   users = users.filter((u) => u.username !== username);
   writeUsers(users);
+
+  console.log(
+    `🗑️ [ADMIN] Usuário removido: ${username} (Total: ${users.length} usuários)`
+  );
 
   // Emitir evento para forçar logout do usuário excluído
   io.emit('user:deleted', { username });
