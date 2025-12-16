@@ -86,24 +86,51 @@ export default function Dashboard() {
   useEffect(() => {
     const u = getAuthUser();
     const adminUser = sessionStorage.getItem('adminUsername');
+    const adminStatus = sessionStorage.getItem('isAdmin') === 'true';
 
-    if (u) {
-      setUser(u);
-    } else if (adminUser) {
+    // Se for admin, não precisa validar no banco de usuários
+    if (adminStatus && adminUser) {
       setUser(adminUser);
-    } else {
+      setIsAdmin(true);
+      return;
+    }
+
+    // Se não há usuário logado, redirecionar para login
+    if (!u) {
       navigate('/login', { replace: true });
       return;
     }
 
-    // SEMPRE re-verificar status de admin para evitar que usuário normal veja opções de admin
-    const adminStatus = sessionStorage.getItem('isAdmin') === 'true';
-    setIsAdmin(adminStatus);
+    // Verificar se o usuário ainda existe no servidor
+    const validateUser = async () => {
+      try {
+        const serverUrl = getServerUrl();
+        const res = await fetch(`${serverUrl}/users/${encodeURIComponent(u)}`);
 
-    // Se não for admin, garantir que não há flag de admin
-    if (!adminStatus) {
-      sessionStorage.removeItem('isAdmin');
-    }
+        if (!res.ok) {
+          // Usuário não existe mais no servidor - fazer logout
+          console.warn(
+            `Usuário "${u}" não encontrado no servidor. Fazendo logout.`
+          );
+          removeAuthUser();
+          sessionStorage.removeItem('isAdmin');
+          sessionStorage.removeItem('adminUsername');
+          navigate('/login', { replace: true });
+          return;
+        }
+
+        // Usuário válido
+        setUser(u);
+        setIsAdmin(false);
+        sessionStorage.removeItem('isAdmin');
+      } catch (error) {
+        console.error('Erro ao validar usuário:', error);
+        // Em caso de erro de rede, permitir acesso (para não bloquear se servidor estiver offline)
+        setUser(u);
+      }
+    };
+
+    validateUser();
 
     // Verificar se é a primeira vez do usuário (auto-iniciar tutorial)
     const tutorialCompleted = localStorage.getItem('tutorialCompleted');
