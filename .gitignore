@@ -25,3 +25,12 @@ dist-ssr
 *.env
 .env.local
 .env
+
+# Dados do servidor (devem persistir apenas no volume do Railway)
+server/users.json
+server/deposits.json
+server/withdrawals.json
+server/chat-main.json
+server/chat-support.json
+server/admins.json
+server/config.json
