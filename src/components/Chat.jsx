@@ -53,8 +53,17 @@ const getDateOnly = (dateStr) => {
 
 export default function Chat({ enabled = true }) {
   const navigate = useNavigate();
-  const getCurrentUser = () => getAuthUser() || 'Guest';
   const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+  const adminUsername = sessionStorage.getItem('adminUsername');
+
+  // Priorizar nome do admin se estiver logado como admin
+  const getCurrentUser = () => {
+    if (isAdmin && adminUsername) {
+      return `Admin ${adminUsername}`;
+    }
+    return getAuthUser() || 'Guest';
+  };
+
   const USE_SOCKET = true;
 
   const [messages, setMessages] = useState(() => {
