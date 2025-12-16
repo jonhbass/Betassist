@@ -866,18 +866,39 @@ app.set('io', io);
 // Rastrear usuários online no chat
 const onlineUsers = new Map(); // socketId -> username
 
-function broadcastOnlineCount() {
-  const count = onlineUsers.size;
-  console.log(`📊 Usuários online: ${count}`);
-  io.emit('chat:online-count', { count });
-}
-
 function getOnlineUsersList() {
   // Retorna lista única de usernames (pode haver o mesmo user em múltiplas abas)
   const uniqueUsers = [...new Set(onlineUsers.values())];
-  return uniqueUsers.sort((a, b) =>
+
+  // Carregar usuários cadastrados do banco
+  const registeredUsers = readUsers();
+  const registeredUsernames = registeredUsers.map((u) =>
+    u.username.toLowerCase()
+  );
+
+  // Filtrar: remover Guest, Anónimo e usuários não cadastrados (exceto Admins)
+  const filteredUsers = uniqueUsers.filter((username) => {
+    // Sempre permitir admins
+    if (username.startsWith('Admin ')) return true;
+
+    // Remover Guest e Anónimo
+    if (username === 'Guest' || username === 'Anónimo') return false;
+
+    // Verificar se está cadastrado no banco
+    return registeredUsernames.includes(username.toLowerCase());
+  });
+
+  return filteredUsers.sort((a, b) =>
     a.toLowerCase().localeCompare(b.toLowerCase())
   );
+}
+
+function broadcastOnlineCount() {
+  // Usar a contagem filtrada (sem Guest/Anónimo e não cadastrados)
+  const filteredUsers = getOnlineUsersList();
+  const count = filteredUsers.length;
+  console.log(`📊 Usuários online (filtrados): ${count}`);
+  io.emit('chat:online-count', { count });
 }
 
 io.on('connection', (socket) => {
