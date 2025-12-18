@@ -4,8 +4,6 @@ import '../css/Login.css';
 import Icon from '../assets/icon.svg';
 import { setAuthUser } from '../utils/auth';
 import { clearVisitorId } from '../utils/visitorId';
-import SupportButton from '../components/SupportButton';
-import SupportChatModal from '../components/SupportChatModal';
 import { getServerUrl } from '../utils/serverUrl';
 
 // Force API usage for consistency with AdminDashboard
@@ -91,8 +89,6 @@ export default function Login() {
 
   return (
     <div className="login-wrap">
-      <SupportButton />
-
       {/* Container que agrupa banner + card de login */}
       <div className="login-container">
         {/* Banner de boas-vindas */}
