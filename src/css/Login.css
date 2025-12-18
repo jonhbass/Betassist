@@ -403,3 +403,63 @@
     font-size: 14px;
   }
 }
+
+/* ============================================
+   BOTÃO WHATSAPP - Estilo similar à imagem
+   ============================================ */
+.login-whatsapp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 24px;
+  margin-top: 0;
+  background: linear-gradient(135deg, #1f2d4a 0%, #16213e 100%);
+  border: 1px solid rgba(26, 163, 255, 0.3);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.login-whatsapp-btn:hover {
+  background: linear-gradient(135deg, #2a3d5f 0%, #1f2d4a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26, 163, 255, 0.2);
+}
+
+.login-whatsapp-btn:active {
+  transform: translateY(0);
+}
+
+.login-whatsapp-btn .whatsapp-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* Ajustar o login-card para conectar com o botão WhatsApp */
+.login-container .login-card {
+  border-radius: 0; /* Remove todas as bordas arredondadas */
+  border-bottom: none; /* Remove borda inferior */
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .login-whatsapp-btn {
+    padding: 12px 20px;
+    font-size: 15px;
+    gap: 10px;
+  }
+
+  .login-whatsapp-btn .whatsapp-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
